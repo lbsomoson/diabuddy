@@ -1,78 +1,73 @@
+import 'package:diabuddy/screens/dashboard_screen.dart';
+import 'package:diabuddy/screens/notificationScreen.dart';
+import 'package:diabuddy/screens/notificationSettingsScreen.dart';
 import 'package:diabuddy/screens/profileScreen.dart';
+import 'package:diabuddy/screens/signupScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
-class AppBottomNavigationBar extends StatefulWidget {
-  const AppBottomNavigationBar({super.key});
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
 
   @override
-  State<AppBottomNavigationBar> createState() => _AppBottomNavigationBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _AppBottomNavigationBarState extends State<AppBottomNavigationBar> {
-  int _selectedIndex = 0;
+class _BottomNavBarState extends State<BottomNavBar> {
+  final controller = PersistentTabController(initialIndex: 0);
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    ProfileScreen(),
-    ProfileScreen(),
-    ProfileScreen(),
-    ProfileScreen(),
-  ];
+  List<PersistentTabConfig> _tabs() => [
+        PersistentTabConfig(
+          screen: const DashboardScreen(),
+          item: ItemConfig(
+              icon: const Icon(Icons.home),
+              title: "Home",
+              inactiveForegroundColor: Colors.grey[400]!,
+              activeForegroundColor: Theme.of(context).colorScheme.primary),
+        ),
+        PersistentTabConfig(
+          screen: const NotificationSettingsScreen(),
+          item: ItemConfig(
+              icon: const Icon(Icons.message),
+              title: "Activity",
+              inactiveForegroundColor: Colors.grey[400]!,
+              activeForegroundColor: Theme.of(context).colorScheme.primary),
+        ),
+        PersistentTabConfig(
+          screen: const DashboardScreen(),
+          item: ItemConfig(
+              icon: const Icon(
+                Icons.camera,
+                color: Colors.white,
+              ),
+              title: "Camera",
+              inactiveForegroundColor: Colors.grey[400]!,
+              activeForegroundColor: Theme.of(context).colorScheme.primary),
+        ),
+        PersistentTabConfig(
+          screen: const NotificationScreen(),
+          item: ItemConfig(
+              icon: const Icon(Icons.notifications),
+              title: "Notifications",
+              inactiveForegroundColor: Colors.grey[400]!,
+              activeForegroundColor: Theme.of(context).colorScheme.primary),
+        ),
+        PersistentTabConfig(
+          screen: const ProfileScreen(),
+          item: ItemConfig(
+              icon: const Icon(Icons.person),
+              title: "Profile",
+              inactiveForegroundColor: Colors.grey[400]!,
+              activeForegroundColor: Theme.of(context).colorScheme.primary),
+        ),
+      ];
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Open camera
-        },
-        tooltip: 'Increment',
-        elevation: 2.0,
-        child: const Icon(Icons.photo_camera),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 0
-                ? const Icon(Icons.home)
-                : const Icon(Icons.home_outlined),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 1
-                ? const Icon(Icons.fitness_center)
-                : const Icon(Icons.fitness_center_outlined),
-            label: 'Exercise',
-          ),
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 0
-                ? const Icon(Icons.notifications)
-                : const Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: _selectedIndex == 2
-                ? const Icon(Icons.notifications)
-                : const Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.grey[800],
-        onTap: _onItemTapped,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => PersistentTabView(
+        tabs: _tabs(),
+        controller: controller,
+        navBarBuilder: (navBarConfig) => Style13BottomNavBar(
+          navBarConfig: navBarConfig,
+        ),
+      );
 }

@@ -4,12 +4,25 @@ import 'package:diabuddy/screens/notificationScreen.dart';
 import 'package:diabuddy/screens/notificationSettingsScreen.dart';
 import 'package:diabuddy/screens/profileScreen.dart';
 import 'package:diabuddy/screens/signupScreen.dart';
+import 'package:diabuddy/widgets/bottomnavbar.dart';
+import 'package:flutter/services.dart';
 // import 'package:diabuddy/widgets/bottomnavbar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+
 import 'package:flutter/material.dart';
 import 'package:gtext/gtext.dart';
 
 void main() {
   GText.init(to: 'fi', enableCaching: false);
+  WidgetsFlutterBinding.ensureInitialized();
+  // make navigation bar transparent
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+    ),
+  );
+  // make flutter draw behind navigation bar
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(const MyApp());
 }
 
@@ -69,8 +82,12 @@ class MyApp extends StatelessWidget {
               ),
         ),
       ),
-      initialRoute: "/loginScreen",
+      // initialRoute: "/signupScreen",
+      // initialRoute: "/loginScreen",
       onGenerateRoute: (settings) {
+        if (settings.name == "/") {
+          return MaterialPageRoute(builder: (context) => const BottomNavBar());
+        }
         if (settings.name == "/notificationScreen") {
           return MaterialPageRoute(
               builder: (context) => const NotificationScreen());
@@ -79,7 +96,6 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute(builder: (context) => const SignUpScreen());
         }
         if (settings.name == "/loginScreen") {
-          // final args = settings.arguments as Object?;
           return MaterialPageRoute(builder: (context) => const LoginScreen());
         }
         if (settings.name == "/dashboardScreen") {
