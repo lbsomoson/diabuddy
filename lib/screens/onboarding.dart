@@ -31,10 +31,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary, // Set the border color to primary color
-                    width: 2.0, // Set the border width
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 2.0,
                   ),
                 ),
                 child: Material(
@@ -43,9 +41,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   borderRadius: BorderRadius.circular(15.0),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15.0),
-                    splashColor:
-                        Theme.of(context).colorScheme.secondary, // splash color
-                    onTap: () {}, // button pressed
+                    splashColor: Theme.of(context).colorScheme.secondary,
+                    onTap: () {},
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -53,9 +50,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Icons.male_outlined,
                           color: Colors.white,
                           size: 100,
-                        ), // icon
-                        Text("Male",
-                            style: TextStyle(color: Colors.white)), // text
+                        ),
+                        Text("Male", style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ),

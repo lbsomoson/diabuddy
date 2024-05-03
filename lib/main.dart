@@ -1,11 +1,11 @@
 import 'package:diabuddy/screens/dashboard_screen.dart';
-import 'package:diabuddy/screens/loginScreen.dart';
-import 'package:diabuddy/screens/notificationScreen.dart';
-import 'package:diabuddy/screens/notificationSettingsScreen.dart';
+import 'package:diabuddy/screens/login_screen.dart';
+import 'package:diabuddy/screens/notification_screen.dart';
+import 'package:diabuddy/screens/notification_settings_screen.dart';
 import 'package:diabuddy/screens/onboarding.dart';
-import 'package:diabuddy/screens/profileScreen.dart';
+import 'package:diabuddy/screens/profile_screen.dart';
 import 'package:diabuddy/screens/reader.dart';
-import 'package:diabuddy/screens/signupScreen.dart';
+import 'package:diabuddy/screens/signup_screen.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
 
 import 'package:flutter/material.dart';
