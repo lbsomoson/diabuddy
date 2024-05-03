@@ -1,6 +1,8 @@
+import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/personal_info.dart';
 import 'package:diabuddy/widgets/text.dart';
+import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -36,33 +38,297 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   List<Map<String, dynamic>> appointments = [
     {
-      "title": "Appointment to Doctor 1",
+      "title": "Appointment with Doctor 1",
       "date": "June 2, 2024",
       "time": "9:00 AM",
     },
     {
-      "title": "Appointment to Doctor 2",
+      "title": "Appointment with Doctor 2",
       "date": "June 2, 2024",
       "time": "10:00 AM",
     },
   ];
+
+  void _editPersonalInformation(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 380),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Age",
+                      label: "Age",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Height",
+                      label: "Height",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Weight",
+                      label: "Weight",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ButtonWidget(
+                        label: "Save",
+                        callback: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void _editAppointmentInformation(
+      context, String title, String time, String date) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 380),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Title",
+                      label: "Title",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Date",
+                      label: "Date",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Time",
+                      label: "Time",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ButtonWidget(
+                        label: "Save",
+                        callback: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void _editMedicineInformation(
+      context, String title, String subtitle, String frequency) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 380),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Medicine Name",
+                      label: "Medicine Name",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Time",
+                      label: "Time",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Frequency",
+                      label: "Frequency",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ButtonWidget(
+                        label: "Verify",
+                        callback: () {
+                          // Navigator.pop(context);
+                          Navigator.pushNamed(
+                              context, '/chooseReadOptionScreen');
+                        })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void _addMedicine(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 380),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Medicine Name",
+                      label: "Medicine Name",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Time",
+                      label: "Time",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Frequency",
+                      label: "Frequency",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ButtonWidget(
+                        label: "Verify",
+                        callback: () {
+                          Navigator.pushNamed(
+                              context, '/chooseReadOptionScreen');
+                        })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void _addAppointmentInformation(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 380),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Title",
+                      label: "Title",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Date",
+                      label: "Date",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFieldWidget(
+                      callback: () {},
+                      hintText: "Time",
+                      label: "Time",
+                      type: "String",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ButtonWidget(
+                        label: "Save",
+                        callback: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const TextWidget(text: "Profile", style: 'bodyLarge'),
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              onPressed: () {
-                // handle the press
-              },
-            ),
-          ],
         ),
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
@@ -89,15 +355,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Divider(color: Colors.grey[500]),
+                  Divider(color: Colors.grey[400]),
                   const SizedBox(
                     height: 10,
                   ),
-                  const Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      textBaseline: TextBaseline.alphabetic,
                       children: [
-                        TextWidget(
-                            text: "Personal Information", style: 'labelMedium')
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextWidget(
+                              text: "Personal Information",
+                              style: 'labelMedium'),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () {
+                              _editPersonalInformation(context);
+                            },
+                            child: Ink(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.transparent,
+                              ),
+                              child: Icon(
+                                Icons.edit,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        )
                       ]),
                   const SizedBox(
                     height: 10,
@@ -106,11 +399,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: const Column(
                       children: [
-                        PersonalInformation(title: "Age", value: "45"),
+                        PersonalInformation(title: "Gender", value: "Female"),
                         SizedBox(
                           height: 8,
                         ),
-                        PersonalInformation(title: "Gender", value: "Female"),
+                        PersonalInformation(title: "Age", value: "45"),
                         SizedBox(
                           height: 8,
                         ),
@@ -136,7 +429,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Divider(color: Colors.grey[500]),
+                  Divider(color: Colors.grey[400]),
                   const SizedBox(
                     height: 10,
                   ),
@@ -155,7 +448,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () => _addMedicine(context),
                             child: Ink(
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
@@ -179,6 +472,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: medicines.map((med) {
                         return CardWidget(
                             // leading: Icons.medical_services_rounded,
+                            callback: () => _editMedicineInformation(
+                                context, med['name'], "asdfad", "2"),
                             trailing: Icons.edit,
                             title: med['name'],
                             subtitle: "asdfad");
@@ -188,7 +483,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Divider(color: Colors.grey[500]),
+                  Divider(color: Colors.grey[400]),
                   const SizedBox(
                     height: 10,
                   ),
@@ -208,7 +503,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () => _addAppointmentInformation(context),
                             child: Ink(
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
@@ -231,20 +526,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       return CardWidget(
                           leading: Icons.medical_services_rounded,
                           trailing: Icons.edit,
+                          callback: () => _editAppointmentInformation(
+                              context, app['title'], app['time'], app['date']),
                           title: app['title'],
                           subtitle: "${app['date']} at ${app['time']}");
                     }).toList(),
                   ),
                   const SizedBox(
+                    height: 15,
+                  ),
+                  Divider(color: Colors.grey[400]),
+                  const SizedBox(
                     height: 10,
                   ),
-                  TextButton.icon(
-                      style: const ButtonStyle(
-                          // foregroundColor: const Color.fromRGBO(100, 204, 197, 1),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.disabled)) {
+                                return Colors.grey;
+                              }
+                              return Theme.of(context).colorScheme.primary;
+                            },
                           ),
-                      onPressed: () {},
-                      icon: const Icon(Icons.logout),
-                      label: const Text("Logout")),
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/loginScreen');
+                        },
+                        icon: const Icon(
+                          Icons.logout,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          "Logout",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  )
                 ]),
               ),
             ),

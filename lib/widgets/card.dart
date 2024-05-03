@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 
 class CardWidget extends StatefulWidget {
   final String title, subtitle;
+  final double? size;
+  final Function? callback;
   final IconData? leading, trailing;
+
   const CardWidget(
       {required this.title,
       required this.subtitle,
+      this.size,
+      this.callback,
       this.trailing,
       this.leading,
       super.key});
@@ -38,10 +43,14 @@ class _CardWidgetState extends State<CardWidget> {
               ? IconButton(
                   icon: Icon(
                     widget.trailing!,
-                    size: 20,
+                    size: widget.size ?? 20,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (widget.callback != null) {
+                      widget.callback!();
+                    }
+                  },
                 )
               : null,
           title: TextWidget(text: widget.title, style: 'bodyMedium'),
