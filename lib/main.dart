@@ -2,27 +2,17 @@ import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/loginScreen.dart';
 import 'package:diabuddy/screens/notificationScreen.dart';
 import 'package:diabuddy/screens/notificationSettingsScreen.dart';
+import 'package:diabuddy/screens/onboarding.dart';
 import 'package:diabuddy/screens/profileScreen.dart';
+import 'package:diabuddy/screens/reader.dart';
 import 'package:diabuddy/screens/signupScreen.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
-import 'package:flutter/services.dart';
-// import 'package:diabuddy/widgets/bottomnavbar.dart';
-import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 import 'package:flutter/material.dart';
 import 'package:gtext/gtext.dart';
 
 void main() {
   GText.init(to: 'fi', enableCaching: false);
-  WidgetsFlutterBinding.ensureInitialized();
-  // make navigation bar transparent
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-    ),
-  );
-  // make flutter draw behind navigation bar
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(const MyApp());
 }
 
@@ -74,29 +64,30 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.w500,
             fontFamily: 'Roboto',
           ),
-          titleSmall: const TextStyle(
-              // fontSize: 14,
-              // fontStyle: FontStyle.italic,
-              // fontWeight: FontWeight.w400,
-              // color: Color.fromARGB(255, 255, 231, 161),
-              ),
+          titleSmall: TextStyle(
+            fontSize: 15,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.w400,
+            color: Colors.grey[500],
+          ),
         ),
       ),
       // initialRoute: "/signupScreen",
+      // initialRoute: "/chooseReadOptionScreen",
       // initialRoute: "/loginScreen",
       onGenerateRoute: (settings) {
         if (settings.name == "/") {
           return MaterialPageRoute(builder: (context) => const BottomNavBar());
-        }
-        if (settings.name == "/notificationScreen") {
-          return MaterialPageRoute(
-              builder: (context) => const NotificationScreen());
         }
         if (settings.name == "/signupScreen") {
           return MaterialPageRoute(builder: (context) => const SignUpScreen());
         }
         if (settings.name == "/loginScreen") {
           return MaterialPageRoute(builder: (context) => const LoginScreen());
+        }
+        if (settings.name == "/onboarding") {
+          return MaterialPageRoute(
+              builder: (context) => const OnboardingScreen());
         }
         if (settings.name == "/dashboardScreen") {
           return MaterialPageRoute(
@@ -105,9 +96,17 @@ class MyApp extends StatelessWidget {
         if (settings.name == "/profileScreen") {
           return MaterialPageRoute(builder: (context) => const ProfileScreen());
         }
+        if (settings.name == "/notificationScreen") {
+          return MaterialPageRoute(
+              builder: (context) => const NotificationScreen());
+        }
         if (settings.name == "/notificationSettingsScreen") {
           return MaterialPageRoute(
               builder: (context) => const NotificationSettingsScreen());
+        }
+        if (settings.name == "/chooseReadOptionScreen") {
+          return MaterialPageRoute(
+              builder: (context) => const ChooseReadOptionScreen());
         }
         return null;
       },

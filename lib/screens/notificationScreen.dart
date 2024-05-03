@@ -1,7 +1,5 @@
-import 'package:diabuddy/widgets/bottomnavbar.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -22,7 +20,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    // final now = DateTime.now();
 
     return SafeArea(
         child: Scaffold(
@@ -87,17 +85,3 @@ class _NotificationScreenState extends State<NotificationScreen> {
     ));
   }
 }
-
-// class _SampleCard extends StatelessWidget {
-//   const _SampleCard({required this.cardName});
-//   final String cardName;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//       width: 300,
-//       height: 100,
-//       child: Center(child: Text(cardName)),
-//     );
-//   }
-// }

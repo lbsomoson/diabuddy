@@ -14,12 +14,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  String email = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context) {
-    String email = '';
-    String password = '';
-
     void handleEmailChange(String value) {
       email = value;
     }
@@ -126,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: IconButtonWidget(
-                                  label: 'Sign in with Google',
+                                  label: 'Google',
                                   callback: handleGoogleSignIn,
                                   icon: './assets/images/google logo.png'),
                             ),

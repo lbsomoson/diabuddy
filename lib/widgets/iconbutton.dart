@@ -21,7 +21,6 @@ class _IconButtonWidgetState extends State<IconButtonWidget> {
           widget.callback();
         },
         label: Text(widget.label),
-        // iconSize: 5,
         icon: Image.asset(
           widget.icon,
           width: 20,

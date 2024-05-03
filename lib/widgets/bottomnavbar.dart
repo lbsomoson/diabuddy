@@ -2,7 +2,6 @@ import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/notificationScreen.dart';
 import 'package:diabuddy/screens/notificationSettingsScreen.dart';
 import 'package:diabuddy/screens/profileScreen.dart';
-import 'package:diabuddy/screens/signupScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 

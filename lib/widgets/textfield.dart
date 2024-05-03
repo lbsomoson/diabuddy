@@ -1,13 +1,13 @@
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final Function callback;
-  final String label, hintText, type;
+  final String hintText, type;
+  final String? label;
   const TextFieldWidget(
       {required this.callback,
-      required this.label,
+      this.label,
       required this.hintText,
       required this.type,
       super.key});
@@ -24,13 +24,19 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: TextWidget(text: widget.label, style: 'bodyMedium'),
-        ),
-        const SizedBox(
-          height: 6,
-        ),
+        widget.label == null
+            ? Container()
+            : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: TextWidget(text: widget.label!, style: 'bodyMedium'),
+                  ),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                ],
+              ),
         TextFormField(
           style: Theme.of(context).textTheme.bodyMedium,
           onSaved: (value) {
@@ -39,7 +45,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           validator: (value) {
             // asks for a value if the textfield is empty
             if (value == null || value.isEmpty) {
-              return "Please enter your ${widget.label.toLowerCase()}";
+              return "Please enter your ${widget.label?.toLowerCase()}";
             }
             // if the type is a number, it checks if the value is a number
             if (widget.type == "Number" && int.tryParse(value) == null) {

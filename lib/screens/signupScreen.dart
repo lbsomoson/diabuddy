@@ -33,13 +33,12 @@ class ObscuredTextFieldSample extends StatelessWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  String email = '';
+  String password = '';
+  String confirmPassword = '';
 
   @override
   Widget build(BuildContext context) {
-    String email = '';
-    String password = '';
-    String confirmPassword = '';
-
     void handleEmailChange(String value) {
       email = value;
     }
@@ -148,7 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 child: IconButtonWidget(
-                                    label: 'Sign up with Google',
+                                    label: 'Google',
                                     callback: handleGoogleSignUp,
                                     icon: './assets/images/google logo.png'),
                               ),
