@@ -40,6 +40,8 @@ dependencies:
   persistent_bottom_nav_bar_v2: ^5.2.3
   flutter_onboarding_slider: ^1.0.11
   font_awesome_flutter: ^10.7.0
+  vertical_weight_slider: ^2.6.0
+  wheel_slider: ^1.2.1
 
 dev_dependencies:
   flutter_test:

@@ -19,7 +19,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -75,6 +74,7 @@ class MyApp extends StatelessWidget {
       // initialRoute: "/signupScreen",
       // initialRoute: "/chooseReadOptionScreen",
       // initialRoute: "/loginScreen",
+      initialRoute: "/onboarding",
       onGenerateRoute: (settings) {
         if (settings.name == "/") {
           return MaterialPageRoute(builder: (context) => const BottomNavBar());
