@@ -1,6 +1,7 @@
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -54,7 +55,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 children: notifications.map((notification) {
                   return CardWidget(
                     trailing: Icons.circle,
-                    leading: Icons.medical_services_rounded,
+                    leading: FontAwesomeIcons.pills,
+                    // leading: Icons.medical_services_rounded,
                     title: notification,
                     subtitle: "asdfadsf",
                     size: 15,

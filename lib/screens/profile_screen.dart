@@ -4,6 +4,7 @@ import 'package:diabuddy/widgets/personal_info.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -466,19 +467,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      children: medicines.map((med) {
-                        return CardWidget(
-                            // leading: Icons.medical_services_rounded,
-                            callback: () => _editMedicineInformation(
-                                context, med['name'], "asdfad", "2"),
-                            trailing: Icons.edit,
-                            title: med['name'],
-                            subtitle: "asdfad");
-                      }).toList(),
-                    ),
+                  Column(
+                    children: medicines.map((med) {
+                      return CardWidget(
+                          leading: FontAwesomeIcons.pills,
+                          callback: () => _editMedicineInformation(
+                              context, med['name'], "asdfad", "2"),
+                          trailing: Icons.edit,
+                          title: med['name'],
+                          subtitle: "asdfad");
+                    }).toList(),
                   ),
                   const SizedBox(
                     height: 10,
