@@ -1,4 +1,5 @@
 import 'package:diabuddy/screens/dashboard_screen.dart';
+import 'package:diabuddy/screens/meal_tracker.dart';
 import 'package:diabuddy/screens/notification_screen.dart';
 import 'package:diabuddy/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
               activeForegroundColor: Theme.of(context).colorScheme.primary),
         ),
         PersistentTabConfig(
-          screen: const DashboardScreen(),
+          screen: const MealTrackerScreen(),
           item: ItemConfig(
               icon: const Icon(FontAwesomeIcons.bowlFood),
               title: "Tracker",

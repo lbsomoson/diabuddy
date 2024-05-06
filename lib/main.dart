@@ -2,6 +2,8 @@ import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/history.dart';
 import 'package:diabuddy/screens/history_all.dart';
 import 'package:diabuddy/screens/login_screen.dart';
+import 'package:diabuddy/screens/meal_details.dart';
+import 'package:diabuddy/screens/meal_tracker.dart';
 import 'package:diabuddy/screens/notification_screen.dart';
 import 'package:diabuddy/screens/notification_settings_screen.dart';
 import 'package:diabuddy/screens/onboarding.dart';
@@ -122,6 +124,14 @@ class MyApp extends StatelessWidget {
         if (settings.name == "/historyAll") {
           return MaterialPageRoute(
               builder: (context) => const HistoryAllScreen());
+        }
+        if (settings.name == "/mealTrackerScreen") {
+          return MaterialPageRoute(
+              builder: (context) => const MealTrackerScreen());
+        }
+        if (settings.name == "/mealDetailsScreen") {
+          return MaterialPageRoute(
+              builder: (context) => const MealDetailsScreen());
         }
         return null;
       },
