@@ -56,7 +56,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   return CardWidget(
                     trailing: Icons.circle,
                     leading: FontAwesomeIcons.pills,
-                    // leading: Icons.medical_services_rounded,
                     title: notification,
                     subtitle: "asdfadsf",
                     size: 15,

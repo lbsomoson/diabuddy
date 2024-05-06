@@ -1,9 +1,9 @@
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/notification_screen.dart';
-import 'package:diabuddy/screens/notification_settings_screen.dart';
 import 'package:diabuddy/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -25,10 +25,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               activeForegroundColor: Theme.of(context).colorScheme.primary),
         ),
         PersistentTabConfig(
-          screen: const NotificationSettingsScreen(),
+          screen: const DashboardScreen(),
           item: ItemConfig(
-              icon: const Icon(Icons.message),
-              title: "Activity",
+              icon: const Icon(FontAwesomeIcons.bowlFood),
+              title: "Tracker",
               inactiveForegroundColor: Colors.grey[400]!,
               activeForegroundColor: Theme.of(context).colorScheme.primary),
         ),

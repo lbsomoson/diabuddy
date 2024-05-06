@@ -6,7 +6,6 @@ class CardWidget extends StatefulWidget {
   final double? size;
   final Function? callback;
   final IconData? leading, trailing;
-  // final FontAwesomeIconData? leadingAwesome;
 
   const CardWidget(
       {required this.title,
@@ -14,7 +13,6 @@ class CardWidget extends StatefulWidget {
       this.size,
       this.callback,
       this.trailing,
-      // this.leadingAwesome,
       this.leading,
       super.key});
 

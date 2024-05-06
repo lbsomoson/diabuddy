@@ -1,4 +1,6 @@
 import 'package:diabuddy/screens/dashboard_screen.dart';
+import 'package:diabuddy/screens/history.dart';
+import 'package:diabuddy/screens/history_all.dart';
 import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/notification_screen.dart';
 import 'package:diabuddy/screens/notification_settings_screen.dart';
@@ -69,12 +71,18 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.w400,
             color: Colors.grey[500],
           ),
+          titleMedium: const TextStyle(
+            fontSize: 18,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.w400,
+            color: Color.fromRGBO(100, 204, 197, 1),
+          ),
         ),
       ),
       // initialRoute: "/signupScreen",
       // initialRoute: "/chooseReadOptionScreen",
       // initialRoute: "/loginScreen",
-      initialRoute: "/onboarding",
+      // initialRoute: "/onboarding",
       onGenerateRoute: (settings) {
         if (settings.name == "/") {
           return MaterialPageRoute(builder: (context) => const BottomNavBar());
@@ -107,6 +115,13 @@ class MyApp extends StatelessWidget {
         if (settings.name == "/chooseReadOptionScreen") {
           return MaterialPageRoute(
               builder: (context) => const ChooseReadOptionScreen());
+        }
+        if (settings.name == "/history") {
+          return MaterialPageRoute(builder: (context) => const HistoryScreen());
+        }
+        if (settings.name == "/historyAll") {
+          return MaterialPageRoute(
+              builder: (context) => const HistoryAllScreen());
         }
         return null;
       },
