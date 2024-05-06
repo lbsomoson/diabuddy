@@ -165,6 +165,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const TextWidget(
+                              text: "View statistics", style: "bodyMedium"),
+                          Icon(
+                            Icons.keyboard_arrow_right_rounded,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 30,
+                          )
+                        ]),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(15),
+                splashColor: const Color.fromRGBO(3, 198, 185, 0.296),
+                onTap: () {},
+                child: GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, "/historyAll"),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey[300]!,
+                        width: 2.0,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.transparent,
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const TextWidget(
                               text: "View history", style: "bodyMedium"),
                           Icon(
                             Icons.keyboard_arrow_right_rounded,

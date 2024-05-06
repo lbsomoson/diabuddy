@@ -13,8 +13,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: const TextWidget(text: "History", style: 'bodyLarge')),
+      appBar: AppBar(
+          title: const TextWidget(text: "Statistics", style: 'bodyLarge')),
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(children: [
@@ -217,46 +217,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey[200]),
-            padding: const EdgeInsets.all(20),
-            child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text("History",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary)),
-                  ),
-                  GestureDetector(
-                    onTap: () => {
-                      Navigator.pushNamed(context, '/historyAll'),
-                    },
-                    child: Row(
-                      children: [
-                        Text("View all",
-                            style: TextStyle(
-                                color:
-                                    Theme.of(context).colorScheme.secondary)),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_sharp,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 20,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              )
-            ]),
-          )
         ]),
       )),
     );
