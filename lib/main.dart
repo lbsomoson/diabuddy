@@ -132,6 +132,20 @@ class MyApp extends StatelessWidget {
         if (settings.name == "/mealDetailsScreen") {
           return MaterialPageRoute(
               builder: (context) => const MealDetailsScreen());
+
+          // final name = settings.arguments as String;
+          // final carbs = settings.arguments as String;
+          // final cal = settings.arguments as String;
+          // final gi = settings.arguments as String;
+          // final date = settings.arguments as String;
+          // return MaterialPageRoute(
+          //     builder: (context) => MealDetailsScreen(
+          //           name: name,
+          //           carbs: carbs,
+          //           cal: cal,
+          //           gi: gi,
+          //           date: date,
+          //         ));
         }
         return null;
       },
