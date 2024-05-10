@@ -11,11 +11,17 @@ import 'package:diabuddy/screens/profile_screen.dart';
 import 'package:diabuddy/screens/reader.dart';
 import 'package:diabuddy/screens/signup_screen.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
 import 'package:gtext/gtext.dart';
 
-void main() {
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   GText.init(to: 'fi', enableCaching: false);
   runApp(const MyApp());
 }

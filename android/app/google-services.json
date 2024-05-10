@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1089663472994",
+    "project_id": "lbsomoson1-diabuddy",
+    "storage_bucket": "lbsomoson1-diabuddy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089663472994:android:4505e3dca27653a8eb883b",
+        "android_client_info": {
+          "package_name": "com.example.diabuddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG48vmADZnG0_8n9ATSz_JtWA__7435Mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
