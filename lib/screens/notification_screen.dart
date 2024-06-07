@@ -1,5 +1,5 @@
+import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/card.dart';
-import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -34,8 +34,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
-        title:
-            const TextWidget(text: "Notification Screen", style: 'bodyLarge'),
+        title: const AppBarTitle(title: "Notification Screen"),
         actions: [
           IconButton(
             iconSize: 30,

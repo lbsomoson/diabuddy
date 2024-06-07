@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -44,14 +45,13 @@ class _CameraScreenState extends State<CameraScreen> {
     setState(() {
       path = '/$userId/uploads/$fileName';
     });
-    // print(path);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Camera Screen'),
+        title: const AppBarTitle(title: "Add Meal"),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -67,7 +67,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   child: selectedImage != null
                       ? Image.file(
                           selectedImage!,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fitHeight,
                         )
                       : Center(
                           child: Icon(

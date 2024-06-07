@@ -1,4 +1,5 @@
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/personal_info.dart';
@@ -331,7 +332,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const TextWidget(text: "Profile", style: 'bodyLarge'),
+          title: const AppBarTitle(title: "Profile"),
         ),
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(

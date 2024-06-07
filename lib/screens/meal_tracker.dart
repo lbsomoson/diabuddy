@@ -1,5 +1,5 @@
+import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/meal_info.dart';
-import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class MealTrackerScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const TextWidget(text: "Meal Tracker", style: 'bodyLarge'),
+        title: const AppBarTitle(title: "Meal Tracker"),
       ),
       body: SafeArea(
           child: SingleChildScrollView(
