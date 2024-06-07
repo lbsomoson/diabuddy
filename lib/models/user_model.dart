@@ -2,27 +2,30 @@ import 'dart:convert';
 
 class User {
   final String? userId;
-  String name;
-  int age;
-  String activityLevel;
-  double height;
-  double weight;
-  int dailyGlycemicIndex;
+  String? name;
+  String? email;
+  int? age;
+  String? activityLevel;
+  double? height;
+  double? weight;
+  int? dailyGlycemicIndex;
 
   User({
     this.userId,
-    required this.name,
-    required this.age,
-    required this.activityLevel,
-    required this.height,
-    required this.weight,
-    required this.dailyGlycemicIndex,
+    this.email,
+    this.name,
+    this.age,
+    this.activityLevel,
+    this.height,
+    this.weight,
+    this.dailyGlycemicIndex,
   });
 
   // Factory constructor to instantiate object from json format
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       userId: json['userId'],
+      email: json['email'],
       name: json['name'],
       age: json['age'],
       activityLevel: json['activityLevel'],
@@ -40,6 +43,7 @@ class User {
   Map<String, dynamic> toJson(User medication) {
     return {
       'userId': medication.userId,
+      'email': medication.email,
       'name': medication.name,
       'age': medication.age,
       'activityLevel': medication.activityLevel,

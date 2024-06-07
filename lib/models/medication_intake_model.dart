@@ -3,7 +3,7 @@ import 'dart:convert';
 class MedicationIntake {
   final String? id;
   final String medicineId;
-  String dateTime;
+  DateTime dateTime;
   double dose;
   String remarks;
 

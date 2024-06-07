@@ -1,3 +1,5 @@
+import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/personal_info.dart';
@@ -5,6 +7,7 @@ import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -552,7 +555,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/loginScreen');
+                          context.read<UserAuthProvider>().signOut();
+                          Navigator.pushNamedAndRemoveUntil(context,
+                              '/loginScreen', (Route<dynamic> route) => false);
                         },
                         icon: const Icon(
                           Icons.logout,

@@ -25,25 +25,12 @@ class _NotificationSettingsScreenState
                 ListTile(
                   trailing: SwitchWidget(),
                   title: TextWidget(
-                      text: "I-buksan ang nagsasalitang paalala",
-                      style: 'bodyMedium'),
+                      text: "Voice Notification Reminder", style: 'bodyMedium'),
                 ),
                 ListTile(
                   trailing: SwitchWidget(),
                   title: TextWidget(
-                      text: "I-bukas ang paalala sa agahan",
-                      style: 'bodyMedium'),
-                ),
-                ListTile(
-                  trailing: SwitchWidget(),
-                  title: TextWidget(
-                      text: "I-bukas ang paalala sa tanghalian",
-                      style: 'bodyMedium'),
-                ),
-                ListTile(
-                  trailing: SwitchWidget(),
-                  title: TextWidget(
-                      text: "I-bukas ang paalala sa hapunan",
+                      text: "Meal Logging Notification Reminder",
                       style: 'bodyMedium'),
                 ),
               ],

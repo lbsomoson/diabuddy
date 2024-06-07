@@ -1,3 +1,5 @@
+import 'package:diabuddy/api/auth_api.dart';
+import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/history.dart';
 import 'package:diabuddy/screens/history_all.dart';
@@ -11,19 +13,34 @@ import 'package:diabuddy/screens/profile_screen.dart';
 import 'package:diabuddy/screens/reader.dart';
 import 'package:diabuddy/screens/signup_screen.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:gtext/gtext.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  FirebaseFirestore.instance.settings =
+      const Settings(persistenceEnabled: true);
+
   GText.init(to: 'fi', enableCaching: false);
-  runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserAuthProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -89,17 +106,17 @@ class MyApp extends StatelessWidget {
       ),
       // initialRoute: "/signupScreen",
       // initialRoute: "/chooseReadOptionScreen",
-      // initialRoute: "/loginScreen",
+      initialRoute: "/loginScreen",
       // initialRoute: "/onboarding",
       onGenerateRoute: (settings) {
-        if (settings.name == "/") {
-          return MaterialPageRoute(builder: (context) => const BottomNavBar());
+        if (settings.name == "/loginScreen") {
+          return MaterialPageRoute(builder: (context) => const LoginScreen());
         }
         if (settings.name == "/signupScreen") {
           return MaterialPageRoute(builder: (context) => const SignUpScreen());
         }
-        if (settings.name == "/loginScreen") {
-          return MaterialPageRoute(builder: (context) => const LoginScreen());
+        if (settings.name == "/") {
+          return MaterialPageRoute(builder: (context) => const BottomNavBar());
         }
         if (settings.name == "/onboarding") {
           return MaterialPageRoute(
