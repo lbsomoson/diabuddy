@@ -36,9 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
     void handleLoginButtonClicked() {}
 
     Future<void> handleGoogleSignIn({required BuildContext context}) async {
-      final user;
       try {
-        user = await context
+        final user = await context
             .read<UserAuthProvider>()
             .authService
             .signInWithGoogle();

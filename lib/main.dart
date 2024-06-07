@@ -12,6 +12,7 @@ import 'package:diabuddy/screens/profile_screen.dart';
 import 'package:diabuddy/screens/reader.dart';
 import 'package:diabuddy/screens/signup_screen.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
@@ -46,6 +47,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = context.read<UserAuthProvider>().user;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -102,10 +105,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      // initialRoute: "/signupScreen",
-      // initialRoute: "/chooseReadOptionScreen",
-      initialRoute: "/loginScreen",
-      // initialRoute: "/onboarding",
+      initialRoute: user != null ? "/" : "/loginScreen",
       onGenerateRoute: (settings) {
         if (settings.name == "/loginScreen") {
           return MaterialPageRoute(builder: (context) => const LoginScreen());

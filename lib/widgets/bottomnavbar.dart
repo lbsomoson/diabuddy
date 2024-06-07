@@ -1,6 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/camera.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/meal_tracker.dart';
@@ -12,7 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
+  const BottomNavBar({super.key});
 
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
@@ -20,6 +19,12 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   final controller = PersistentTabController(initialIndex: 0);
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   List<PersistentTabConfig> _tabs() => [
         PersistentTabConfig(
@@ -41,7 +46,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
         ),
         PersistentTabConfig(
-          screen: const DashboardScreen(),
+          screen: const CameraScreen(),
           item: ItemConfig(
             icon: const Icon(Icons.camera, color: Colors.white),
             title: "Camera",
