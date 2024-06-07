@@ -1,5 +1,4 @@
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/personal_info.dart';
