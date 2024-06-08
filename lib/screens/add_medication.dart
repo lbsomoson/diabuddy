@@ -34,11 +34,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   @override
   void initState() {
     super.initState();
+    listenToNotification();
+    print("--------------------------------------------");
   }
 
   // to listen to any notification clicked or not
   listenToNotification() {
-    print("Listening to notification");
+    print("=======================================Listening to notification");
     LocalNotifications.onClickNotification.stream.listen((event) {
       print("Notification popped up");
     });
@@ -233,14 +235,10 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          LocalNotifications().showSimpleNotification(
+                          await LocalNotifications.showScheduledNotification(
                               title: "Medication Reminder",
                               body: "Time to take your medication!",
                               payload: "Medication Reminder");
-                          // LocalNotifications.showSimpleNotification(
-                          //     title: "Medication Reminder",
-                          //     body: "Time to take your medication!",
-                          //     payload: "Medication Reminder");
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');
                         }

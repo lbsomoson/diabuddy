@@ -52,7 +52,28 @@ class LocalNotifications {
       {required String title,
       required String body,
       required String payload}) async {
+    print(
+        "=======================================Scheduling notification================================");
     tz.initializeTimeZones();
-    var localTime = tz.local;
+    // id, title, body, scheduledDate, notificationDetails, uiLocalNotificationDateInterpretation
+    print(tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)));
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        2,
+        title,
+        body,
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'channel 3', 'your channel name',
+                channelDescription: 'your channel description',
+                importance: Importance.max,
+                priority: Priority.high,
+                ticker: 'ticker')),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: payload);
+
+    // var localTime = tz.local;
   }
 }
