@@ -31,6 +31,19 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       isVerifiedBy: false,
       isActive: true);
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  // to listen to any notification clicked or not
+  listenToNotification() {
+    print("Listening to notification");
+    LocalNotifications.onClickNotification.stream.listen((event) {
+      print("Notification popped up");
+    });
+  }
+
   void _addNewTextField() {
     setState(() {
       textFields.add({
