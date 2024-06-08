@@ -1,28 +1,34 @@
 import 'dart:convert';
 
 class MedicationIntake {
-  final String? id;
-  final String medicineId;
-  DateTime dateTime;
-  double dose;
-  String remarks;
+  final String? medicationId;
+  String userId;
+  String name;
+  List<String> time;
+  String dose;
+  bool isVerifiedBy;
+  bool isActive;
 
   MedicationIntake({
-    this.id,
-    required this.medicineId,
-    required this.dateTime,
+    this.medicationId,
+    required this.userId,
+    required this.name,
+    required this.time,
     required this.dose,
-    required this.remarks,
+    required this.isVerifiedBy,
+    required this.isActive,
   });
 
   // Factory constructor to instantiate object from json format
   factory MedicationIntake.fromJson(Map<String, dynamic> json) {
     return MedicationIntake(
-      id: json['id'],
-      medicineId: json['medicineId'],
-      dateTime: json['dateTime'],
+      medicationId: json['medicationId'],
+      userId: json['userId'],
+      name: json['name'],
+      time: json['time'],
       dose: json['dose'],
-      remarks: json['remarks'],
+      isVerifiedBy: json['isVerifiedBy'],
+      isActive: json['isActive'],
     );
   }
 
@@ -35,11 +41,13 @@ class MedicationIntake {
 
   Map<String, dynamic> toJson(MedicationIntake medicationIntake) {
     return {
-      'userId': medicationIntake.id,
-      'medicationId': medicationIntake.medicineId,
-      'isActive': medicationIntake.dateTime,
-      'foodRecommendation': medicationIntake.dose,
-      'verifiedBy': medicationIntake.remarks,
+      'medicationId': medicationIntake.medicationId,
+      'userId': medicationIntake.userId,
+      'name': medicationIntake.name,
+      'time': medicationIntake.time,
+      'dose': medicationIntake.dose,
+      'isVerifiedBy': medicationIntake.isVerifiedBy,
+      'isActive': medicationIntake.isActive,
     };
   }
 }

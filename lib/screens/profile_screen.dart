@@ -1,10 +1,12 @@
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/personal_info.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -207,9 +209,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ButtonWidget(
                         label: "Verify",
                         callback: () {
-                          // Navigator.pop(context);
-                          Navigator.pushNamed(
-                              context, '/chooseReadOptionScreen');
+                          Navigator.pop(context);
+                          // Navigator.pushNamed(
+                          //     context, '/chooseReadOptionScreen');
                         })
                   ],
                 ),
@@ -219,60 +221,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
-  void _addMedicine(context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 380),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Medicine Name",
-                      label: "Medicine Name",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Time",
-                      label: "Time",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Frequency",
-                      label: "Frequency",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ButtonWidget(
-                        label: "Verify",
-                        callback: () {
-                          Navigator.pushNamed(
-                              context, '/chooseReadOptionScreen');
-                        })
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
+  // void _addMedicine(context) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return Dialog(
+  //           shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(20.0)),
+  //           child: Container(
+  //             constraints: const BoxConstraints(maxHeight: 600),
+  //             child:
+  //           ),
+  //         );
+  //       });
+  // }
 
   void _addAppointmentInformation(context) {
     showDialog(
@@ -330,6 +292,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = context.read<UserAuthProvider>().user;
+
     return Scaffold(
         appBar: AppBar(
           title: const AppBarTitle(title: "Profile"),
@@ -452,7 +416,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: InkWell(
-                            onTap: () => _addMedicine(context),
+                            onTap: () => Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AddMedicationScreen(id: user!.uid);
+                            })),
                             child: Ink(
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,

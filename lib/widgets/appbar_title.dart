@@ -9,10 +9,10 @@ class AppBarTitle extends StatelessWidget {
     return Text(
       title,
       style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.secondary,
           fontFamily: 'Inter',
-          fontWeight: FontWeight.w800,
-          fontSize: 22),
+          fontWeight: FontWeight.w600,
+          fontSize: 20),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
+import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,7 @@ class _CameraScreenState extends State<CameraScreen> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                   padding: const EdgeInsets.symmetric(vertical: 50),
@@ -69,13 +71,11 @@ class _CameraScreenState extends State<CameraScreen> {
                           selectedImage!,
                           fit: BoxFit.fitHeight,
                         )
-                      : Center(
-                          child: Icon(
-                            Icons.add,
-                            size: 75,
-                            color: Colors.grey[300],
-                          ),
-                        )),
+                      : Center(child: Container())),
+              const TextWidget(
+                text: "Meal Name",
+                style: 'bodyLarge',
+              ),
             ],
           ),
         ),

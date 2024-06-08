@@ -1,4 +1,6 @@
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/medication_provider.dart';
+import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/history.dart';
 import 'package:diabuddy/screens/history_all.dart';
@@ -36,6 +38,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserAuthProvider()),
+        ChangeNotifierProvider(create: (context) => MedicationProvider()),
       ],
       child: const MyApp(),
     ),
@@ -126,6 +129,11 @@ class MyApp extends StatelessWidget {
         }
         if (settings.name == "/profileScreen") {
           return MaterialPageRoute(builder: (context) => const ProfileScreen());
+        }
+        if (settings.name == "/addMedicationScreen") {
+          final args = settings.arguments as String;
+          return MaterialPageRoute(
+              builder: (context) => AddMedicationScreen(id: args));
         }
         if (settings.name == "/notificationScreen") {
           return MaterialPageRoute(

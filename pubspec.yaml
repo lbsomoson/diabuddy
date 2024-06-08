@@ -49,6 +49,17 @@ dependencies:
   connectivity_plus: ^6.0.3
   image_picker: ^1.1.1
   firebase_storage: ^11.7.6
+  pedometer: ^4.0.1
+  sensors_plus: ^5.0.1
+  shared_preferences: ^2.2.3
+  flutter_launcher_icons: ^0.13.1
+  permission_handler: ^10.0.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21
 
 dev_dependencies:
   flutter_test:

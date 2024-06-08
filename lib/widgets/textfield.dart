@@ -51,10 +51,6 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             if (widget.type == "Number" && int.tryParse(value) == null) {
               return "Please enter a number";
             }
-            // if the type is a string, it checks if the value is a string
-            if (widget.type == "String" && regExp.hasMatch(value)) {
-              return "Please enter valid text";
-            }
             return null;
           },
           onChanged: (value) => {

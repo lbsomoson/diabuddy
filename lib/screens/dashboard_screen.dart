@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pedometer/pedometer.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -13,13 +17,86 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final double sizedBoxHeight = 15;
+  String formatDate(DateTime d) {
+    return d.toString().substring(0, 19);
+  }
 
   FirebaseMealAPI firestore = FirebaseMealAPI();
+  final double sizedBoxHeight = 15;
+
+  // String _stepCountValue = "";
+  // String _caloriesBurnedValue = "";
+  // String _kmValue = "";
+  // StreamSubscription<int> _subscription;
+
+  // double _stepCount = 0.0;
+  // double _caloriesBurned = 0.0;
+  // double _km = 0.0;
+
+  late Stream<StepCount> _stepCountStream;
+  late Stream<PedestrianStatus> _pedestrianStatusStream;
+  String _status = '?', _steps = '?';
+
   @override
   void initState() {
     super.initState();
     firestore.uploadJsonDataToFirestore();
+    // setUpPedometer();
+    initPlatformState();
+  }
+
+  void onStepCount(StepCount event) {
+    print(event);
+    setState(() {
+      _steps = event.steps.toString();
+    });
+  }
+
+  void onPedestrianStatusChanged(PedestrianStatus event) {
+    print(event);
+    setState(() {
+      _status = event.status;
+    });
+  }
+
+  void onPedestrianStatusError(error) {
+    print('onPedestrianStatusError: $error');
+    setState(() {
+      _status = 'Pedestrian Status not available on this device';
+    });
+  }
+
+  void onStepCountError(error) {
+    print('onStepCountError: $error');
+    setState(() {
+      _steps = 'Step Count not available on this device';
+    });
+  }
+
+  void initPlatformState() async {
+    // check and request activity recognition permission
+    PermissionStatus status = await Permission.activityRecognition.status;
+    if (status != PermissionStatus.granted) {
+      status = await Permission.activityRecognition.request();
+      if (status != PermissionStatus.granted) {
+        print('Activity Recognition permission not granted');
+        setState(() {
+          _steps = 'Permission not granted';
+          _status = 'Permission not granted';
+        });
+        return;
+      }
+    }
+
+    _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
+    _pedestrianStatusStream
+        .listen(onPedestrianStatusChanged)
+        .onError(onPedestrianStatusError);
+
+    _stepCountStream = Pedometer.stepCountStream;
+    _stepCountStream.listen(onStepCount).onError(onStepCountError);
+
+    if (!mounted) return;
   }
 
   @override
@@ -116,7 +193,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 size: 50,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              const Text("4500",
+                              // _steps
+                              const Text("450",
                                   style: TextStyle(
                                       color: Color.fromARGB(255, 19, 98, 93),
                                       fontSize: 22)),
