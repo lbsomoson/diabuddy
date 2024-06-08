@@ -5,6 +5,7 @@ import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/meal_tracker.dart';
 import 'package:diabuddy/screens/notification_screen.dart';
 import 'package:diabuddy/screens/profile_screen.dart';
+import 'package:diabuddy/widgets/local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,6 +20,12 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   final controller = PersistentTabController(initialIndex: 0);
+
+  @override
+  void initState() {
+    super.initState();
+    LocalNotifications.initialize();
+  }
 
   @override
   void dispose() {

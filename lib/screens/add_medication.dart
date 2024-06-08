@@ -2,6 +2,7 @@ import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
+import 'package:diabuddy/widgets/local_notifications.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/widgets/text2.dart';
@@ -219,6 +220,14 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
+                          LocalNotifications().showSimpleNotification(
+                              title: "Medication Reminder",
+                              body: "Time to take your medication!",
+                              payload: "Medication Reminder");
+                          // LocalNotifications.showSimpleNotification(
+                          //     title: "Medication Reminder",
+                          //     body: "Time to take your medication!",
+                          //     payload: "Medication Reminder");
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');
                         }
