@@ -208,15 +208,15 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                             .addMedication(
                                 medicationIntake.toJson(medicationIntake));
 
-                        final snackBar = SnackBar(
-                          backgroundColor:
-                              const Color.fromARGB(255, 245, 88, 77),
-                          content: const Text('Added medication successfully!'),
-                          action:
-                              SnackBarAction(label: 'Close', onPressed: () {}),
-                        );
-
                         if (context.mounted && res == "Successfully added!") {
+                          final snackBar = SnackBar(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            content:
+                                const Text('Added medication successfully!'),
+                            action: SnackBarAction(
+                                label: 'Close', onPressed: () {}),
+                          );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');
