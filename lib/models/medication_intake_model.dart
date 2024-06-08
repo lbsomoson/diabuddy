@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class MedicationIntake {
-  final String? medicationId;
+  String? medicationId;
   String userId;
   String name;
   List<String> time;
@@ -25,7 +25,7 @@ class MedicationIntake {
       medicationId: json['medicationId'],
       userId: json['userId'],
       name: json['name'],
-      time: json['time'],
+      time: (json['time'] as List<dynamic>).map((e) => e as String).toList(),
       dose: json['dose'],
       isVerifiedBy: json['isVerifiedBy'],
       isActive: json['isActive'],

@@ -1,13 +1,18 @@
+import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/personal_info.dart';
 import 'package:diabuddy/widgets/text.dart';
+import 'package:diabuddy/widgets/text2.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +24,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  User? user;
   List<Map<String, dynamic>> medicines = [
     {
       "name": "Biogesic",
@@ -221,21 +227,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
-  // void _addMedicine(context) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return Dialog(
-  //           shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(20.0)),
-  //           child: Container(
-  //             constraints: const BoxConstraints(maxHeight: 600),
-  //             child:
-  //           ),
-  //         );
-  //       });
-  // }
-
   void _addAppointmentInformation(context) {
     showDialog(
         context: context,
@@ -292,8 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User? user = context.read<UserAuthProvider>().user;
-
+    user = context.read<UserAuthProvider>().user;
     return Scaffold(
         appBar: AppBar(
           title: const AppBarTitle(title: "Profile"),
@@ -308,18 +298,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(300.0),
-                      child: const Image(
-                          width: 80,
-                          height: 80,
-                          image:
-                              AssetImage('./assets/images/profile_empty.png')),
-                    ),
+                        borderRadius: BorderRadius.circular(300.0),
+                        child: Image(
+                            width: 80,
+                            height: 80,
+                            image: NetworkImage(user!.photoURL!))),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
-                  const TextWidget(text: "Juan Dela Cruz", style: 'bodyLarge'),
+                  TextWidget(text: user!.displayName ?? '', style: 'bodyLarge'),
+                  TextWidget(text: user!.email ?? '', style: 'bodySmall'),
                   const SizedBox(
                     height: 10,
                   ),
@@ -437,17 +426,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Column(
-                    children: medicines.map((med) {
-                      return CardWidget(
-                          leading: FontAwesomeIcons.pills,
-                          callback: () => _editMedicineInformation(
-                              context, med['name'], "asdfad", "2"),
-                          trailing: Icons.edit,
-                          title: med['name'],
-                          subtitle: "asdfad");
-                    }).toList(),
-                  ),
+                  _displayMedicines(context, user!.uid),
                   const SizedBox(
                     height: 10,
                   ),
@@ -544,4 +523,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ));
   }
+}
+
+Widget _displayMedicines(BuildContext context, String id) {
+  return StreamBuilder(
+      stream: context.watch<MedicationProvider>().getMedications(id),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return const Center(
+            child: Text("No Medicines Found"),
+          );
+        } else if (snapshot.data!.docs.isEmpty) {
+          return const Center(
+              child: Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                      child:
+                          Text2Widget(text: "No medicines yet", style: 'body2'))
+                ]),
+          ));
+        }
+        return ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.data?.docs.length,
+            itemBuilder: (context, index) {
+              MedicationIntake medication = MedicationIntake.fromJson(
+                  snapshot.data?.docs[index].data() as Map<String, dynamic>);
+              medication.medicationId = snapshot.data?.docs[index].id;
+              return CardWidget(
+                leading: FontAwesomeIcons.pills,
+                callback: () {},
+                trailing: Icons.edit,
+                title: medication.name,
+                subtitle: medication.time.join(", "),
+              );
+            });
+      });
 }
