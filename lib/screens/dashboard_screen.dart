@@ -1,6 +1,12 @@
 import 'dart:async';
 
 import 'package:diabuddy/api/meal_api.dart';
+<<<<<<< HEAD
+=======
+import 'package:diabuddy/models/daily_health_record_model.dart';
+import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record_provider.dart';
+>>>>>>> 393cb42 (feat: translation)
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
@@ -8,6 +14,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
+<<<<<<< HEAD
+=======
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:translator/translator.dart';
+>>>>>>> 393cb42 (feat: translation)
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -17,9 +29,17 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+<<<<<<< HEAD
   String formatDate(DateTime d) {
     return d.toString().substring(0, 19);
   }
+=======
+  FirebaseMealAPI firestore = FirebaseMealAPI();
+  final translator = GoogleTranslator();
+
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  late Future<int> _stepFuture;
+>>>>>>> 393cb42 (feat: translation)
 
   FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
@@ -37,26 +57,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
   late Stream<PedestrianStatus> _pedestrianStatusStream;
   String _status = '?', _steps = '?';
 
+<<<<<<< HEAD
+=======
+  int _initialStepCount = 0;
+  int _dailySteps = 0;
+
+  DailyHealthRecord dHR = DailyHealthRecord(
+      date: DateTime.now(),
+      healthyIndexScore: 0.0,
+      totalGlycemicIndex: 0,
+      totalCarbohydrates: 0.0,
+      totalCalories: 0.0,
+      dietDiversityScore: 0,
+      stepsCount: 0);
+
+>>>>>>> 393cb42 (feat: translation)
   @override
   void initState() {
     super.initState();
     firestore.uploadJsonDataToFirestore();
     // setUpPedometer();
     initPlatformState();
+<<<<<<< HEAD
+=======
+    _resetDailyStepsAtMidnight();
+    translateText();
+  }
+
+  void translateText() async {
+    // Translate the text
+    print("Translating.................");
+    var translatedText = await translator.translate("Hello", to: 'tl');
+    var viewHistoryText = await translator.translate("View history", to: 'tl');
+    var viewStatisticsText =
+        await translator.translate("View statistics", to: 'tl');
+
+    print(translatedText);
+    print(viewHistoryText);
+    print(viewStatisticsText);
+>>>>>>> 393cb42 (feat: translation)
   }
 
   void onStepCount(StepCount event) {
     print(event);
+    final SharedPreferences prefs = await _prefs;
+
     setState(() {
+<<<<<<< HEAD
       _steps = event.steps.toString();
     });
+=======
+      if (_initialStepCount == 0) {
+        _initialStepCount = event.steps;
+      }
+      _dailySteps = event.steps - _initialStepCount;
+      _steps = _dailySteps.toString();
+      dHR.stepsCount = _dailySteps;
+    });
+
+    await prefs.setInt('steps', _dailySteps);
+    await prefs.setInt('initialStepCount', _initialStepCount);
+>>>>>>> 393cb42 (feat: translation)
   }
 
-  void onPedestrianStatusChanged(PedestrianStatus event) {
+  void onPedestrianStatusChanged(PedestrianStatus event) async {
     print(event);
     setState(() {
       _status = event.status;
     });
+<<<<<<< HEAD
+=======
+    print(_status);
+    if (_status == "stopped") {
+      // Save daily record when pedestrian status is "stopped"
+      String res = await context
+          .read<DailyHealthRecordProvider>()
+          .addDailyHealthRecord(dHR.toJson(dHR));
+      print(res);
+    }
+>>>>>>> 393cb42 (feat: translation)
   }
 
   void onPedestrianStatusError(error) {
@@ -99,6 +178,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (!mounted) return;
   }
 
+<<<<<<< HEAD
+=======
+  void _resetDailyStepsAtMidnight() {
+    DateTime now = DateTime.now();
+    DateTime midnight = DateTime(now.year, now.month, now.day + 1);
+    Duration timeUntilMidnight = midnight.difference(now);
+
+    Timer(timeUntilMidnight, () async {
+      final SharedPreferences prefs = await _prefs;
+      setState(() {
+        _initialStepCount = 0;
+        _dailySteps = 0;
+        _steps = '0';
+      });
+      await prefs.setInt('steps', 0);
+      await prefs.setInt('initialStepCount', 0);
+      _resetDailyStepsAtMidnight(); // Schedule the next reset
+    });
+  }
+
+>>>>>>> 393cb42 (feat: translation)
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,6 +293,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 size: 50,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
+<<<<<<< HEAD
                               // _steps
                               Text(_steps,
                                   style: const TextStyle(
@@ -203,6 +304,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       fontWeight: FontWeight.w500,
                                       fontStyle: FontStyle.italic,
                                       fontSize: 15))
+=======
+                              FutureBuilder<int>(
+                                  future: _stepFuture,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<int> snapshot) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                        return const CircularProgressIndicator();
+                                      case ConnectionState.active:
+                                      case ConnectionState.done:
+                                        if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          return Text(
+                                            snapshot.data!.toString(),
+                                            style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 19, 98, 93),
+                                              fontSize: 22,
+                                            ),
+                                          );
+                                        }
+                                    }
+                                  }),
+                              const Text(
+                                "steps",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 15,
+                                ),
+                              )
+>>>>>>> 393cb42 (feat: translation)
                             ],
                           ),
                           Column(
