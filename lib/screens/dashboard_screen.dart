@@ -1,25 +1,20 @@
 import 'dart:async';
 
 import 'package:diabuddy/api/meal_api.dart';
-<<<<<<< HEAD
-=======
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
->>>>>>> 393cb42 (feat: translation)
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
-<<<<<<< HEAD
-=======
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translator/translator.dart';
->>>>>>> 393cb42 (feat: translation)
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -29,36 +24,18 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-<<<<<<< HEAD
-  String formatDate(DateTime d) {
-    return d.toString().substring(0, 19);
-  }
-=======
   FirebaseMealAPI firestore = FirebaseMealAPI();
   final translator = GoogleTranslator();
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<int> _stepFuture;
->>>>>>> 393cb42 (feat: translation)
 
-  FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
-
-  // String _stepCountValue = "";
-  // String _caloriesBurnedValue = "";
-  // String _kmValue = "";
-  // StreamSubscription<int> _subscription;
-
-  // double _stepCount = 0.0;
-  // double _caloriesBurned = 0.0;
-  // double _km = 0.0;
 
   late Stream<StepCount> _stepCountStream;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
   String _status = '?', _steps = '?';
 
-<<<<<<< HEAD
-=======
   int _initialStepCount = 0;
   int _dailySteps = 0;
 
@@ -71,15 +48,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
       dietDiversityScore: 0,
       stepsCount: 0);
 
->>>>>>> 393cb42 (feat: translation)
   @override
   void initState() {
     super.initState();
+    _stepFuture = _prefs.then((SharedPreferences prefs) {
+      return prefs.getInt('steps') ?? 0;
+    });
+
     firestore.uploadJsonDataToFirestore();
-    // setUpPedometer();
     initPlatformState();
-<<<<<<< HEAD
-=======
     _resetDailyStepsAtMidnight();
     translateText();
   }
@@ -95,18 +72,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     print(translatedText);
     print(viewHistoryText);
     print(viewStatisticsText);
->>>>>>> 393cb42 (feat: translation)
   }
 
-  void onStepCount(StepCount event) {
+  void onStepCount(StepCount event) async {
     print(event);
     final SharedPreferences prefs = await _prefs;
 
     setState(() {
-<<<<<<< HEAD
-      _steps = event.steps.toString();
-    });
-=======
       if (_initialStepCount == 0) {
         _initialStepCount = event.steps;
       }
@@ -117,7 +89,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     await prefs.setInt('steps', _dailySteps);
     await prefs.setInt('initialStepCount', _initialStepCount);
->>>>>>> 393cb42 (feat: translation)
   }
 
   void onPedestrianStatusChanged(PedestrianStatus event) async {
@@ -125,8 +96,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       _status = event.status;
     });
-<<<<<<< HEAD
-=======
     print(_status);
     if (_status == "stopped") {
       // Save daily record when pedestrian status is "stopped"
@@ -135,7 +104,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           .addDailyHealthRecord(dHR.toJson(dHR));
       print(res);
     }
->>>>>>> 393cb42 (feat: translation)
   }
 
   void onPedestrianStatusError(error) {
@@ -153,7 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void initPlatformState() async {
-    // check and request activity recognition permission
+    // Check and request activity recognition permission
     PermissionStatus status = await Permission.activityRecognition.status;
     if (status != PermissionStatus.granted) {
       status = await Permission.activityRecognition.request();
@@ -178,8 +146,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (!mounted) return;
   }
 
-<<<<<<< HEAD
-=======
   void _resetDailyStepsAtMidnight() {
     DateTime now = DateTime.now();
     DateTime midnight = DateTime(now.year, now.month, now.day + 1);
@@ -198,91 +164,83 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
->>>>>>> 393cb42 (feat: translation)
   @override
   Widget build(BuildContext context) {
+    User? user = context.read<UserAuthProvider>().user;
+    List<String> nameParts = user!.displayName!.split(' ');
+    String firstName = nameParts.isNotEmpty ? nameParts.first : '';
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: SafeArea(
-            child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextWidget(text: "Hello Juan!", style: 'bodyLarge'),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      TextWidget(
-                          text: "Health Index Score", style: 'titleSmall'),
-                      TextWidget(text: "10.0", style: "bodyLarge")
-                    ],
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Divider(color: Colors.grey[400]),
-              SizedBox(
-                height: sizedBoxHeight,
-              ),
-              const SemiCircleProgressBar(title: "Title"),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  const Expanded(
-                      child: DashboardWidget(
-                          header: "Glycemic Index", value: 10.0)),
-                  SizedBox(
-                    width: sizedBoxHeight,
-                  ),
-                  const Expanded(
-                      child: DashboardWidget(
-                          header: "Diet Diversity Score", value: 7.5)),
-                ],
-              ),
-              SizedBox(
-                height: sizedBoxHeight,
-              ),
-              const Row(
-                children: [
-                  Expanded(
-                      child: DashboardWidget(header: "Calories", value: 3.45)),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                      child:
-                          DashboardWidget(header: "Carbohydrates", value: 360)),
-                ],
-              ),
-              SizedBox(
-                height: sizedBoxHeight,
-              ),
-              Container(
-                padding: const EdgeInsets.all(15),
-                width: double.infinity,
-                decoration: BoxDecoration(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextWidget(text: "Hello $firstName!", style: 'bodyLarge'),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        TextWidget(
+                            text: "Health Index Score", style: 'titleSmall'),
+                        TextWidget(text: "10.0", style: "bodyLarge")
+                      ],
+                    )
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Divider(color: Colors.grey[400]),
+                SizedBox(height: sizedBoxHeight),
+                const SemiCircleProgressBar(title: "Title"),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    const Expanded(
+                        child: DashboardWidget(
+                            header: "Glycemic Index", value: 10.0)),
+                    SizedBox(width: sizedBoxHeight),
+                    const Expanded(
+                        child: DashboardWidget(
+                            header: "Diet Diversity Score", value: 7.5)),
+                  ],
+                ),
+                SizedBox(height: sizedBoxHeight),
+                const Row(
+                  children: [
+                    Expanded(
+                        child:
+                            DashboardWidget(header: "Calories", value: 3.45)),
+                    SizedBox(width: 10),
+                    Expanded(
+                        child: DashboardWidget(
+                            header: "Carbohydrates", value: 360)),
+                  ],
+                ),
+                SizedBox(height: sizedBoxHeight),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey[100]),
-                child: Column(
+                    color: Colors.grey[100],
+                  ),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Activity Status",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.italic)),
-                      SizedBox(
-                        height: sizedBoxHeight,
+                      const Text(
+                        "Activity Status",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
+                      SizedBox(height: sizedBoxHeight),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -293,18 +251,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 size: 50,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-<<<<<<< HEAD
-                              // _steps
-                              Text(_steps,
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 19, 98, 93),
-                                      fontSize: 22)),
-                              const Text("steps",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontStyle: FontStyle.italic,
-                                      fontSize: 15))
-=======
                               FutureBuilder<int>(
                                   future: _stepFuture,
                                   builder: (BuildContext context,
@@ -338,7 +284,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   fontSize: 15,
                                 ),
                               )
->>>>>>> 393cb42 (feat: translation)
                             ],
                           ),
                           Column(
@@ -348,92 +293,106 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 size: 50,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              const Text("1.5",
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 19, 98, 93),
-                                      fontSize: 22)),
-                              const Text("kCal burned",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontStyle: FontStyle.italic,
-                                      fontSize: 15))
+                              const Text(
+                                "1.5",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 19, 98, 93),
+                                  fontSize: 22,
+                                ),
+                              ),
+                              const Text(
+                                "kCal burned",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 15,
+                                ),
+                              )
                             ],
                           ),
                         ],
                       ),
-                    ]),
-              ),
-              SizedBox(
-                height: sizedBoxHeight,
-              ),
-              InkWell(
-                borderRadius: BorderRadius.circular(15),
-                splashColor: const Color.fromRGBO(3, 198, 185, 0.296),
-                onTap: () {},
-                child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, "/history"),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 20),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 2.0,
+                    ],
+                  ),
+                ),
+                SizedBox(height: sizedBoxHeight),
+                InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  splashColor: const Color.fromRGBO(3, 198, 185, 0.296),
+                  onTap: () {},
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, "/history"),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10.0,
+                        horizontal: 20,
                       ),
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.transparent,
-                    ),
-                    child: Row(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[300]!,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.transparent,
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const TextWidget(
-                              text: "View statistics", style: "bodyMedium"),
+                            text: "View statistics",
+                            style: "bodyMedium",
+                          ),
                           Icon(
                             Icons.keyboard_arrow_right_rounded,
                             color: Theme.of(context).colorScheme.primary,
                             size: 30,
-                          )
-                        ]),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              InkWell(
-                borderRadius: BorderRadius.circular(15),
-                splashColor: const Color.fromRGBO(3, 198, 185, 0.296),
-                onTap: () {},
-                child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, "/historyAll"),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 20),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 2.0,
+                const SizedBox(height: 10),
+                InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  splashColor: const Color.fromRGBO(3, 198, 185, 0.296),
+                  onTap: () {},
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, "/historyAll"),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10.0,
+                        horizontal: 20,
                       ),
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.transparent,
-                    ),
-                    child: Row(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[300]!,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.transparent,
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const TextWidget(
-                              text: "View history", style: "bodyMedium"),
+                            text: "View history",
+                            style: "bodyMedium",
+                          ),
                           Icon(
                             Icons.keyboard_arrow_right_rounded,
                             color: Theme.of(context).colorScheme.primary,
                             size: 30,
-                          )
-                        ]),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
-        )),
+        ),
       ),
     );
   }

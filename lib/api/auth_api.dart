@@ -14,6 +14,21 @@ class FirebaseAuthAPI {
 
   static Stream<User?> get userStream => auth.authStateChanges();
 
+  Future<bool> addUser(String id) async {
+    // Check if the user exists in Firestore
+    final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+        await db.collection('users').doc(id).get();
+
+    if (!userSnapshot.exists) {
+      // if the user doesn't exist, add the user to Firestore
+      await db.collection('users').doc(id).set({
+        'userId': id,
+      });
+      return true;
+    }
+    return false;
+  }
+
   // TODO: Check if new account or not
   Future signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -33,6 +48,7 @@ class FirebaseAuthAPI {
       try {
         final UserCredential userCredential =
             await auth.signInWithCredential(credential);
+<<<<<<< HEAD
         user = userCredential.user;
         print("userid in auth api: ${user!.uid}");
         // check if user already exists in the database
@@ -50,6 +66,9 @@ class FirebaseAuthAPI {
           }
         }
         return "existing";
+=======
+        return userCredential.user;
+>>>>>>> 401cca7 (feat: navigate to onboarding if new user)
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
           return user;
@@ -70,7 +89,9 @@ class FirebaseAuthAPI {
     try {
       await googleSignIn.signOut(); // sign out google
       await FirebaseAuth.instance.signOut(); // sign out user to firebase
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
