@@ -13,7 +13,7 @@ import 'package:flutter/foundation.dart'
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
-/// ```
+///
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -64,8 +64,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1089663472994',
     projectId: 'lbsomoson1-diabuddy',
     storageBucket: 'lbsomoson1-diabuddy.appspot.com',
-    androidClientId: '1089663472994-588dlb504tf7c1b8s7ecvb921uo8hdos.apps.googleusercontent.com',
-    iosClientId: '1089663472994-dkkb4959oo03g8dcrielb30d3rfmujft.apps.googleusercontent.com',
+    androidClientId:
+        '1089663472994-588dlb504tf7c1b8s7ecvb921uo8hdos.apps.googleusercontent.com',
+    iosClientId:
+        '1089663472994-dkkb4959oo03g8dcrielb30d3rfmujft.apps.googleusercontent.com',
     iosBundleId: 'com.example.diabuddy',
   );
 
@@ -75,8 +77,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1089663472994',
     projectId: 'lbsomoson1-diabuddy',
     storageBucket: 'lbsomoson1-diabuddy.appspot.com',
-    androidClientId: '1089663472994-588dlb504tf7c1b8s7ecvb921uo8hdos.apps.googleusercontent.com',
-    iosClientId: '1089663472994-dkkb4959oo03g8dcrielb30d3rfmujft.apps.googleusercontent.com',
+    androidClientId:
+        '1089663472994-588dlb504tf7c1b8s7ecvb921uo8hdos.apps.googleusercontent.com',
+    iosClientId:
+        '1089663472994-dkkb4959oo03g8dcrielb30d3rfmujft.apps.googleusercontent.com',
     iosBundleId: 'com.example.diabuddy',
   );
 
@@ -89,5 +93,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'lbsomoson1-diabuddy.appspot.com',
     measurementId: 'G-WVYM7MY4CY',
   );
-
 }
