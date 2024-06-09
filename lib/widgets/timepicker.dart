@@ -32,8 +32,10 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
         : TimeOfDay.now();
 
     // Defer setting _controller.text until after initState completes
-    Future.delayed(Duration.zero, () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.text = selectedTime.format(context);
+      widget.callback(_controller
+          .text); // Ensure the callback is called with the initial value
     });
   }
 
