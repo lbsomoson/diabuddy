@@ -248,10 +248,26 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                         }
                       }
                     }),
+                const SizedBox(height: 12),
                 ButtonWidget(
                   style: 'outlined',
                   label: "Delete",
-                  callback: () {},
+                  callback: () async {
+                    String res = await context
+                        .read<MedicationProvider>()
+                        .deleteMedication(widget.med.toJson(widget.med));
+
+                    if (context.mounted && res == "Successfully deleted!") {
+                      final snackBar = SnackBar(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        content: const Text('Medication deleted successfully!'),
+                        action:
+                            SnackBarAction(label: 'Close', onPressed: () {}),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      Navigator.pop(context);
+                    }
+                  },
                 )
               ],
             ),

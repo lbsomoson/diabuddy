@@ -31,4 +31,10 @@ class MedicationProvider with ChangeNotifier {
     notifyListeners();
     return message;
   }
+
+  Future<String> deleteMedication(Map<String, dynamic> data) async {
+    String message = await firebaseService.deleteMedication(data);
+    notifyListeners();
+    return message;
+  }
 }

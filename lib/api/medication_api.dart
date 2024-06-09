@@ -8,6 +8,7 @@ class FirebaseMedicationAPI {
     return db
         .collection('medications')
         .where("userId", isEqualTo: id)
+        .where("isActive", isEqualTo: true)
         .snapshots();
   }
 
@@ -57,6 +58,19 @@ class FirebaseMedicationAPI {
         // if document does not exist
         return "Document with ID $id does not exist.";
       }
+    } on FirebaseException catch (e) {
+      return "Error in ${e.code}: ${e.message}";
+    }
+  }
+
+  // delete medication
+  Future<String> deleteMedication(Map<String, dynamic> data) async {
+    try {
+      await db
+          .collection('medications')
+          .doc(data['medicationId'])
+          .update({'isActive': false});
+      return "Successfully deleted!";
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";
     }
