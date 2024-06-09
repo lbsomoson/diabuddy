@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1089663472994-588dlb504tf7c1b8s7ecvb921uo8hdos.apps.googleusercontent.com",
+          "client_id": "1089663472994-v8tkag5isbfjs2b1ou3nv5vb6ci3naj2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.diabuddy",
-            "certificate_hash": "a0c4b4cec2135f39f7162e1422a07a941aa659f6"
+            "certificate_hash": "047aa19038fd41469c3b8f93d99ebd199b3c3ae5"
           }
         },
         {

@@ -38,19 +38,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Future<void> handleGoogleSignIn({required BuildContext context}) async {
       try {
-        final res = await context
+        final user = await context
             .read<UserAuthProvider>()
             .authService
             .signInWithGoogle();
-        print(res);
-        if (context.mounted && res != null && res == "existing") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const BottomNavBar();
-          }));
-        } else if (context.mounted && res != null && res == "new") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const OnboardingScreen();
-          }));
+        if (context.mounted && user != null) {
+          User? signedInUser = context.read<UserAuthProvider>().user;
+
+          bool isNew =
+              await context.read<UserAuthProvider>().addUser(signedInUser!.uid);
+          if (context.mounted && isNew == true) {
+            // navigate to onboarding page
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const OnboardingScreen();
+            }));
+          } else if (context.mounted && isNew == false) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const BottomNavBar();
+            }));
+          }
         }
       } on NoGoogleAccountChosenException {
         return;

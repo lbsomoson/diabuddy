@@ -19,4 +19,8 @@ class UserAuthProvider with ChangeNotifier {
     await authService.signOut();
     notifyListeners();
   }
+
+  Future<bool> addUser(String id) async {
+    return await authService.addUser(id);
+  }
 }

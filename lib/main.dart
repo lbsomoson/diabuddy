@@ -1,5 +1,6 @@
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
@@ -42,6 +43,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => UserAuthProvider()),
         ChangeNotifierProvider(create: (context) => MedicationProvider()),
+        ChangeNotifierProvider(
+            create: (context) => DailyHealthRecordProvider()),
         ChangeNotifierProvider(create: (context) => AppointmentProvider()),
       ],
       child: const MyApp(),
