@@ -111,8 +111,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    print(widget.med.toJson(widget.med));
     return Scaffold(
       appBar: AppBar(
         title: const AppBarTitle(title: "Edit Medication"),
@@ -212,10 +210,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                     label: "Edit",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          // widget.med.userId = widget.id;
-                        });
-
                         List<String> times = textFields
                             .map((item) => item['value'] as String)
                             .toList();

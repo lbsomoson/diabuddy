@@ -5,6 +5,7 @@ import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/screens/add_appointment.dart';
 import 'package:diabuddy/screens/add_medication.dart';
+import 'package:diabuddy/screens/edit_appointment.dart';
 import 'package:diabuddy/screens/edit_medication.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -100,175 +101,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       callback: () {},
                       hintText: "Weight",
                       label: "Weight",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ButtonWidget(
-                        style: 'filled',
-                        label: "Save",
-                        callback: () {
-                          Navigator.pop(context);
-                        })
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
-  void _editAppointmentInformation(
-      context, String title, String time, String date) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 380),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Title",
-                      label: "Title",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Date",
-                      label: "Date",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Time",
-                      label: "Time",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ButtonWidget(
-                        style: 'filled',
-                        label: "Save",
-                        callback: () {
-                          Navigator.pop(context);
-                        })
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
-  void _editMedicineInformation(
-      context, String title, String subtitle, String frequency) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 380),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Medicine Name",
-                      label: "Medicine Name",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Time",
-                      label: "Time",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Frequency",
-                      label: "Frequency",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ButtonWidget(
-                        style: 'filled',
-                        label: "Verify",
-                        callback: () {
-                          Navigator.pop(context);
-                          // Navigator.pushNamed(
-                          //     context, '/chooseReadOptionScreen');
-                        })
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
-  void _addAppointmentInformation(context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 380),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Title",
-                      label: "Title",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Date",
-                      label: "Date",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Time",
-                      label: "Time",
                       type: "String",
                     ),
                     const SizedBox(
@@ -441,7 +273,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-
                   Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       textBaseline: TextBaseline.alphabetic,
@@ -482,17 +313,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: 10,
                   ),
                   _displayAppointments(context, user!.uid),
-                  // Column(
-                  //   children: appointments.map((app) {
-                  //     return CardWidget(
-                  //         leading: Icons.medical_services_rounded,
-                  //         trailing: Icons.edit,
-                  //         callback: () => _editAppointmentInformation(
-                  //             context, app['title'], app['time'], app['date']),
-                  //         title: app['title'],
-                  //         subtitle: "${app['date']} at ${app['time']}");
-                  //   }).toList(),
-                  // ),
                   const SizedBox(
                     height: 15,
                   ),
@@ -629,9 +449,9 @@ Widget _displayAppointments(BuildContext context, String id) {
               return CardWidget(
                 leading: Icons.medical_services_rounded,
                 callback: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  //   return EditMedicationScreen(med: appointment);
-                  // }));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return EditAppointmentScreen(appointment: appointment);
+                  }));
                 },
                 trailing: Icons.edit,
                 title:

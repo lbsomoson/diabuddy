@@ -8,25 +8,17 @@ import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddAppointmentScreen extends StatefulWidget {
-  final String id;
-  const AddAppointmentScreen({required this.id, super.key});
+class EditAppointmentScreen extends StatefulWidget {
+  final Appointment appointment;
+  const EditAppointmentScreen({required this.appointment, super.key});
 
   @override
-  State<AddAppointmentScreen> createState() => _AddAppointmentScreenState();
+  State<EditAppointmentScreen> createState() => _EditAppointmentScreenState();
 }
 
-class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
+class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
-
-  Appointment appointment = Appointment(
-      appointmentId: "",
-      doctorName: "",
-      title: "",
-      clinicName: "",
-      date: DateTime.now(),
-      userId: "");
 
   @override
   void initState() {
@@ -47,7 +39,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const AppBarTitle(title: "Add New appointment"),
+        title: const AppBarTitle(title: "Edit Appointment"),
       ),
       body: SafeArea(
           child: SingleChildScrollView(
@@ -59,9 +51,10 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFieldWidget(
+                  initialValue: widget.appointment.title,
                   callback: (String val) {
                     setState(() {
-                      appointment.title = val;
+                      widget.appointment.title = val;
                     });
                   },
                   hintText: "Title",
@@ -72,9 +65,10 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                   height: 10,
                 ),
                 TextFieldWidget(
+                  initialValue: widget.appointment.doctorName,
                   callback: (String val) {
                     setState(() {
-                      appointment.doctorName = val;
+                      widget.appointment.doctorName = val;
                     });
                   },
                   hintText: "Name of Doctor",
@@ -85,9 +79,10 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                   height: 10,
                 ),
                 TextFieldWidget(
+                  initialValue: widget.appointment.clinicName,
                   callback: (String val) {
                     setState(() {
-                      appointment.clinicName = val;
+                      widget.appointment.clinicName = val;
                     });
                   },
                   hintText: "Clinic name",
@@ -98,9 +93,10 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                   height: 10,
                 ),
                 DatePickerWidget(
+                    initialValue: widget.appointment.date,
                     callback: (String val) {
                       setState(() {
-                        appointment.date = DateTime.parse(val);
+                        widget.appointment.date = DateTime.parse(val);
                       });
                     },
                     hintText: "Date",
@@ -115,24 +111,21 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                 ),
                 ButtonWidget(
                     style: 'filled',
-                    label: "Add Appointment",
+                    label: "Edit Appointment",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          appointment.userId = widget.id;
-                        });
-
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
                         String res = await context
                             .read<AppointmentProvider>()
-                            .addAppointment(appointment.toJson(appointment));
+                            .editAppointment(widget.appointment.appointmentId!,
+                                widget.appointment.toJson(widget.appointment));
 
-                        if (context.mounted && res == "Successfully added!") {
+                        if (context.mounted && res == "Successfully edited!") {
                           final snackBar = SnackBar(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             content:
-                                const Text('Added appointment successfully!'),
+                                const Text('Appointment edited successfully!'),
                             action: SnackBarAction(
                                 label: 'Close', onPressed: () {}),
                           );
@@ -141,11 +134,32 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           await LocalNotifications.showScheduledNotification(
                               title: "Appointment Reminder",
                               body:
-                                  "You have an appointment with ${appointment.doctorName}!",
+                                  "You have an appointment with ${widget.appointment.doctorName}!",
                               payload: "Appointment Reminder");
                         }
                       }
-                    })
+                    }),
+                const SizedBox(height: 12),
+                ButtonWidget(
+                  style: 'outlined',
+                  label: "Delete",
+                  callback: () async {
+                    String res = await context
+                        .read<AppointmentProvider>()
+                        .deleteAppointment();
+
+                    if (context.mounted && res == "Successfully deleted!") {
+                      final snackBar = SnackBar(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        content: const Text('Medication deleted successfully!'),
+                        action:
+                            SnackBarAction(label: 'Close', onPressed: () {}),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      Navigator.pop(context);
+                    }
+                  },
+                )
               ],
             ),
           ),

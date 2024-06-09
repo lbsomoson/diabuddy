@@ -28,7 +28,13 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   void initState() {
     super.initState();
     _selectedDate = widget.initialValue ?? DateTime.now();
-    _controller.text = "";
+
+    // Defer setting _controller.text until after initState completes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.text = _formatDate(_selectedDate);
+      widget.callback(_controller
+          .text); // Ensure the callback is called with the initial value
+    });
   }
 
   String _formatDate(DateTime date) {

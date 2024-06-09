@@ -32,8 +32,8 @@ class AppointmentProvider with ChangeNotifier {
     return message;
   }
 
-  Future<String> deleteAppointment(Map<String, dynamic> data) async {
-    String message = await firebaseService.deleteAppointment(data);
+  Future<String> deleteAppointment() async {
+    String message = await firebaseService.deleteAppointment();
     notifyListeners();
     return message;
   }

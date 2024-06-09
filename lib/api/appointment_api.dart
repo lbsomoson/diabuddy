@@ -42,7 +42,6 @@ class FirebaseAppointmentAPI {
         // exclude the field that will not be update from the existing data
         Map<String, dynamic> existingData =
             documentSnapshot.data() as Map<String, dynamic>;
-        existingData.remove('name'); // remove the field to exclude
 
         // merge the updated data with the existing data
         Map<String, dynamic> mergedData = {...existingData, ...updatedData};
@@ -63,12 +62,9 @@ class FirebaseAppointmentAPI {
   }
 
   // delete appointment
-  Future<String> deleteAppointment(Map<String, dynamic> data) async {
+  Future<String> deleteAppointment() async {
     try {
-      await db
-          .collection('appointments')
-          .doc(data['appointmentId'])
-          .update({'isActive': false});
+      await db.collection('appointments').doc().delete();
       return "Successfully deleted!";
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";
