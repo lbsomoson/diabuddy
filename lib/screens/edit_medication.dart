@@ -143,6 +143,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                 ),
                 TextFieldWidget(
                   initialValue: widget.med.dose,
+                  isDisabled: true,
                   callback: (String val) {
                     setState(() {
                       widget.med.dose = val;
@@ -170,16 +171,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                     ),
                   ),
                 ),
-                // TimePickerWidget(
-                //   initialValue: widget.med.time[0],
-                //   callback: (String value) {
-                //     setState(() {
-                //       widget.med.time.add(value); // TODO: EDIT TIME, NOT ADD
-                //     });
-                //   },
-                //   hintText: "Time",
-                //   label: "Time",
-                // ),
                 Column(
                   children: textFields
                       .map((field) => field['widget'] as Widget)
@@ -217,6 +208,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   height: 20,
                 ),
                 ButtonWidget(
+                    style: 'filled',
                     label: "Edit",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
@@ -257,6 +249,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                       }
                     }),
                 ButtonWidget(
+                  style: 'outlined',
                   label: "Delete",
                   callback: () {},
                 )

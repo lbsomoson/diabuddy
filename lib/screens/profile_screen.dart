@@ -102,6 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 20,
                     ),
                     ButtonWidget(
+                        style: 'filled',
                         label: "Save",
                         callback: () {
                           Navigator.pop(context);
@@ -157,6 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 20,
                     ),
                     ButtonWidget(
+                        style: 'filled',
                         label: "Save",
                         callback: () {
                           Navigator.pop(context);
@@ -212,6 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 20,
                     ),
                     ButtonWidget(
+                        style: 'filled',
                         label: "Verify",
                         callback: () {
                           Navigator.pop(context);
@@ -268,6 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 20,
                     ),
                     ButtonWidget(
+                        style: 'filled',
                         label: "Save",
                         callback: () {
                           Navigator.pop(context);

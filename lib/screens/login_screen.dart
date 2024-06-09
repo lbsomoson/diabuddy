@@ -122,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ))),
                               ]),
                               ButtonWidget(
+                                style: 'filled',
                                 label: "Login",
                                 callback: () {},
                               ),

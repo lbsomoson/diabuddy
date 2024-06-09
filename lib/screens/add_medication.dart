@@ -205,6 +205,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   height: 20,
                 ),
                 ButtonWidget(
+                    style: 'filled',
                     label: "Verify",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
