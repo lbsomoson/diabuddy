@@ -1,3 +1,4 @@
+import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
@@ -19,7 +20,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
-
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:gtext/gtext.dart';
 
@@ -33,21 +34,29 @@ void main() async {
       const Settings(persistenceEnabled: true);
 
   GText.init(to: 'fi', enableCaching: false);
+  // Initialize time zones
+  tz.initializeTimeZones();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserAuthProvider()),
         ChangeNotifierProvider(create: (context) => MedicationProvider()),
+        ChangeNotifierProvider(create: (context) => AppointmentProvider()),
       ],
       child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
@@ -92,6 +101,12 @@ class MyApp extends StatelessWidget {
             color: Colors.grey[500],
             fontSize: 15,
             fontWeight: FontWeight.w500,
+            fontFamily: 'Roboto',
+          ),
+          // Text Field Helper
+          labelSmall: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
             fontFamily: 'Roboto',
           ),
           titleSmall: TextStyle(
