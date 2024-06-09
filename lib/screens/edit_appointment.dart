@@ -146,12 +146,13 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                   callback: () async {
                     String res = await context
                         .read<AppointmentProvider>()
-                        .deleteAppointment();
+                        .deleteAppointment(widget.appointment.appointmentId!);
 
                     if (context.mounted && res == "Successfully deleted!") {
                       final snackBar = SnackBar(
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        content: const Text('Medication deleted successfully!'),
+                        content:
+                            const Text('Apppointment deleted successfully!'),
                         action:
                             SnackBarAction(label: 'Close', onPressed: () {}),
                       );

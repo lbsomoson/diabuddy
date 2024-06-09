@@ -32,8 +32,8 @@ class AppointmentProvider with ChangeNotifier {
     return message;
   }
 
-  Future<String> deleteAppointment() async {
-    String message = await firebaseService.deleteAppointment();
+  Future<String> deleteAppointment(String id) async {
+    String message = await firebaseService.deleteAppointment(id);
     notifyListeners();
     return message;
   }

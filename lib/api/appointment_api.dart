@@ -62,9 +62,9 @@ class FirebaseAppointmentAPI {
   }
 
   // delete appointment
-  Future<String> deleteAppointment() async {
+  Future<String> deleteAppointment(String id) async {
     try {
-      await db.collection('appointments').doc().delete();
+      await db.collection('appointments').doc(id).delete();
       return "Successfully deleted!";
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";
