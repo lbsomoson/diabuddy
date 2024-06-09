@@ -1,26 +1,32 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Appointment {
-  final String? appointmentId;
+  String? appointmentId;
   String title;
   String doctorName;
   String? clinicName;
+  DateTime? date;
+  String userId;
 
   Appointment({
     this.appointmentId,
     required this.title,
     required this.doctorName,
     this.clinicName,
+    required this.date,
+    required this.userId,
   });
 
   // Factory constructor to instantiate object from json format
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
-      appointmentId: json['appointmentId'],
-      title: json['title'],
-      doctorName: json['doctorName'],
-      clinicName: json['clinicName'],
-    );
+        appointmentId: json['appointmentId'],
+        title: json['title'],
+        doctorName: json['doctorName'],
+        clinicName: json['clinicName'],
+        date: (json['date'] as Timestamp).toDate(),
+        userId: json['userId']);
   }
 
   static List<Appointment> fromJsonArray(String jsonData) {
@@ -30,12 +36,14 @@ class Appointment {
         .toList();
   }
 
-  Map<String, dynamic> toJson(Appointment medication) {
+  Map<String, dynamic> toJson(Appointment appointment) {
     return {
-      'appointmentId': medication.appointmentId,
-      'title': medication.title,
-      'doctorName': medication.doctorName,
-      'clinicName': medication.clinicName,
+      'appointmentId': appointment.appointmentId,
+      'title': appointment.title,
+      'doctorName': appointment.doctorName,
+      'clinicName': appointment.clinicName,
+      'date': appointment.date,
+      'userId': appointment.userId,
     };
   }
 }

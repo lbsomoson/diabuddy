@@ -9,27 +9,18 @@ import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddMedicationScreen extends StatefulWidget {
-  final String id;
-  const AddMedicationScreen({required this.id, super.key});
+class EditMedicationScreen extends StatefulWidget {
+  final MedicationIntake med;
+  const EditMedicationScreen({required this.med, super.key});
 
   @override
-  State<AddMedicationScreen> createState() => _AddMedicationScreenState();
+  State<EditMedicationScreen> createState() => _EditMedicationScreenState();
 }
 
-class _AddMedicationScreenState extends State<AddMedicationScreen> {
+class _EditMedicationScreenState extends State<EditMedicationScreen> {
   static int indexCounter = 1;
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
-
-  MedicationIntake medicationIntake = MedicationIntake(
-      medicationId: "",
-      userId: "",
-      name: "Biogesic",
-      time: [],
-      dose: "",
-      isVerifiedBy: false,
-      isActive: true);
 
   @override
   void initState() {
@@ -122,7 +113,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const AppBarTitle(title: "Add New Medication"),
+        title: const AppBarTitle(title: "Edit Medication"),
       ),
       body: SafeArea(
           child: SingleChildScrollView(
@@ -134,9 +125,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFieldWidget(
+                  isDisabled: true,
+                  initialValue: widget.med.name,
                   callback: (String val) {
                     setState(() {
-                      medicationIntake.name = val;
+                      widget.med.name = val;
                     });
                   },
                   hintText: "Medicine Name",
@@ -147,9 +140,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   height: 10,
                 ),
                 TextFieldWidget(
+                  initialValue: widget.med.dose,
+                  isDisabled: true,
                   callback: (String val) {
                     setState(() {
-                      medicationIntake.dose = val;
+                      widget.med.dose = val;
                     });
                   },
                   hintText: "Dosage",
@@ -159,14 +154,20 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                TimePickerWidget(
-                  callback: (String value) {
-                    setState(() {
-                      medicationIntake.time.add(value);
-                    });
-                  },
-                  hintText: "Time",
-                  label: "Time",
+                Column(
+                  children: List.generate(
+                    widget.med.time.length,
+                    (index) => TimePickerWidget(
+                      initialValue: widget.med.time[index],
+                      callback: (String value) {
+                        setState(() {
+                          widget.med.time[index] = value;
+                        });
+                      },
+                      hintText: "Time",
+                      label: "Time",
+                    ),
+                  ),
                 ),
                 Column(
                   children: textFields
@@ -206,31 +207,27 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 ),
                 ButtonWidget(
                     style: 'filled',
-                    label: "Verify",
+                    label: "Edit",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          medicationIntake.userId = widget.id;
-                        });
-
                         List<String> times = textFields
                             .map((item) => item['value'] as String)
                             .toList();
-                        times.insertAll(0, medicationIntake.time);
-                        medicationIntake.time = times;
+                        times.insertAll(0, widget.med.time);
+                        widget.med.time = times;
 
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
                         String res = await context
                             .read<MedicationProvider>()
-                            .addMedication(
-                                medicationIntake.toJson(medicationIntake));
+                            .editMedication(widget.med.medicationId!,
+                                widget.med.toJson(widget.med));
 
-                        if (context.mounted && res == "Successfully added!") {
+                        if (context.mounted && res == "Successfully edited!") {
                           final snackBar = SnackBar(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             content:
-                                const Text('Added medication successfully!'),
+                                const Text('Medication edited successfully!'),
                             action: SnackBarAction(
                                 label: 'Close', onPressed: () {}),
                           );
@@ -238,14 +235,34 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           Navigator.pop(context);
                           await LocalNotifications.showScheduledNotification(
                               title: "Medication Reminder",
-                              body:
-                                  "Time to take your ${medicationIntake.name}!",
+                              body: "Time to take your ${widget.med.name}!",
                               payload: "Medication Reminder");
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');
                         }
                       }
-                    })
+                    }),
+                const SizedBox(height: 12),
+                ButtonWidget(
+                  style: 'outlined',
+                  label: "Delete",
+                  callback: () async {
+                    String res = await context
+                        .read<MedicationProvider>()
+                        .deleteMedication(widget.med.toJson(widget.med));
+
+                    if (context.mounted && res == "Successfully deleted!") {
+                      final snackBar = SnackBar(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        content: const Text('Medication deleted successfully!'),
+                        action:
+                            SnackBarAction(label: 'Close', onPressed: () {}),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      Navigator.pop(context);
+                    }
+                  },
+                )
               ],
             ),
           ),

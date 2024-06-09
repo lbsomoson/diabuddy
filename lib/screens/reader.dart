@@ -43,6 +43,7 @@ class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
                       height: 20,
                     ),
                     ButtonWidget(
+                        style: 'filled',
                         label: "Save",
                         callback: () {
                           Navigator.pop(context);

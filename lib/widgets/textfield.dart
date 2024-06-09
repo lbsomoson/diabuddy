@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final Function callback;
+  final String? initialValue;
   final String hintText, type;
   final String? label;
+  final bool? isDisabled;
   const TextFieldWidget(
       {required this.callback,
       this.label,
+      this.initialValue,
+      this.isDisabled,
       required this.hintText,
       required this.type,
       super.key});
@@ -38,7 +42,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                 ],
               ),
         TextFormField(
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.labelSmall,
           onSaved: (value) {
             print("Text value: $value");
           },
@@ -53,6 +57,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             }
             return null;
           },
+          readOnly: widget.isDisabled ?? false,
+          initialValue: widget.initialValue,
           onChanged: (value) => {
             if (value.isNotEmpty) // value != null &&
               {

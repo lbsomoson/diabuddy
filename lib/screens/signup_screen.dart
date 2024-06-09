@@ -121,6 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 height: 15,
                               ),
                               ButtonWidget(
+                                  style: 'filled',
                                   label: "Sign Up",
                                   callback: () {
                                     handleSignupButtonClicked();

@@ -52,18 +52,15 @@ class LocalNotifications {
       {required String title,
       required String body,
       required String payload}) async {
-    print(
-        "=====================================Scheduling notification================================");
-
-    // Check if the permission is granted
+    // check if the permission is granted
     final bool isPermissionGranted = await Permission.notification.isGranted;
 
     if (!isPermissionGranted) {
-      // Request permission if not granted
+      // request permission if not granted
       await Permission.notification.request();
-      // Check the permission status again
+      // check the permission status again
       if (await Permission.notification.isDenied) {
-        // Handle case when the permission is still not granted
+        // handle case when the permission is still not granted
         print('Notification permission is still not granted.');
         return;
       }
@@ -77,8 +74,7 @@ class LocalNotifications {
 
     // Add 5 seconds to the current time in the Philippines timezone
     final scheduledTime = philippinesTime.add(const Duration(seconds: 30));
-    // id, title, body, scheduledDate, notificationDetails, uiLocalNotificationDateInterpretation
-    // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5))
+
     print(scheduledTime);
     await _flutterLocalNotificationsPlugin.zonedSchedule(
         2,
@@ -96,5 +92,24 @@ class LocalNotifications {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload);
+
+    // Schedule repeating notifications
+    final repeatNotificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails('channel 3', 'your channel name',
+          channelDescription: 'your channel description',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker'),
+    );
+
+    await _flutterLocalNotificationsPlugin.periodicallyShow(
+      3,
+      title,
+      body,
+      RepeatInterval.daily,
+      repeatNotificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: payload,
+    );
   }
 }
