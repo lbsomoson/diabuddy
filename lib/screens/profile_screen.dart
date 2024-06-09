@@ -2,6 +2,7 @@ import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
+import 'package:diabuddy/screens/edit_medication.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
@@ -561,7 +562,11 @@ Widget _displayMedicines(BuildContext context, String id) {
               medication.medicationId = snapshot.data?.docs[index].id;
               return CardWidget(
                 leading: FontAwesomeIcons.pills,
-                callback: () {},
+                callback: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return EditMedicationScreen(med: medication);
+                  }));
+                },
                 trailing: Icons.edit,
                 title: medication.name,
                 subtitle: medication.time.join(", "),

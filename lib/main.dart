@@ -101,6 +101,12 @@ class _MyAppState extends State<MyApp> {
             fontWeight: FontWeight.w500,
             fontFamily: 'Roboto',
           ),
+          // Text Field Helper
+          labelSmall: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            fontFamily: 'Roboto',
+          ),
           titleSmall: TextStyle(
             fontSize: 15,
             fontStyle: FontStyle.italic,

@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 class TimePickerWidget extends StatefulWidget {
   final Function(String) callback;
   final String hintText;
-  final String? label;
+  final String? label, initialValue;
   final bool? isRequired;
 
   const TimePickerWidget({
     required this.callback,
     this.label,
+    this.initialValue,
     this.isRequired,
     required this.hintText,
     super.key,
@@ -26,7 +27,32 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
   @override
   void initState() {
     super.initState();
-    _controller.text = "";
+    selectedTime = widget.initialValue != null
+        ? _parseTime(widget.initialValue!)
+        : TimeOfDay.now();
+
+    // Defer setting _controller.text until after initState completes
+    Future.delayed(Duration.zero, () {
+      _controller.text = selectedTime.format(context);
+    });
+  }
+
+  TimeOfDay _parseTime(String timeString) {
+    final List<String> parts = timeString.split(':');
+    if (parts.length != 2) {
+      throw FormatException('Invalid time format: $timeString');
+    }
+    final int hour = int.tryParse(parts[0]) ?? 0;
+    final List<String> minuteAndAmPm = parts[1].split(' ');
+    final int minute = int.tryParse(minuteAndAmPm[0]) ?? 0;
+    if (hour < 0 || hour > 12 || minute < 0 || minute > 59) {
+      throw FormatException('Invalid time values: $timeString');
+    }
+    final bool isPM =
+        minuteAndAmPm.length > 1 && minuteAndAmPm[1].toUpperCase() == 'PM';
+    final int adjustedHour =
+        hour == 12 ? (isPM ? 12 : 0) : (isPM ? hour + 12 : hour);
+    return TimeOfDay(hour: adjustedHour, minute: minute);
   }
 
   Future<void> _selectTime(BuildContext context) async {
