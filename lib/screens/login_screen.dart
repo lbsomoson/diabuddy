@@ -1,5 +1,6 @@
 import 'package:diabuddy/api/auth_api.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/onboarding.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/iconbutton.dart';
@@ -37,13 +38,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Future<void> handleGoogleSignIn({required BuildContext context}) async {
       try {
-        final user = await context
+        final res = await context
             .read<UserAuthProvider>()
             .authService
             .signInWithGoogle();
-        if (context.mounted && user != null) {
+        print(res);
+        if (context.mounted && res != null && res == "existing") {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const BottomNavBar();
+          }));
+        } else if (context.mounted && res != null && res == "new") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const OnboardingScreen();
           }));
         }
       } on NoGoogleAccountChosenException {

@@ -34,10 +34,25 @@ class FirebaseAuthAPI {
         final UserCredential userCredential =
             await auth.signInWithCredential(credential);
         user = userCredential.user;
-        return user;
+        print("userid in auth api: ${user!.uid}");
+        // check if user already exists in the database
+        if (user != null) {
+          final DocumentSnapshot userSnapshot =
+              await db.collection('users').doc(user!.uid).get();
+
+          if (!userSnapshot.exists) {
+            // add user to the database
+            await db
+                .collection('users')
+                .doc(user!.uid)
+                .set({"email": user!.email});
+            return "new";
+          }
+        }
+        return "existing";
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
-          return e.message;
+          return user;
         } else if (e.code == 'invalid-credential') {
           return e.message;
         }
@@ -46,6 +61,7 @@ class FirebaseAuthAPI {
         return e.toString();
       }
     }
+    return null;
   }
 
   Future<void> signOut() async {

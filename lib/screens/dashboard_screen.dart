@@ -194,8 +194,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               // _steps
-                              const Text("450",
-                                  style: TextStyle(
+                              Text(_steps,
+                                  style: const TextStyle(
                                       color: Color.fromARGB(255, 19, 98, 93),
                                       fontSize: 22)),
                               const Text("steps",
