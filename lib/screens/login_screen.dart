@@ -1,5 +1,6 @@
 import 'package:diabuddy/api/auth_api.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/onboarding.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/iconbutton.dart';
@@ -42,9 +43,20 @@ class _LoginScreenState extends State<LoginScreen> {
             .authService
             .signInWithGoogle();
         if (context.mounted && user != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const BottomNavBar();
-          }));
+          User? signedInUser = context.read<UserAuthProvider>().user;
+
+          bool isNew =
+              await context.read<UserAuthProvider>().addUser(signedInUser!.uid);
+          if (context.mounted && isNew == true) {
+            // navigate to onboarding page
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const OnboardingScreen();
+            }));
+          } else if (context.mounted && isNew == false) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const BottomNavBar();
+            }));
+          }
         }
       } on NoGoogleAccountChosenException {
         return;
