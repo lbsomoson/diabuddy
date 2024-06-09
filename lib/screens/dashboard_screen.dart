@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:diabuddy/api/meal_api.dart';
+import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
@@ -12,6 +14,7 @@ import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:translator/translator.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,7 +25,8 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   FirebaseMealAPI firestore = FirebaseMealAPI();
-  // Obtain shared preferences.
+  final translator = GoogleTranslator();
+
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<int> _stepFuture;
 
@@ -35,6 +39,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _initialStepCount = 0;
   int _dailySteps = 0;
 
+  DailyHealthRecord dHR = DailyHealthRecord(
+      date: DateTime.now(),
+      healthyIndexScore: 0.0,
+      totalGlycemicIndex: 0,
+      totalCarbohydrates: 0.0,
+      totalCalories: 0.0,
+      dietDiversityScore: 0,
+      stepsCount: 0);
+
   @override
   void initState() {
     super.initState();
@@ -45,34 +58,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
     firestore.uploadJsonDataToFirestore();
     initPlatformState();
     _resetDailyStepsAtMidnight();
+    translateText();
+  }
+
+  void translateText() async {
+    // Translate the text
+    print("Translating.................");
+    var translatedText = await translator.translate("Hello", to: 'tl');
+    var viewHistoryText = await translator.translate("View history", to: 'tl');
+    var viewStatisticsText =
+        await translator.translate("View statistics", to: 'tl');
+
+    print(translatedText);
+    print(viewHistoryText);
+    print(viewStatisticsText);
   }
 
   void onStepCount(StepCount event) async {
     print(event);
+    final SharedPreferences prefs = await _prefs;
+
     setState(() {
       if (_initialStepCount == 0) {
         _initialStepCount = event.steps;
       }
       _dailySteps = event.steps - _initialStepCount;
       _steps = _dailySteps.toString();
+      dHR.stepsCount = _dailySteps;
     });
-    final SharedPreferences prefs = await _prefs;
-    final int steps = (prefs.getInt('steps') ?? 0) + 1;
 
-    setState(() {
-      _stepFuture = prefs.setInt('steps', steps).then((bool success) {
-        return steps;
-      });
-    });
+    await prefs.setInt('steps', _dailySteps);
+    await prefs.setInt('initialStepCount', _initialStepCount);
   }
 
-  void onPedestrianStatusChanged(PedestrianStatus event) {
+  void onPedestrianStatusChanged(PedestrianStatus event) async {
     print(event);
     setState(() {
       _status = event.status;
     });
     print(_status);
-    if (_status == "stopped") {}
+    if (_status == "stopped") {
+      // Save daily record when pedestrian status is "stopped"
+      String res = await context
+          .read<DailyHealthRecordProvider>()
+          .addDailyHealthRecord(dHR.toJson(dHR));
+      print(res);
+    }
   }
 
   void onPedestrianStatusError(error) {
@@ -120,12 +151,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     DateTime midnight = DateTime(now.year, now.month, now.day + 1);
     Duration timeUntilMidnight = midnight.difference(now);
 
-    Timer(timeUntilMidnight, () {
+    Timer(timeUntilMidnight, () async {
+      final SharedPreferences prefs = await _prefs;
       setState(() {
         _initialStepCount = 0;
         _dailySteps = 0;
         _steps = '0';
       });
+      await prefs.setInt('steps', 0);
+      await prefs.setInt('initialStepCount', 0);
       _resetDailyStepsAtMidnight(); // Schedule the next reset
     });
   }
@@ -237,10 +271,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               fontSize: 22,
                                             ),
                                           );
-                                          // return Text(
-                                          //   'Button tapped ${snapshot.data} time${snapshot.data == 1 ? '' : 's'}.\n\n'
-                                          //   'This should persist across restarts.',
-                                          // );
                                         }
                                     }
                                   }),

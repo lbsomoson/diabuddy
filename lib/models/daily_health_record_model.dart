@@ -3,7 +3,7 @@ import 'dart:convert';
 class DailyHealthRecord {
   final String? recordId;
   final String? userId;
-  String date;
+  DateTime date;
   double healthyIndexScore;
   int totalGlycemicIndex;
   double totalCarbohydrates;
@@ -58,4 +58,6 @@ class DailyHealthRecord {
       'stepsCount': medication.stepsCount,
     };
   }
+
+  addDailyHealthRecord(Map<String, dynamic> json) {}
 }
