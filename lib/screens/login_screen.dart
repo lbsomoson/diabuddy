@@ -47,10 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
           bool isNew =
               await context.read<UserAuthProvider>().addUser(signedInUser!.uid);
+          print(isNew);
           if (context.mounted && isNew == true) {
             // navigate to onboarding page
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return OnboardingScreen(id: user.uid);
+              return OnboardingScreen(id: signedInUser.uid);
             }));
           } else if (context.mounted && isNew == false) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {

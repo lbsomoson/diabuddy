@@ -234,6 +234,8 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
                           await LocalNotifications.showScheduledNotification(
+                              context,
+                              id: widget.med.userId,
                               title: "Medication Reminder",
                               body: "Time to take your ${widget.med.name}!",
                               payload: "Medication Reminder");

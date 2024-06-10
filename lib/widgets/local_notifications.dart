@@ -1,6 +1,10 @@
+import 'package:diabuddy/provider/notification_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotifications {
@@ -48,8 +52,9 @@ class LocalNotifications {
         .show(0, title, body, notificationDetails, payload: payload);
   }
 
-  static Future showScheduledNotification(
-      {required String title,
+  static Future showScheduledNotification(BuildContext context,
+      {required String id,
+      required String title,
       required String body,
       required String payload}) async {
     // check if the permission is granted
@@ -111,5 +116,19 @@ class LocalNotifications {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: payload,
     );
+
+    if (context.mounted) {
+      await context.read<NotificationProvider>().addNotification({
+        'userId': id,
+        'title': title,
+        'body': body,
+        'payload': payload,
+        'time': scheduledTime.toString(),
+      });
+    }
+
+    // Cancel the scheduled notification
+    // await _flutterLocalNotificationsPlugin.cancel(2);
+    // await _flutterLocalNotificationsPlugin.cancel(3);
   }
 }

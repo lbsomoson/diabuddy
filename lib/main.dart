@@ -2,6 +2,7 @@ import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
+import 'package:diabuddy/provider/notification_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/history.dart';
@@ -46,6 +47,7 @@ void main() async {
         ChangeNotifierProvider(
             create: (context) => DailyHealthRecordProvider()),
         ChangeNotifierProvider(create: (context) => AppointmentProvider()),
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
         ChangeNotifierProvider(
             create: (context) => DailyHealthRecordProvider()),
       ],
