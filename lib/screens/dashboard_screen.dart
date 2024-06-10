@@ -181,10 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    firstName != null
-                        ? TextWidget(
-                            text: "Hello $firstName!", style: 'bodyLarge')
-                        : const TextWidget(text: "Hello!", style: 'bodyLarge'),
+                    TextWidget(text: "Hello $firstName!", style: 'bodyLarge'),
                     const Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
