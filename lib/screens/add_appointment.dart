@@ -19,6 +19,7 @@ class AddAppointmentScreen extends StatefulWidget {
 class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
+  LocalNotifications localNotifications = LocalNotifications();
 
   Appointment appointment = Appointment(
       appointmentId: "",
@@ -144,13 +145,14 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          await LocalNotifications.showScheduledNotification(
-                              context,
-                              id: widget.id,
-                              title: "Appointment Reminder",
-                              body:
-                                  "You have an appointment with ${appointment.doctorName}!",
-                              payload: "Appointment Reminder");
+                          await localNotifications
+                              .showScheduledNotificationAppointment(context,
+                                  id: widget.id,
+                                  date: appointment.date!,
+                                  title: "Appointment Reminder",
+                                  body:
+                                      "You have an appointment with ${appointment.doctorName}!",
+                                  payload: "Appointment Reminder");
                         }
                       }
                     })

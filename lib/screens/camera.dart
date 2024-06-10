@@ -1,13 +1,15 @@
 import 'dart:io';
-import 'dart:isolate';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
+import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -22,11 +24,11 @@ class _CameraScreenState extends State<CameraScreen> {
   String? userId;
   bool imageSelected = false;
   late List results = [];
+  List? _recognitions;
 
   @override
   void initState() {
     super.initState();
-    // use Future.delayed to ensure the context is fully initialized before accessing userId
     Future.delayed(Duration.zero, () {
       userId = context.read<UserAuthProvider>().user!.uid;
     });
@@ -35,56 +37,86 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> checkAndRequestPermissions() async {
     if (await Permission.camera.request().isGranted) {
-      // permission granted, proceed with Isolate spawning
       await _pickImageFromGallery(userId!);
-      await useIsolate(selectedImage!);
     } else {
-      // permission denied, handle accordingly
       print('Camera permission denied');
     }
   }
 
+  // Future loadModel() async {
+  //   print("loading model====================");
+  //   Tflite.close(); // close any previously loaded models
+  //   String res;
+  //   res = (await Tflite.loadModel(
+  //     model: 'assets/sp2_metadata_v4.tflite',
+  //   ))!;
+  //   print("Model loading status: $res");
+  // }
+
   Future loadModel() async {
-    print("loading model====================");
-    Tflite.close(); // close any previously loaded models
-    String res;
-    res = (await Tflite.loadModel(
-      model: 'assets/sp2_metadata_v4.tflite',
-    ))!;
-    print("Model loading status: $res");
+    try {
+      Tflite.close(); // close any previously loaded models
+      print("Attempting to load model...");
+      String? res = await Tflite.loadModel(
+        model: 'assets/sp2_metadata_v4.tflite',
+      );
+      if (res != null) {
+        print("Model loaded successfully: $res");
+      } else {
+        print("Model loaded with null response.");
+      }
+    } catch (e) {
+      print("Exception during model load: $e");
+    }
   }
 
-  Future imageClassification(List<dynamic> args) async {
-    print("in image classifications====================");
-    SendPort resultPort = args[0];
-    var recognitions = await Tflite.runModelOnImage(
-        path: args[1].path,
-        imageMean: 0.0,
-        imageStd: 255.0,
-        numResults: 2,
-        threshold: 0.2,
-        asynch: true);
-
-    print(recognitions);
+  Future<void> getImageAndPredict(File image) async {
+    List? recognitions = await predictImage(image);
     setState(() {
-      results = recognitions!;
+      _recognitions = recognitions;
     });
 
-    Isolate.exit(resultPort, recognitions!);
+    print("Recognitions: $_recognitions");
   }
 
-  useIsolate(File image) async {
-    final ReceivePort receivePort = ReceivePort();
-
+  Future<List?> predictImage(File image) async {
     try {
-      await Isolate.spawn(imageClassification, [receivePort.sendPort, image]);
-    } on Object {
-      print("Isolate failed to spawn");
-      receivePort.close();
-    }
+      img.Image imageInput = img.decodeImage(image.readAsBytesSync())!;
+      img.Image resizedImage =
+          img.copyResize(imageInput, width: 320, height: 320);
 
-    final response = await receivePort.first;
-    print('Result:::::: $response');
+      final tempDir = await getTemporaryDirectory();
+      final tempFile = File('${tempDir.path}/temp_image.png');
+      tempFile.writeAsBytesSync(img.encodePng(resizedImage));
+
+      var recognitions = await Tflite.detectObjectOnImage(
+        path: tempFile.path,
+        model: "SSDMobileNet",
+        imageMean: 127.5,
+        imageStd: 127.5,
+        threshold: 0.4,
+        numResultsPerClass: 10,
+        blockSize: 32,
+        numBoxesPerBlock: 5,
+        asynch: true,
+      );
+
+      // Process tensors
+      // List<List<dynamic>> tensor0 = recognitions?[0]["locations"];
+      // List<List<List<dynamic>>> tensor1 = recognitions?[1]["locations"];
+      // List<dynamic> tensor2 = recognitions?[2]["locations"];
+      // List<List<dynamic>> tensor3 = recognitions?[3]["locations"];
+
+      // Process each tensor accordingly
+      // For example, you might print or process each tensor here
+
+      print(recognitions);
+
+      return recognitions;
+    } catch (e) {
+      print("Error during image prediction: $e");
+      return null;
+    }
   }
 
   Future _pickImageFromGallery(String id) async {
@@ -96,6 +128,9 @@ class _CameraScreenState extends State<CameraScreen> {
     setState(() {
       selectedImage = File(returnedImage.path);
     });
+
+    getImageAndPredict(selectedImage!);
+
     // get the file path from the File object
     String filePath = selectedImage!.path;
     // find the index of the last occurrence of "/"
@@ -103,9 +138,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
     // extract the substring starting from the position after the last occurrence of "/"
     String fileName = filePath.substring(lastIndex + 1);
-
-    print("calling useIsolate");
-    useIsolate(selectedImage!);
 
     setState(() {
       path = '/$id/uploads/$fileName';
@@ -137,11 +169,11 @@ class _CameraScreenState extends State<CameraScreen> {
                               selectedImage!,
                               fit: BoxFit.fitHeight,
                             ),
-                            Column(
-                              children: results
-                                  .map((result) => Text(result))
-                                  .toList(),
-                            )
+                            // Column(
+                            //   children: results
+                            //       .map((result) => Text(result))
+                            //       .toList(),
+                            // )
                           ],
                         )
                       : Center(child: Container())),
@@ -149,6 +181,13 @@ class _CameraScreenState extends State<CameraScreen> {
                 text: "Meal Name",
                 style: 'bodyLarge',
               ),
+              ButtonWidget(
+                  block: true,
+                  callback: () {
+                    checkAndRequestPermissions();
+                  },
+                  label: "Capture Food",
+                  style: 'filled'),
             ],
           ),
         ),

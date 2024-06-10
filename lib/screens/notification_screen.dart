@@ -18,6 +18,7 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   User? user;
+  static int count = 0;
 
   @override
   Widget build(BuildContext context) {

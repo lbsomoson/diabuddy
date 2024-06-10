@@ -21,6 +21,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
   static int indexCounter = 1;
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
+  LocalNotifications localNotifications = LocalNotifications();
 
   @override
   void initState() {
@@ -239,9 +240,10 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          await LocalNotifications.showScheduledNotification(
+                          await localNotifications.showScheduledNotification(
                               context,
                               id: widget.med.userId,
+                              time: widget.med.time,
                               title: "Medication Reminder",
                               body: "Time to take your ${widget.med.name}!",
                               payload: "Medication Reminder");
