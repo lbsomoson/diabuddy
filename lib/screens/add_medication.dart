@@ -227,6 +227,12 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
 
                         if (context.mounted && res == "Successfully added!") {
                           final snackBar = SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).size.height - 150,
+                                right: 20,
+                                left: 20),
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             content:
@@ -237,6 +243,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
                           await LocalNotifications.showScheduledNotification(
+                              context,
+                              id: widget.id,
                               title: "Medication Reminder",
                               body:
                                   "Time to take your ${medicationIntake.name}!",

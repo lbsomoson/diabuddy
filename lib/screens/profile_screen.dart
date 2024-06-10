@@ -29,41 +29,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   User? user;
-  List<Map<String, dynamic>> medicines = [
-    {
-      "name": "Biogesic",
-      "frequency": "2",
-      "time": ["9:00 AM", "9:00 PM"]
-    },
-    {
-      "name": "Biogesic",
-      "frequency": "2",
-      "time": ["9:00 AM", "9:00 PM"]
-    },
-    {
-      "name": "Biogesic",
-      "frequency": "2",
-      "time": ["9:00 AM", "9:00 PM"]
-    },
-    {
-      "name": "Biogesic",
-      "frequency": "2",
-      "time": ["9:00 AM", "9:00 PM"]
-    }
-  ];
-
-  List<Map<String, dynamic>> appointments = [
-    {
-      "title": "Appointment with Doctor 1",
-      "date": "June 2, 2024",
-      "time": "9:00 AM",
-    },
-    {
-      "title": "Appointment with Doctor 2",
-      "date": "June 2, 2024",
-      "time": "10:00 AM",
-    },
-  ];
 
   void _editPersonalInformation(context) {
     showDialog(

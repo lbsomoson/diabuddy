@@ -37,8 +37,6 @@ class FirebaseAuthAPI {
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
 
-    print("==========================$googleSignInAccount");
-
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
@@ -64,7 +62,8 @@ class FirebaseAuthAPI {
           return e.message;
         }
       } catch (e) {
-        print(e);
+        print("=====================");
+        print(e.toString());
         // handle the error here
         return e.toString();
       }

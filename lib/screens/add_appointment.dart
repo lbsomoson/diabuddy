@@ -139,6 +139,8 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
                           await LocalNotifications.showScheduledNotification(
+                              context,
+                              id: widget.id,
                               title: "Appointment Reminder",
                               body:
                                   "You have an appointment with ${appointment.doctorName}!",
