@@ -40,20 +40,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            children: [
-              _displayNotifications(context, user!.uid)
-              // Column(
-              //   children: notifications.map((notification) {
-              //     return CardWidget(
-              //       trailing: Icons.circle,
-              //       leading: FontAwesomeIcons.pills,
-              //       title: notification,
-              //       subtitle: "asdfadsf",
-              //       size: 15,
-              //     );
-              //   }).toList(),
-              // ),
-            ],
+            children: [_displayNotifications(context, user!.uid)],
           ),
         ),
       ),
@@ -85,17 +72,17 @@ String getTimePassed(String dateString) {
   }
 }
 
-bool checkTimeString(String timeString) {
-  // Split the string into words
-  List<String> words = timeString.split(' ');
+// bool checkTimeString(String timeString) {
+//   // Split the string into words
+//   List<String> words = timeString.split(' ');
 
-  // Check if the first word is "0" and the second word is "seconds"
-  if (words.length > 1 && words[0] == "0" && words[1] == "seconds") {
-    return true;
-  }
+//   // Check if the first word is "0" and the second word is "seconds"
+//   if (words.length > 1 && words[0] == "0" && words[1] == "seconds") {
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 Widget _displayNotifications(BuildContext context, String id) {
   var timePassed;
@@ -137,18 +124,18 @@ Widget _displayNotifications(BuildContext context, String id) {
                   snapshot.data?.docs[index].data() as Map<String, dynamic>);
               notification.notificationId = snapshot.data?.docs[index].id;
               timePassed = getTimePassed(notification.time.toString());
-              result = checkTimeString(timePassed);
-              if (result == false) {
-                return CardWidget(
-                  trailing: Icons.circle,
-                  leading: FontAwesomeIcons.pills,
-                  title: notification.body,
-                  subtitle: timePassed,
-                  size: 15,
-                );
-              } else {
-                return Container();
-              }
+              // result = checkTimeString(timePassed);
+              return CardWidget(
+                trailing: Icons.circle,
+                leading: FontAwesomeIcons.pills,
+                title: notification.body,
+                subtitle: timePassed,
+                size: 15,
+              );
+              // if (result == false) {
+              // } else {
+              //   return Container();
+              // }
             });
       });
 }

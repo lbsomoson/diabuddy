@@ -1,3 +1,4 @@
+import 'package:diabuddy/models/notification_model.dart';
 import 'package:diabuddy/provider/notification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -78,7 +79,7 @@ class LocalNotifications {
     final philippinesTime = tz.TZDateTime.now(philippinesTimeZone);
 
     // Add 5 seconds to the current time in the Philippines timezone
-    final scheduledTime = philippinesTime.add(const Duration(seconds: 30));
+    final scheduledTime = philippinesTime.add(const Duration(seconds: 5));
 
     print(scheduledTime);
     await _flutterLocalNotificationsPlugin.zonedSchedule(
@@ -117,18 +118,52 @@ class LocalNotifications {
       payload: payload,
     );
 
+    NotificationModel notificationModel = NotificationModel(
+        userId: id, title: title, body: body, time: scheduledTime);
+
     if (context.mounted) {
-      await context.read<NotificationProvider>().addNotification({
-        'userId': id,
-        'title': title,
-        'body': body,
-        'payload': payload,
-        'time': scheduledTime.toString(),
-      });
+      await context
+          .read<NotificationProvider>()
+          .addNotification(notificationModel.toJson(notificationModel));
     }
+
+    // Save the scheduled notification state
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(payload, true);
+
+    print(prefs.getBool(payload));
+    print("=========================");
+  }
+
+  // static Future<void> _handleNotificationReceived(String payload) async {
+  //   print("Handling notification received==============================");
+
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   bool? wasScheduled = prefs.getBool(payload);
+
+  //   print(prefs.getBool(payload));
+
+  //   if (wasScheduled == true) {
+  //     // Get the context
+  //     // if (context.mounted) {
+  //     //   await context.read<NotificationProvider>().addNotification({
+  //     //     'userId': 'userId',
+  //     //     'title': 'title',
+  //     //     'body': 'body',
+  //     //     'payload': payload,
+  //     //     'time': DateTime.now().toString(),
+  //     //   });
+
+  //     //   // Clear the scheduled notification state
+  //     //   await prefs.remove(payload);
+  //     // }
+  //   }
+
+  //   print(prefs.getBool(payload));
+  // }
+}
+
 
     // Cancel the scheduled notification
     // await _flutterLocalNotificationsPlugin.cancel(2);
     // await _flutterLocalNotificationsPlugin.cancel(3);
-  }
-}

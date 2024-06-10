@@ -42,7 +42,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   listenToNotification() {
     print("=======================================Listening to notification");
     LocalNotifications.onClickNotification.stream.listen((event) {
-      print("Notification popped up");
+      print("Notification clicked");
+      print(event);
     });
   }
 

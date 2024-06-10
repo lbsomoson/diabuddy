@@ -129,6 +129,12 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
 
                         if (context.mounted && res == "Successfully added!") {
                           final snackBar = SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).size.height - 150,
+                                right: 20,
+                                left: 20),
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             content:
