@@ -43,6 +43,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => UserAuthProvider()),
         ChangeNotifierProvider(create: (context) => MedicationProvider()),
+        ChangeNotifierProvider(
+            create: (context) => DailyHealthRecordProvider()),
         ChangeNotifierProvider(create: (context) => AppointmentProvider()),
         ChangeNotifierProvider(
             create: (context) => DailyHealthRecordProvider()),

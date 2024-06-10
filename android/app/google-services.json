@@ -15,10 +15,14 @@
       "oauth_client": [
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
           "client_id": "1089663472994-588dlb504tf7c1b8s7ecvb921uo8hdos.apps.googleusercontent.com",
 =======
           "client_id": "535639872179-2nf55dmhmrel1blhtbqqdd3cm7b35mhr.apps.googleusercontent.com",
 >>>>>>> bb65b14 (feat: created new database)
+=======
+          "client_id": "535639872179-2nf55dmhmrel1blhtbqqdd3cm7b35mhr.apps.googleusercontent.com",
+>>>>>>> 2ccc9bacbc962bdecb7ea98fe9c4a30dec526bec
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.diabuddy",
