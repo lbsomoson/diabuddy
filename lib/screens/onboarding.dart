@@ -306,7 +306,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             skipTextButton: const Text('Skip'),
             trailing: const Text('Done'),
             trailingFunction: () {
-              Navigator.pushNamed(context, '/dashboardScreen');
+              Navigator.pushNamed(context, '/');
             },
             background: [
               Container(),

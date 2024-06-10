@@ -1,45 +1,45 @@
 {
   "project_info": {
-    "project_number": "1089663472994",
-    "project_id": "lbsomoson1-diabuddy",
-    "storage_bucket": "lbsomoson1-diabuddy.appspot.com"
+    "project_number": "535639872179",
+    "project_id": "new-diabuddy",
+    "storage_bucket": "new-diabuddy.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1089663472994:android:4505e3dca27653a8eb883b",
+        "mobilesdk_app_id": "1:535639872179:android:51bcf87f57f3cab5c556c6",
         "android_client_info": {
           "package_name": "com.example.diabuddy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1089663472994-v8tkag5isbfjs2b1ou3nv5vb6ci3naj2.apps.googleusercontent.com",
+          "client_id": "535639872179-2nf55dmhmrel1blhtbqqdd3cm7b35mhr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.diabuddy",
-            "certificate_hash": "047aa19038fd41469c3b8f93d99ebd199b3c3ae5"
+            "certificate_hash": "a0c4b4cec2135f39f7162e1422a07a941aa659f6"
           }
         },
         {
-          "client_id": "1089663472994-o1vd7la4h0bvvem2poo8h9it03vkbg61.apps.googleusercontent.com",
+          "client_id": "535639872179-eum2esp4te4jibjj8dgh6731a0f40qvu.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCG48vmADZnG0_8n9ATSz_JtWA__7435Mc"
+          "current_key": "AIzaSyC1Pf2G44rWXTwC3fhT6peCpiYW7XgFjbY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1089663472994-o1vd7la4h0bvvem2poo8h9it03vkbg61.apps.googleusercontent.com",
+              "client_id": "535639872179-eum2esp4te4jibjj8dgh6731a0f40qvu.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1089663472994-dkkb4959oo03g8dcrielb30d3rfmujft.apps.googleusercontent.com",
+              "client_id": "535639872179-dh18b7q27sgktv0n0gih893gdmktq0v1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.example.diabuddy"
