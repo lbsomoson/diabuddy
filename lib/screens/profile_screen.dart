@@ -1,5 +1,6 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/models/appointment_model.dart';
+import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
@@ -88,6 +89,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     user = context.read<UserAuthProvider>().user;
+    AppUser? appuser = context.watch<UserAuthProvider>().userInfo;
+    if (appuser == null && user != null) {
+      context.read<UserAuthProvider>().getUserInfo(user!.uid);
+    }
+
+    double computeBmi() {
+      double bmi = 0;
+      if (appuser?.weight != null && appuser?.height != null) {
+        bmi = ((appuser?.weight)! / (appuser!.height! * appuser.height!));
+      }
+      return bmi;
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const AppBarTitle(title: "Profile"),
@@ -158,32 +172,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: const Column(
+                    child: Column(
                       children: [
-                        PersonalInformation(title: "Gender", value: "Female"),
-                        SizedBox(
+                        PersonalInformation(
+                            title: "Gender", value: appuser!.gender ?? "N/A"),
+                        const SizedBox(
                           height: 8,
                         ),
-                        PersonalInformation(title: "Age", value: "45"),
-                        SizedBox(
+                        PersonalInformation(
+                            title: "Age",
+                            value: appuser.age?.toString() ?? "N/A"),
+                        const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
                             title: "Height",
-                            value: "5\"11",
+                            value:
+                                "${appuser.height?.toStringAsFixed(2) ?? "N/A"} m",
                             icon: Icons.verified),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
                             title: "Weight",
-                            value: "50 kg",
+                            value:
+                                "${appuser.weight?.toStringAsFixed(2) ?? "N/A"} kg",
                             icon: Icons.verified),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
-                            title: "BMI", value: "20.5", icon: Icons.verified),
+                            title: "BMI",
+                            value: computeBmi().toStringAsFixed(2),
+                            icon: Icons.verified),
                       ],
                     ),
                   ),

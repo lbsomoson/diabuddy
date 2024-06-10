@@ -30,6 +30,21 @@ class FirebaseAuthAPI {
     return false;
   }
 
+  Future<AppUser?> getUserInfo(String id) async {
+    try {
+      DocumentSnapshot doc = await db.collection("users").doc(id).get();
+      if (doc.exists) {
+        return AppUser.fromJson(doc.data() as Map<String, dynamic>);
+      } else {
+        print('Document does not exist');
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   // TODO: Check if new account or not
   Future signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();

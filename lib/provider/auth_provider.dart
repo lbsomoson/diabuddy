@@ -11,6 +11,13 @@ class UserAuthProvider with ChangeNotifier {
   }
 
   User? get user => authService.getUser();
+  AppUser? _userInfo;
+  AppUser? get userInfo => _userInfo;
+
+  Future<void> getUserInfo(String id) async {
+    _userInfo = await authService.getUserInfo(id);
+    notifyListeners();
+  }
 
   Future signInWithGoogle() async {
     return await authService.signInWithGoogle();
