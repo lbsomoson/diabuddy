@@ -1,6 +1,7 @@
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
+import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/notification_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
@@ -50,6 +51,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
         ChangeNotifierProvider(
             create: (context) => DailyHealthRecordProvider()),
+        ChangeNotifierProvider(create: (context) => MealProvider())
       ],
       child: const MyApp(),
     ),
@@ -182,8 +184,9 @@ class _MyAppState extends State<MyApp> {
               builder: (context) => const MealTrackerScreen());
         }
         if (settings.name == "/mealDetailsScreen") {
+          final args = settings.arguments as String;
           return MaterialPageRoute(
-              builder: (context) => const MealDetailsScreen());
+              builder: (context) => MealDetailsScreen(mealName: args));
 
           // final name = settings.arguments as String;
           // final carbs = settings.arguments as String;

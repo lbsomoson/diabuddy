@@ -4,28 +4,29 @@ class Meal {
   final String? mealId;
   final String? mealName;
   final String? foodCode;
+  final double? calcium;
   final double? carbohydrate;
-  final double? totalDietaryFiber;
-  final double? totalSugar;
-  final double? protein;
+  final double? diversityScore;
+  final double? energyKcal;
   final double? fat;
-  final int? energyKcal;
-  final List<String>? sodium;
-  final String? cholesterol;
-  final int? calcium;
-  final int? phosphorus;
+  final double? glycemicIndex;
   final double? iron;
-  final String? potassium;
-  final String? zinc;
-  final String? retinol;
-  final String? betaCarotene;
-  final String? thiamin;
-  final String? riboflavin;
+  final double? phosphorus;
+  final double? protein;
+
   final String? niacin;
-  final String? vitaminC;
-  final int? glycemicIndex;
-  final int? diversityScore;
+  final String? cholesterol;
   final String? phytochemicalIndex;
+  final String? potassium;
+  final String? retinol;
+  final String? riboflavin;
+  final List<String>? sodium;
+  final String? thiamin;
+  final String? totalDietaryFiber;
+  final String? totalSugar;
+  final String? vitaminC;
+  final String? zinc;
+  final String? betaCarotene;
 
   Meal({
     this.mealId,
@@ -61,15 +62,15 @@ class Meal {
       mealName: json['Meal Name'],
       foodCode: json['Food Code'],
       carbohydrate: json['Carbohydrate']?.toDouble(),
-      totalDietaryFiber: json['Total Dietary Fiber']?.toDouble(),
-      totalSugar: json['Total Sugar']?.toDouble(),
+      totalDietaryFiber: json['Total Dietary Fiber'],
+      totalSugar: json['Total Sugar'],
       protein: json['Protein']?.toDouble(),
       fat: json['Fat']?.toDouble(),
-      energyKcal: json['Energy (Kcal)'],
+      energyKcal: json['Energy (Kcal)']?.toDouble(),
       sodium: json['Sodium']?.cast<String>(),
       cholesterol: json['Cholesterol'],
-      calcium: json['Calcium'],
-      phosphorus: json['Phosphorus'],
+      calcium: json['Calcium']?.toDouble(),
+      phosphorus: json['Phosphorus']?.toDouble(),
       iron: json['Iron']?.toDouble(),
       potassium: json['Potassium'],
       zinc: json['Zinc'],
@@ -79,8 +80,8 @@ class Meal {
       riboflavin: json['Riboflavin'],
       niacin: json['Niacin'],
       vitaminC: json['Vitamin C'],
-      glycemicIndex: json['Glycemic Index'],
-      diversityScore: json['Diversity Score'],
+      glycemicIndex: json['Glycemic Index']?.toDouble(),
+      diversityScore: json['Diversity Score']?.toDouble(),
       phytochemicalIndex: json['Phytochemical Index'],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
@@ -62,5 +63,25 @@ class FirebaseMealAPI {
   Future<Map<String, dynamic>> loadJsonData() async {
     String jsonString = await rootBundle.loadString('assets/meal.json');
     return jsonDecode(jsonString);
+  }
+
+  Future<Meal?> getMealInfo(String mealName) async {
+    try {
+      QuerySnapshot querySnapshot = await firestore
+          .collection("meals")
+          .where('Meal Name', isEqualTo: mealName)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        return Meal.fromJson(data);
+      }
+    } catch (e) {
+      print("Error getting meal info: $e");
+    }
+    return null;
   }
 }

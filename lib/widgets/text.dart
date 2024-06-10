@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TextWidget extends StatefulWidget {
-  final String text, style;
+  final String? text;
+  final String style;
   const TextWidget({required this.text, required this.style, super.key});
 
   @override
@@ -12,7 +13,7 @@ class _TextWidgetState extends State<TextWidget> {
   @override
   Widget build(BuildContext context) {
     return Text(
-      widget.text,
+      widget.text == null || widget.text == "" ? "null" : widget.text!,
       overflow: TextOverflow.ellipsis,
       softWrap: true,
       maxLines: 3,
