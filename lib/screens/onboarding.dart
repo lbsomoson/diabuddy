@@ -269,6 +269,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             skipTextButton: const Text('Skip'),
             trailing: const Text('Done'),
             trailingFunction: () {
+              Navigator.pop(context);
               Navigator.pushNamed(context, '/');
             },
             background: [
@@ -295,6 +296,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               await context
                   .read<UserAuthProvider>()
                   .onboarding(widget.id, appuser);
+
+              if (context.mounted) {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/');
+              }
             },
           ),
         )));
