@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diabuddy/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -52,39 +53,12 @@ class FirebaseAuthAPI {
       try {
         final UserCredential userCredential =
             await auth.signInWithCredential(credential);
-<<<<<<< HEAD
-<<<<<<< HEAD
-        user = userCredential.user;
-        print("userid in auth api: ${user!.uid}");
-        // check if user already exists in the database
-        if (user != null) {
-          final DocumentSnapshot userSnapshot =
-              await db.collection('users').doc(user!.uid).get();
-
-          if (!userSnapshot.exists) {
-            // add user to the database
-            await db
-                .collection('users')
-                .doc(user!.uid)
-                .set({"email": user!.email});
-            return "new";
-          }
-        }
-        return "existing";
-=======
-=======
         print(userCredential.user);
->>>>>>> 36dc8fa (chore: try isolate)
         return userCredential.user;
->>>>>>> 401cca7 (feat: navigate to onboarding if new user)
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
-<<<<<<< HEAD
-          return user;
-=======
           print(e.message);
           return e.message;
->>>>>>> 36dc8fa (chore: try isolate)
         } else if (e.code == 'invalid-credential') {
           print(e.message);
           return e.message;
@@ -95,7 +69,22 @@ class FirebaseAuthAPI {
         return e.toString();
       }
     }
-    return null;
+  }
+
+  Future<void> onboarding(String id, AppUser appuser) async {
+    // Check if the user exists in Firestore
+    final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+        await db.collection('users').doc(id).get();
+
+    if (userSnapshot.exists) {
+      // if the user exist, add the user to Firestore
+      await db.collection('users').doc(id).update({
+        'age': appuser.age,
+        'gender': appuser.gender,
+        'weight': appuser.weight,
+        'height': appuser.height,
+      });
+    }
   }
 
   Future<void> signOut() async {

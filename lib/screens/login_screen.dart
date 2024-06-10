@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (context.mounted && isNew == true) {
             // navigate to onboarding page
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const OnboardingScreen();
+              return OnboardingScreen(id: user.uid);
             }));
           } else if (context.mounted && isNew == false) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {

@@ -138,8 +138,9 @@ class _MyAppState extends State<MyApp> {
           return MaterialPageRoute(builder: (context) => const BottomNavBar());
         }
         if (settings.name == "/onboarding") {
+          final args = settings.arguments as String;
           return MaterialPageRoute(
-              builder: (context) => const OnboardingScreen());
+              builder: (context) => OnboardingScreen(id: args));
         }
         if (settings.name == "/dashboardScreen") {
           return MaterialPageRoute(
