@@ -1,6 +1,5 @@
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
