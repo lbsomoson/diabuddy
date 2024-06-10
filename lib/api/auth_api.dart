@@ -36,6 +36,8 @@ class FirebaseAuthAPI {
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
 
+    print("==========================$googleSignInAccount");
+
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
@@ -45,17 +47,23 @@ class FirebaseAuthAPI {
         idToken: googleSignInAuthentication.idToken,
       );
 
+      print(credential);
+
       try {
         final UserCredential userCredential =
             await auth.signInWithCredential(credential);
+        print(userCredential.user);
         return userCredential.user;
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
+          print(e.message);
           return e.message;
         } else if (e.code == 'invalid-credential') {
+          print(e.message);
           return e.message;
         }
       } catch (e) {
+        print(e);
         // handle the error here
         return e.toString();
       }
