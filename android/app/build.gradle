@@ -64,6 +64,11 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    aaptOptions {
+        noCompress 'tflite'
+        noCompress 'lite'
+    }
 }
 
 flutter {
@@ -77,4 +82,5 @@ dependencies {
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "androidx.appcompat:appcompat:1.4.0"
     implementation "androidx.window:window:1.0.0"
+    implementation 'org.tensorflow:tensorflow-lite:+'
 }
