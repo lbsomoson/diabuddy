@@ -203,7 +203,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         PersonalInformation(
                             title: "BMI",
-                            value: computeBmi().toStringAsFixed(2),
+                            value:
+                                "${computeBmi().toStringAsFixed(2)} kg/m\u00B2",
                             icon: Icons.verified),
                       ],
                     ),
