@@ -167,6 +167,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
+    List<String> nameParts = user!.displayName!.split(' ');
+    String firstName = nameParts.isNotEmpty ? nameParts.first : '';
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -176,11 +178,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextWidget(text: "Hello Juan!", style: 'bodyLarge'),
-                    Column(
+                    firstName != null
+                        ? TextWidget(
+                            text: "Hello $firstName!", style: 'bodyLarge')
+                        : const TextWidget(text: "Hello!", style: 'bodyLarge'),
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         TextWidget(
