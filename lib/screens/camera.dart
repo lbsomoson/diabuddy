@@ -1,8 +1,12 @@
 import 'dart:io';
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/meal_provider.dart';
+import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
+import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,12 +23,14 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
+  final _formKey = GlobalKey<FormState>();
   File? selectedImage;
   String? path;
   String? userId;
   bool imageSelected = false;
   late List results = [];
   List? _recognitions;
+  late String mealName;
 
   @override
   void initState() {
@@ -177,10 +183,10 @@ class _CameraScreenState extends State<CameraScreen> {
                           ],
                         )
                       : Center(child: Container())),
-              const TextWidget(
-                text: "Meal Name",
-                style: 'bodyLarge',
-              ),
+              // const TextWidget(
+              //   text: "Meal Name",
+              //   style: 'bodyLarge',
+              // ),
               ButtonWidget(
                   block: true,
                   callback: () {
@@ -188,6 +194,36 @@ class _CameraScreenState extends State<CameraScreen> {
                   },
                   label: "Capture Food",
                   style: 'filled'),
+              Form(
+                key: _formKey,
+                child: TextFieldWidget(
+                    callback: (String val) {
+                      mealName = val;
+                    },
+                    hintText: "Meal Name",
+                    label: "Meal Name",
+                    type: 'String'),
+              ),
+              ButtonWidget(
+                block: true,
+                callback: () async {
+                  if (_formKey.currentState!.validate()) {
+                    Map<String, dynamic>? mealMap = await context
+                        .read<MealProvider>()
+                        .getMealInfo(mealName);
+
+                    if (mealMap != null && context.mounted) {
+                      Meal meal = Meal.fromJson(mealMap);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return MealDetailsScreen(meal: meal);
+                      }));
+                    }
+                  }
+                },
+                label: "Find Food",
+                style: 'filled',
+              )
             ],
           ),
         ),

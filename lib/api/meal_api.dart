@@ -65,22 +65,18 @@ class FirebaseMealAPI {
     return jsonDecode(jsonString);
   }
 
-  Future<Meal?> getMealInfo(String mealName) async {
-    try {
-      QuerySnapshot querySnapshot = await firestore
-          .collection("meals")
-          .where('Meal Name', isEqualTo: mealName)
-          .get();
+  Future<Map<String, dynamic>?> getMealInfo(String mealName) async {
+    QuerySnapshot querySnapshot = await firestore
+        .collection("meals")
+        .where('Meal Name', isEqualTo: mealName)
+        .get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
-        Map<String, dynamic> data =
-            documentSnapshot.data() as Map<String, dynamic>;
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
 
-        return Meal.fromJson(data);
-      }
-    } catch (e) {
-      print("Error getting meal info: $e");
+      return data;
     }
     return null;
   }

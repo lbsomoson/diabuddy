@@ -8,8 +8,9 @@ class MealProvider with ChangeNotifier {
   Meal? _meal;
   Meal? get mealInfo => _meal;
 
-  Future<void> getMealInfo(String mealName) async {
-    _meal = await firebaseService.getMealInfo(mealName);
+  Future<Map<String, dynamic>?> getMealInfo(String mealName) async {
+    Map<String, dynamic>? meal = await firebaseService.getMealInfo(mealName);
     notifyListeners();
+    return meal;
   }
 }

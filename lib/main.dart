@@ -1,3 +1,4 @@
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
@@ -185,9 +186,9 @@ class _MyAppState extends State<MyApp> {
               builder: (context) => const MealTrackerScreen());
         }
         if (settings.name == "/mealDetailsScreen") {
-          final args = settings.arguments as String;
+          final args = settings.arguments as Meal;
           return MaterialPageRoute(
-              builder: (context) => MealDetailsScreen(mealName: args));
+              builder: (context) => MealDetailsScreen(meal: args));
 
           // final name = settings.arguments as String;
           // final carbs = settings.arguments as String;
