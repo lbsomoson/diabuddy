@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class NotificationModel {
   String? notificationId;
   final String userId;
@@ -19,10 +21,10 @@ class NotificationModel {
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
       notificationId: json['notificationId'] as String?,
-      userId: json['userId'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      body: json['body'] as String? ?? '',
-      time: DateTime.tryParse(json['time'] as String? ?? '') ?? DateTime.now(),
+      userId: json['userId'],
+      title: json['title'],
+      body: json['body'],
+      time: (json['time'] as Timestamp).toDate(),
     );
   }
 
@@ -39,7 +41,7 @@ class NotificationModel {
       'userId': notification.userId,
       'title': notification.title,
       'body': notification.body,
-      'time': notification.time.toIso8601String(),
+      'time': notification.time,
     };
   }
 }

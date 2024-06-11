@@ -21,6 +21,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   static int indexCounter = 1;
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
+  LocalNotifications localNotifications = LocalNotifications();
 
   MedicationIntake medicationIntake = MedicationIntake(
       medicationId: "",
@@ -42,7 +43,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   listenToNotification() {
     print("=======================================Listening to notification");
     LocalNotifications.onClickNotification.stream.listen((event) {
-      print("Notification popped up");
+      print("Notification clicked");
+      print(event);
     });
   }
 
@@ -242,10 +244,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          await LocalNotifications.showScheduledNotification(
+                          await localNotifications.showScheduledNotification(
                               context,
                               id: widget.id,
                               title: "Medication Reminder",
+                              time: medicationIntake.time,
                               body:
                                   "Time to take your ${medicationIntake.name}!",
                               payload: "Medication Reminder");

@@ -19,6 +19,7 @@ class EditAppointmentScreen extends StatefulWidget {
 class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
+  LocalNotifications localNotifications = LocalNotifications();
 
   @override
   void initState() {
@@ -122,6 +123,12 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
 
                         if (context.mounted && res == "Successfully edited!") {
                           final snackBar = SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).size.height - 150,
+                                right: 20,
+                                left: 20),
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             content:
@@ -131,13 +138,14 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          await LocalNotifications.showScheduledNotification(
-                              context,
-                              id: widget.appointment.userId,
-                              title: "Appointment Reminder",
-                              body:
-                                  "You have an appointment with ${widget.appointment.doctorName}!",
-                              payload: "Appointment Reminder");
+                          await localNotifications
+                              .showScheduledNotificationAppointment(context,
+                                  id: widget.appointment.userId,
+                                  title: "Appointment Reminder",
+                                  date: widget.appointment.date!,
+                                  body:
+                                      "You have an appointment with ${widget.appointment.doctorName}!",
+                                  payload: "Appointment Reminder");
                         }
                       }
                     }),
