@@ -52,15 +52,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
         ),
-        PersistentTabConfig(
-          screen: const CameraScreen(),
-          item: ItemConfig(
-            icon: const Icon(Icons.camera, color: Colors.white),
-            title: "Camera",
-            inactiveForegroundColor: Colors.grey[400]!,
-            activeForegroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        // PersistentTabConfig(
+        //   screen: const CameraScreen(),
+        //   item: ItemConfig(
+        //     icon: const Icon(FontAwesomeIcons.bowlFood, color: Colors.white),
+        //     title: "Meal",
+        //     inactiveForegroundColor: Colors.grey[400]!,
+        //     activeForegroundColor: Theme.of(context).colorScheme.primary,
+        //   ),
+        // ),
         PersistentTabConfig(
           screen: const NotificationScreen(),
           item: ItemConfig(
@@ -92,7 +92,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return PersistentTabView(
       controller: controller,
       tabs: _tabs(),
-      navBarBuilder: (navBarConfig) => Style13BottomNavBar(
+      navBarBuilder: (navBarConfig) => Style5BottomNavBar(
         navBarConfig: navBarConfig,
       ),
     );

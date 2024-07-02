@@ -172,6 +172,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/cameraScreen");
+        },
+        child: const Icon(Icons.camera_alt),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        shape: const CircleBorder(),
+      ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(

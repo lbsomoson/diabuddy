@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/user_model.dart';
@@ -86,6 +87,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
+  void checkInternetConnection() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      print('No internet connection');
+    } else {
+      print('Connected to the internet');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     user = context.read<UserAuthProvider>().user;
@@ -114,13 +124,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(children: [
                   SizedBox(
-                    width: double.infinity,
+                    width: 100,
+                    height: 100,
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(300.0),
-                        child: Image(
-                            width: 80,
-                            height: 80,
-                            image: NetworkImage(user!.photoURL!))),
+                      borderRadius: BorderRadius.circular(50.0),
+                      child: Image.network(
+                        user!.photoURL!,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 10,
@@ -322,6 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         onPressed: () {
+                          checkInternetConnection();
                           context.read<UserAuthProvider>().signOut();
                           Navigator.pushNamedAndRemoveUntil(context,
                               '/loginScreen', (Route<dynamic> route) => false);

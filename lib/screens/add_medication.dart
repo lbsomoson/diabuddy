@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
@@ -68,6 +69,15 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       }
     });
   }
+
+  // void checkInternetConnection() async {
+  //   var connectivityResult = await (Connectivity().checkConnectivity());
+  //   if (connectivityResult == ConnectivityResult.none) {
+  //     print('No internet connection');
+  //   } else {
+  //     print('Connected to the internet');
+  //   }
+  // }
 
   Widget _buildTextField(int index) {
     return Center(
@@ -222,6 +232,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         medicationIntake.time = times;
 
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
+                        // checkInternetConnection();
                         String res = await context
                             .read<MedicationProvider>()
                             .addMedication(

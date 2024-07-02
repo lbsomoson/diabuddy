@@ -6,6 +6,7 @@ import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/notification_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
+import 'package:diabuddy/screens/camera.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/history.dart';
 import 'package:diabuddy/screens/history_all.dart';
@@ -22,7 +23,6 @@ import 'package:diabuddy/widgets/bottomnavbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -153,6 +153,9 @@ class _MyAppState extends State<MyApp> {
         if (settings.name == "/dashboardScreen") {
           return MaterialPageRoute(
               builder: (context) => const DashboardScreen());
+        }
+        if (settings.name == "/cameraScreen") {
+          return MaterialPageRoute(builder: (context) => const CameraScreen());
         }
         if (settings.name == "/profileScreen") {
           return MaterialPageRoute(builder: (context) => const ProfileScreen());
