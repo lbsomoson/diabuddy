@@ -225,12 +225,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
 
                         if (context.mounted && res == "Successfully edited!") {
                           final snackBar = SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            margin: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).size.height - 150,
-                                right: 20,
-                                left: 20),
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             content:

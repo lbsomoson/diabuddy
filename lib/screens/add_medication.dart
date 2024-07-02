@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
@@ -240,12 +239,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
 
                         if (context.mounted && res == "Successfully added!") {
                           final snackBar = SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            margin: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).size.height - 150,
-                                right: 20,
-                                left: 20),
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             content:
@@ -254,7 +247,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                 label: 'Close', onPressed: () {}),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          Navigator.pop(context);
                           await localNotifications.showScheduledNotification(
                               context,
                               id: widget.id,
@@ -266,6 +258,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');
                         }
+                        Navigator.pop(context);
                       }
                     })
               ],

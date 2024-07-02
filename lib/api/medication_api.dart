@@ -3,28 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseMedicationAPI {
   static final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  FirebaseMedicationAPI() {
-    db.settings = const Settings(
-      persistenceEnabled: true,
-      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-    );
-  }
+  // FirebaseMedicationAPI() {
+  //   db.settings = const Settings(
+  //     persistenceEnabled: true,
+  //     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  //   );
+  // }
 
   // get ALL medications
   Stream<QuerySnapshot> getMedications(String id) {
-    try {
-      db.disableNetwork();
-      return db
-          .collection('medications')
-          .where("userId", isEqualTo: id)
-          .where("isActive", isEqualTo: true)
-          .snapshots();
-    } on FirebaseException catch (e) {
-      print("Error: $e");
-      return const Stream.empty();
-    } finally {
-      db.enableNetwork();
-    }
+    return db
+        .collection('medications')
+        .where("userId", isEqualTo: id)
+        .where("isActive", isEqualTo: true)
+        .snapshots();
   }
 
   // get ONE medication by id
@@ -44,13 +36,10 @@ class FirebaseMedicationAPI {
   // add a new medication
   Future<String> addMedication(Map<String, dynamic> data) async {
     try {
-      await db.disableNetwork();
       await db.collection('medications').add(data);
       return "Successfully added!";
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";
-    } finally {
-      await db.enableNetwork();
     }
   }
 
@@ -59,7 +48,6 @@ class FirebaseMedicationAPI {
       String id, Map<String, dynamic> updatedData) async {
     try {
       // retrieve the document
-      await db.disableNetwork();
       DocumentSnapshot documentSnapshot =
           await db.collection('medications').doc(id).get();
 
@@ -85,15 +73,12 @@ class FirebaseMedicationAPI {
       }
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";
-    } finally {
-      await db.enableNetwork();
     }
   }
 
   // delete medication
   Future<String> deleteMedication(Map<String, dynamic> data) async {
     try {
-      await db.disableNetwork();
       await db
           .collection('medications')
           .doc(data['medicationId'])
@@ -101,8 +86,6 @@ class FirebaseMedicationAPI {
       return "Successfully deleted!";
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";
-    } finally {
-      await db.enableNetwork();
     }
   }
 }
