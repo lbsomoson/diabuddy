@@ -5,6 +5,7 @@ import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
+import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/screens/add_appointment.dart';
 import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/edit_appointment.dart';
@@ -18,6 +19,7 @@ import 'package:diabuddy/widgets/text2.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -362,22 +364,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 Widget _displayMedicines(BuildContext context, String id) {
-  return StreamBuilder(
-      stream: context.watch<MedicationProvider>().getMedications(id),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text("Error encountered! ${snapshot.error}"),
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (!snapshot.hasData) {
-          return const Center(
-            child: Text("No Medicines Found"),
-          );
-        } else if (snapshot.data!.docs.isEmpty) {
+  return BlocBuilder<MedicationBloc, MedicationState>(
+    builder: (context, state) {
+      if (state is MedicationLoading) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      } else if (state is MedicationLoaded) {
+        if (state.medications.isEmpty) {
           return const Center(
               child: Center(
             child: Column(
@@ -392,11 +386,9 @@ Widget _displayMedicines(BuildContext context, String id) {
         }
         return ListView.builder(
             shrinkWrap: true,
-            itemCount: snapshot.data?.docs.length,
+            itemCount: state.medications.length,
             itemBuilder: (context, index) {
-              MedicationIntake medication = MedicationIntake.fromJson(
-                  snapshot.data?.docs[index].data() as Map<String, dynamic>);
-              medication.medicationId = snapshot.data?.docs[index].id;
+              MedicationIntake medication = state.medications[index];
               return CardWidget(
                 leading: FontAwesomeIcons.pills,
                 callback: () {
@@ -409,8 +401,64 @@ Widget _displayMedicines(BuildContext context, String id) {
                 subtitle: medication.time.join(", "),
               );
             });
-      });
+      }
+      return const Center(
+        child: Text("Error encountered!"),
+      );
+    },
+  );
 }
+
+// Widget _displayMedicines(BuildContext context, String id) {
+//   return StreamBuilder(
+//       stream: context.watch<MedicationProvider>().getMedications(id),
+//       builder: (context, snapshot) {
+//         if (snapshot.hasError) {
+//           return Center(
+//             child: Text("Error encountered! ${snapshot.error}"),
+//           );
+//         } else if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const Center(
+//             child: CircularProgressIndicator(),
+//           );
+//         } else if (!snapshot.hasData) {
+//           return const Center(
+//             child: Text("No Medicines Found"),
+//           );
+//         } else if (snapshot.data!.docs.isEmpty) {
+//           return const Center(
+//               child: Center(
+//             child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 crossAxisAlignment: CrossAxisAlignment.center,
+//                 children: [
+//                   Center(
+//                       child:
+//                           Text2Widget(text: "No medicines yet", style: 'body2'))
+//                 ]),
+//           ));
+//         }
+//         return ListView.builder(
+//             shrinkWrap: true,
+//             itemCount: snapshot.data?.docs.length,
+//             itemBuilder: (context, index) {
+//               MedicationIntake medication = MedicationIntake.fromJson(
+//                   snapshot.data?.docs[index].data() as Map<String, dynamic>);
+//               medication.medicationId = snapshot.data?.docs[index].id;
+//               return CardWidget(
+//                 leading: FontAwesomeIcons.pills,
+//                 callback: () {
+//                   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//                     return EditMedicationScreen(med: medication);
+//                   }));
+//                 },
+//                 trailing: Icons.edit,
+//                 title: medication.name,
+//                 subtitle: medication.time.join(", "),
+//               );
+//             });
+//       });
+// }
 
 Widget _displayAppointments(BuildContext context, String id) {
   return StreamBuilder(

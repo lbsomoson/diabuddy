@@ -32,7 +32,6 @@ class _CameraScreenState extends State<CameraScreen> {
   late String mealName;
 
   @override
-  @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
@@ -70,10 +69,11 @@ class _CameraScreenState extends State<CameraScreen> {
         imageMean: 127.5,
         imageStd: 127.5,
         threshold: 0.4,
-        numResultsPerClass: 10,
-        blockSize: 32,
-        numBoxesPerBlock: 5,
+        numResultsPerClass: 4,
         asynch: true,
+        // blockSize: 32,
+        // numBoxesPerBlock: 5,
+        // asynch: true,
       );
 
       if (recognitions == null) {

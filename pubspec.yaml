@@ -39,6 +39,8 @@ dependencies:
   rxdart: ^0.27.7
   translator: ^0.1.7
   intl: ^0.17.0
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.5
   # tflite: ^1.1.2
   timezone: ^0.9.3
   path_provider: ^2.1.3
@@ -67,6 +69,8 @@ flutter:
     - assets/images/meal.jpg
     - assets/meal.json
     - assets/sp2_metadata_v4.tflite
+    - assets/ssd_mobilenet.tflite
+    - assets/ssd_mobilenet.txt
 
   fonts:
     - family: Roboto
