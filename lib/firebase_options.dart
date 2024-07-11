@@ -13,7 +13,7 @@ import 'package:flutter/foundation.dart'
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
-///
+/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -41,56 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCT01T2TwEykTKXpx-h56w8IoN0EN7Od14',
-    appId: '1:535639872179:web:08b05fe8644049f0c556c6',
-    messagingSenderId: '535639872179',
-    projectId: 'new-diabuddy',
-    authDomain: 'new-diabuddy.firebaseapp.com',
-    storageBucket: 'new-diabuddy.appspot.com',
-    measurementId: 'G-SK54CHBHCJ',
+    apiKey: 'AIzaSyCCSSnY5S_HSESJcA75UoYbqyCHDeEmOvs',
+    appId: '1:535109141123:web:13a3bf66f73438871791b6',
+    messagingSenderId: '535109141123',
+    projectId: 'diabuddy-7994e',
+    authDomain: 'diabuddy-7994e.firebaseapp.com',
+    storageBucket: 'diabuddy-7994e.appspot.com',
+    measurementId: 'G-KH9GH0J909',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC1Pf2G44rWXTwC3fhT6peCpiYW7XgFjbY',
-    appId: '1:535639872179:android:51bcf87f57f3cab5c556c6',
-    messagingSenderId: '535639872179',
-    projectId: 'new-diabuddy',
-    storageBucket: 'new-diabuddy.appspot.com',
+    apiKey: 'AIzaSyDwizktEZDagTs-DrTJmbuhMAme9ehUhUU',
+    appId: '1:535109141123:android:8fc2221d4059771a1791b6',
+    messagingSenderId: '535109141123',
+    projectId: 'diabuddy-7994e',
+    storageBucket: 'diabuddy-7994e.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBZLgbeIc4P7kFYyG9TX237XmKF_L4I7PE',
-    appId: '1:535639872179:ios:15e538ce27e52217c556c6',
-    messagingSenderId: '535639872179',
-    projectId: 'new-diabuddy',
-    storageBucket: 'new-diabuddy.appspot.com',
-    androidClientId:
-        '535639872179-2nf55dmhmrel1blhtbqqdd3cm7b35mhr.apps.googleusercontent.com',
-    iosClientId:
-        '535639872179-dh18b7q27sgktv0n0gih893gdmktq0v1.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDgVapRuzHBegcbYoaYdk8bNHVIqoUhF4g',
+    appId: '1:535109141123:ios:8a982d4289be7b071791b6',
+    messagingSenderId: '535109141123',
+    projectId: 'diabuddy-7994e',
+    storageBucket: 'diabuddy-7994e.appspot.com',
     iosBundleId: 'com.example.diabuddy',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBZLgbeIc4P7kFYyG9TX237XmKF_L4I7PE',
-    appId: '1:535639872179:ios:15e538ce27e52217c556c6',
-    messagingSenderId: '535639872179',
-    projectId: 'new-diabuddy',
-    storageBucket: 'new-diabuddy.appspot.com',
-    androidClientId:
-        '535639872179-2nf55dmhmrel1blhtbqqdd3cm7b35mhr.apps.googleusercontent.com',
-    iosClientId:
-        '535639872179-dh18b7q27sgktv0n0gih893gdmktq0v1.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDgVapRuzHBegcbYoaYdk8bNHVIqoUhF4g',
+    appId: '1:535109141123:ios:8a982d4289be7b071791b6',
+    messagingSenderId: '535109141123',
+    projectId: 'diabuddy-7994e',
+    storageBucket: 'diabuddy-7994e.appspot.com',
     iosBundleId: 'com.example.diabuddy',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCT01T2TwEykTKXpx-h56w8IoN0EN7Od14',
-    appId: '1:535639872179:web:c774892c8228effec556c6',
-    messagingSenderId: '535639872179',
-    projectId: 'new-diabuddy',
-    authDomain: 'new-diabuddy.firebaseapp.com',
-    storageBucket: 'new-diabuddy.appspot.com',
-    measurementId: 'G-PCS7TNBS06',
+    apiKey: 'AIzaSyCCSSnY5S_HSESJcA75UoYbqyCHDeEmOvs',
+    appId: '1:535109141123:web:e8e10a17233fa0151791b6',
+    messagingSenderId: '535109141123',
+    projectId: 'diabuddy-7994e',
+    authDomain: 'diabuddy-7994e.firebaseapp.com',
+    storageBucket: 'diabuddy-7994e.appspot.com',
+    measurementId: 'G-239XRWHMPG',
   );
 }

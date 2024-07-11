@@ -1,5 +1,4 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
-import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
