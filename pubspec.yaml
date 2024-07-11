@@ -69,8 +69,6 @@ flutter:
     - assets/images/meal.jpg
     - assets/meal.json
     - assets/sp2_metadata_v4.tflite
-    - assets/ssd_mobilenet.tflite
-    - assets/ssd_mobilenet.txt
 
   fonts:
     - family: Roboto

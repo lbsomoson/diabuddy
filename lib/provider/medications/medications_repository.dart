@@ -22,16 +22,24 @@ class MedicationRepository {
   }
 
   Future<void> deleteMedication(String medicationId) {
-    return firestore.collection('medications').doc(medicationId).delete();
+    return firestore
+        .collection('medications')
+        .doc(medicationId)
+        .update({'isActive': false});
   }
 
   Stream<List<MedicationIntake>> getMedications(String userId) {
+    print(
+        "===================Fetching medications for user: $userId===================");
+
+    print("Fetching medications for user: $userId");
     return firestore
         .collection('medications')
         .where("userId", isEqualTo: userId)
         .where("isActive", isEqualTo: true)
         .snapshots()
         .map((snapshot) {
+      print("Medications snapshot: ${snapshot.docs.length} documents fetched.");
       return snapshot.docs
           .map((doc) => MedicationIntake.fromJson(doc.data()))
           .toList();

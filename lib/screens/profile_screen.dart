@@ -3,7 +3,6 @@ import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/screens/add_appointment.dart';
@@ -21,7 +20,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -89,18 +87,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
-  void checkInternetConnection() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      print('No internet connection');
-    } else {
-      print('Connected to the internet');
-    }
+  @override
+  void initState() {
+    super.initState();
+    user = context.read<UserAuthProvider>().user;
+    context.read<MedicationBloc>().add(LoadMedications(user!.uid));
   }
 
   @override
   Widget build(BuildContext context) {
     user = context.read<UserAuthProvider>().user;
+    print("Current user: $user");
     AppUser? appuser = context.watch<UserAuthProvider>().userInfo;
     if (appuser == null && user != null) {
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
@@ -338,7 +335,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         onPressed: () {
-                          checkInternetConnection();
                           context.read<UserAuthProvider>().signOut();
                           Navigator.pushNamedAndRemoveUntil(context,
                               '/loginScreen', (Route<dynamic> route) => false);
@@ -373,7 +369,6 @@ Widget _displayMedicines(BuildContext context, String id) {
       } else if (state is MedicationLoaded) {
         if (state.medications.isEmpty) {
           return const Center(
-              child: Center(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -382,83 +377,35 @@ Widget _displayMedicines(BuildContext context, String id) {
                       child:
                           Text2Widget(text: "No medicines yet", style: 'body2'))
                 ]),
-          ));
+          );
         }
         return ListView.builder(
-            shrinkWrap: true,
-            itemCount: state.medications.length,
-            itemBuilder: (context, index) {
-              MedicationIntake medication = state.medications[index];
-              return CardWidget(
-                leading: FontAwesomeIcons.pills,
-                callback: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return EditMedicationScreen(med: medication);
-                  }));
-                },
-                trailing: Icons.edit,
-                title: medication.name,
-                subtitle: medication.time.join(", "),
-              );
-            });
+          shrinkWrap: true,
+          itemCount: state.medications.length,
+          itemBuilder: (context, index) {
+            MedicationIntake medication = state.medications[index];
+            medication.medicationId = state.medications[index].medicationId;
+            return CardWidget(
+              leading: FontAwesomeIcons.pills,
+              callback: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return EditMedicationScreen(med: medication);
+                }));
+              },
+              trailing: Icons.edit,
+              title: medication.name,
+              subtitle: medication.time.join(", "),
+            );
+          },
+        );
+      } else {
+        return const Center(
+          child: Text("Error encountered!"),
+        );
       }
-      return const Center(
-        child: Text("Error encountered!"),
-      );
     },
   );
 }
-
-// Widget _displayMedicines(BuildContext context, String id) {
-//   return StreamBuilder(
-//       stream: context.watch<MedicationProvider>().getMedications(id),
-//       builder: (context, snapshot) {
-//         if (snapshot.hasError) {
-//           return Center(
-//             child: Text("Error encountered! ${snapshot.error}"),
-//           );
-//         } else if (snapshot.connectionState == ConnectionState.waiting) {
-//           return const Center(
-//             child: CircularProgressIndicator(),
-//           );
-//         } else if (!snapshot.hasData) {
-//           return const Center(
-//             child: Text("No Medicines Found"),
-//           );
-//         } else if (snapshot.data!.docs.isEmpty) {
-//           return const Center(
-//               child: Center(
-//             child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 children: [
-//                   Center(
-//                       child:
-//                           Text2Widget(text: "No medicines yet", style: 'body2'))
-//                 ]),
-//           ));
-//         }
-//         return ListView.builder(
-//             shrinkWrap: true,
-//             itemCount: snapshot.data?.docs.length,
-//             itemBuilder: (context, index) {
-//               MedicationIntake medication = MedicationIntake.fromJson(
-//                   snapshot.data?.docs[index].data() as Map<String, dynamic>);
-//               medication.medicationId = snapshot.data?.docs[index].id;
-//               return CardWidget(
-//                 leading: FontAwesomeIcons.pills,
-//                 callback: () {
-//                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//                     return EditMedicationScreen(med: medication);
-//                   }));
-//                 },
-//                 trailing: Icons.edit,
-//                 title: medication.name,
-//                 subtitle: medication.time.join(", "),
-//               );
-//             });
-//       });
-// }
 
 Widget _displayAppointments(BuildContext context, String id) {
   return StreamBuilder(

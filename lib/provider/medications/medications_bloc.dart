@@ -19,11 +19,10 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
 
   Future<void> _onLoadMedications(
       LoadMedications event, Emitter<MedicationState> emit) async {
-    // final Stream<List<MedicationIntake>> medicationStream =
-    //     medicationRepository.getMedications(event.userId);
     print("===================ON LOAD MEDICATIONS==================");
     print(event.userId);
     medicationRepository.getMedications(event.userId).listen((medications) {
+      print("Medications loaded: ${medications.length}");
       add(MedicationsUpdated(medications));
     });
   }

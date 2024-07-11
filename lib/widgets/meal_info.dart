@@ -1,6 +1,9 @@
+import 'package:diabuddy/models/meal_model.dart';
+import 'package:diabuddy/screens/meal_details.dart';
 import 'package:flutter/material.dart';
 
 class MealInfo extends StatefulWidget {
+  // final Meal meal;
   final String mealName, carbs, cal, gi;
   const MealInfo(
       {required this.mealName,
@@ -20,7 +23,10 @@ class _MealInfoState extends State<MealInfo> {
       borderRadius: BorderRadius.circular(15),
       splashColor: const Color.fromRGBO(3, 198, 185, 0.296),
       onTap: () {
-        Navigator.pushNamed(context, '/mealDetailsScreen');
+        // Navigator.pushNamed(context, '/mealDetailsScreen');
+        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //   return MealDetailsScreen(meal: widget.mealName);
+        // }));
       },
       child: Container(
         padding: const EdgeInsets.all(15),
@@ -28,7 +34,11 @@ class _MealInfoState extends State<MealInfo> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(widget.mealName),
+          Text(widget.mealName,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700)),
           Padding(
             padding: const EdgeInsets.only(left: 20),
             child: Row(

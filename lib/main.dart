@@ -79,7 +79,8 @@ class _MyAppState extends State<MyApp> {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => MedicationBloc(medicationRepository)),
+        BlocProvider(
+            create: (context) => MedicationBloc(MedicationRepository())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -206,21 +207,21 @@ class _MyAppState extends State<MyApp> {
             final args = settings.arguments as Meal;
             return MaterialPageRoute(
                 builder: (context) => MealDetailsScreen(meal: args));
-
-            // final name = settings.arguments as String;
-            // final carbs = settings.arguments as String;
-            // final cal = settings.arguments as String;
-            // final gi = settings.arguments as String;
-            // final date = settings.arguments as String;
-            // return MaterialPageRoute(
-            //     builder: (context) => MealDetailsScreen(
-            //           name: name,
-            //           carbs: carbs,
-            //           cal: cal,
-            //           gi: gi,
-            //           date: date,
-            //         ));
           }
+
+          // final name = settings.arguments as String;
+          // final carbs = settings.arguments as String;
+          // final cal = settings.arguments as String;
+          // final gi = settings.arguments as String;
+          // final date = settings.arguments as String;
+          // return MaterialPageRoute(
+          //     builder: (context) => MealDetailsScreen(
+          //           name: name,
+          //           carbs: carbs,
+          //           cal: cal,
+          //           gi: gi,
+          //           date: date,
+          //         ));
           return null;
         },
       ),
