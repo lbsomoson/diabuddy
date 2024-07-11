@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/user_model.dart';

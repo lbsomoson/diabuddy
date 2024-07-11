@@ -220,9 +220,8 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
 
                         print("medication Id: ${widget.med.medicationId}");
 
-                        context
-                            .read<MedicationBloc>()
-                            .add(UpdateMedication(widget.med));
+                        context.read<MedicationBloc>().add(UpdateMedication(
+                            widget.med, widget.med.medicationId!));
 
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
                         // String res = await context

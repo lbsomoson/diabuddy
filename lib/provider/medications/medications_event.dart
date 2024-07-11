@@ -27,11 +27,12 @@ class AddMedication extends MedicationEvent {
 
 class UpdateMedication extends MedicationEvent {
   final MedicationIntake medication;
+  final String medicationId;
 
-  const UpdateMedication(this.medication);
+  const UpdateMedication(this.medication, this.medicationId);
 
   @override
-  List<Object> get props => [medication];
+  List<Object> get props => [medication, medicationId];
 }
 
 class DeleteMedication extends MedicationEvent {
