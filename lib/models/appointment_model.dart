@@ -19,9 +19,9 @@ class Appointment {
   });
 
   // Factory constructor to instantiate object from json format
-  factory Appointment.fromJson(Map<String, dynamic> json) {
+  factory Appointment.fromJson(Map<String, dynamic> json, String id) {
     return Appointment(
-        appointmentId: json['appointmentId'],
+        appointmentId: id,
         title: json['title'],
         doctorName: json['doctorName'],
         clinicName: json['clinicName'],
@@ -29,11 +29,11 @@ class Appointment {
         userId: json['userId']);
   }
 
-  static List<Appointment> fromJsonArray(String jsonData) {
-    final Iterable<dynamic> data = jsonDecode(jsonData);
-    return data
-        .map<Appointment>((dynamic d) => Appointment.fromJson(d))
-        .toList();
+  static List<Appointment> fromJsonArray(List<Map<String, dynamic>> jsonData) {
+    return jsonData.map<Appointment>((data) {
+      String id = data['appointmentId'];
+      return Appointment.fromJson(data, id);
+    }).toList();
   }
 
   Map<String, dynamic> toJson(Appointment appointment) {

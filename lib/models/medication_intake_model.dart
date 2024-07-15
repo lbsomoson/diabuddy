@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class MedicationIntake {
   String? medicationId;
   String userId;
@@ -20,23 +18,24 @@ class MedicationIntake {
   });
 
   // Factory constructor to instantiate object from json format
-  factory MedicationIntake.fromJson(Map<String, dynamic> json) {
+  factory MedicationIntake.fromJson(Map<String, dynamic> json, String id) {
     return MedicationIntake(
-      medicationId: json['medicationId'],
+      medicationId: id,
       userId: json['userId'],
-      name: json['name'],
-      time: (json['time'] as List<dynamic>).map((e) => e as String).toList(),
       dose: json['dose'],
       isVerifiedBy: json['isVerifiedBy'],
       isActive: json['isActive'],
+      name: json['name'],
+      time: List<String>.from(json['time']),
     );
   }
 
-  static List<MedicationIntake> fromJsonArray(String jsonData) {
-    final Iterable<dynamic> data = jsonDecode(jsonData);
-    return data
-        .map<MedicationIntake>((dynamic d) => MedicationIntake.fromJson(d))
-        .toList();
+  static List<MedicationIntake> fromJsonArray(
+      List<Map<String, dynamic>> jsonData) {
+    return jsonData.map<MedicationIntake>((data) {
+      String id = data['medicationId'];
+      return MedicationIntake.fromJson(data, id);
+    }).toList();
   }
 
   Map<String, dynamic> toJson(MedicationIntake medicationIntake) {

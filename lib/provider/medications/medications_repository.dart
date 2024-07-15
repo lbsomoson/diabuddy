@@ -51,20 +51,34 @@ class MedicationRepository {
   }
 
   Stream<List<MedicationIntake>> getMedications(String userId) {
-    print(
-        "===================Fetching medications for user: $userId===================");
-
-    print("Fetching medications for user: $userId");
-    return firestore
+    return FirebaseFirestore.instance
         .collection('medications')
         .where("userId", isEqualTo: userId)
         .where("isActive", isEqualTo: true)
         .snapshots()
         .map((snapshot) {
-      print("Medications snapshot: ${snapshot.docs.length} documents fetched.");
-      return snapshot.docs
-          .map((doc) => MedicationIntake.fromJson(doc.data()))
-          .toList();
+      return snapshot.docs.map((doc) {
+        // include the document ID when creating the MedicationIntake object
+        return MedicationIntake.fromJson(doc.data(), doc.id);
+      }).toList();
     });
   }
+
+  // Stream<List<MedicationIntake>> getMedications(String userId) {
+  //   print(
+  //       "===================Fetching medications for user: $userId===================");
+
+  //   print("Fetching medications for user: $userId");
+  //   return firestore
+  //       .collection('medications')
+  //       .where("userId", isEqualTo: userId)
+  //       .where("isActive", isEqualTo: true)
+  //       .snapshots()
+  //       .map((snapshot) {
+  //     print("Medications snapshot: ${snapshot.docs.length} documents fetched.");
+  //     return snapshot.docs
+  //         .map((doc) => MedicationIntake.fromJson(doc.data()))
+  //         .toList();
+  //   });
+  // }
 }

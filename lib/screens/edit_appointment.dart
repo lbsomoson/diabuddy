@@ -1,5 +1,6 @@
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
+import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/datepicker.dart';
@@ -116,12 +117,12 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
-                        String res = await context
-                            .read<AppointmentProvider>()
-                            .editAppointment(widget.appointment.appointmentId!,
-                                widget.appointment.toJson(widget.appointment));
 
-                        if (context.mounted && res == "Successfully edited!") {
+                        context.read<AppointmentBloc>().add(UpdateAppointment(
+                            widget.appointment,
+                            widget.appointment.appointmentId!));
+
+                        if (context.mounted) {
                           final snackBar = SnackBar(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
@@ -148,11 +149,14 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                   style: 'outlined',
                   label: "Delete",
                   callback: () async {
-                    String res = await context
-                        .read<AppointmentProvider>()
-                        .deleteAppointment(widget.appointment.appointmentId!);
+                    // String res = await context
+                    //     .read<AppointmentProvider>()
+                    //     .deleteAppointment(widget.appointment.appointmentId!);
 
-                    if (context.mounted && res == "Successfully deleted!") {
+                    context.read<AppointmentBloc>().add(
+                        DeleteAppointment(widget.appointment.appointmentId!));
+
+                    if (context.mounted) {
                       final snackBar = SnackBar(
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         content:

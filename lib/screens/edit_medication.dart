@@ -27,12 +27,10 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
   void initState() {
     super.initState();
     listenToNotification();
-    print("--------------------------------------------");
   }
 
   // to listen to any notification clicked or not
   listenToNotification() {
-    print("=======================================Listening to notification");
     LocalNotifications.onClickNotification.stream.listen((event) {
       print("Notification popped up");
     });
@@ -217,38 +215,32 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                         times.insertAll(0, widget.med.time);
                         widget.med.time = times;
 
-                        print("medication Id: ${widget.med.medicationId}");
-
                         context.read<MedicationBloc>().add(UpdateMedication(
                             widget.med, widget.med.medicationId!));
 
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
-                        // String res = await context
-                        //     .read<MedicationProvider>()
-                        //     .editMedication(widget.med.medicationId!,
-                        //         widget.med.toJson(widget.med));
 
-                        // if (context.mounted && res == "Successfully edited!") {
-                        //   final snackBar = SnackBar(
-                        //     backgroundColor:
-                        //         Theme.of(context).colorScheme.primary,
-                        //     content:
-                        //         const Text('Medication edited successfully!'),
-                        //     action: SnackBarAction(
-                        //         label: 'Close', onPressed: () {}),
-                        //   );
-                        //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        //   Navigator.pop(context);
-                        //   await localNotifications.showScheduledNotification(
-                        //       context,
-                        //       id: widget.med.userId,
-                        //       time: widget.med.time,
-                        //       title: "Medication Reminder",
-                        //       body: "Time to take your ${widget.med.name}!",
-                        //       payload: "Medication Reminder");
-                        //   // Navigator.pushNamed(
-                        //   //     context, '/chooseReadOptionScreen');
-                        // }
+                        if (context.mounted) {
+                          final snackBar = SnackBar(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            content:
+                                const Text('Medication edited successfully!'),
+                            action: SnackBarAction(
+                                label: 'Close', onPressed: () {}),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          Navigator.pop(context);
+                          await localNotifications.showScheduledNotification(
+                              context,
+                              id: widget.med.userId,
+                              time: widget.med.time,
+                              title: "Medication Reminder",
+                              body: "Time to take your ${widget.med.name}!",
+                              payload: "Medication Reminder");
+                          Navigator.pushNamed(
+                              context, '/chooseReadOptionScreen');
+                        }
                       }
                     }),
                 const SizedBox(height: 12),
@@ -256,26 +248,20 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   style: 'outlined',
                   label: "Delete",
                   callback: () async {
-                    print("medication Id: ${widget.med.medicationId}");
-
                     context
                         .read<MedicationBloc>()
                         .add(DeleteMedication(widget.med.medicationId!));
 
-                    // String res = await context
-                    //     .read<MedicationProvider>()
-                    //     .deleteMedication(widget.med.toJson(widget.med));
-
-                    // if (context.mounted && res == "Successfully deleted!") {
-                    //   final snackBar = SnackBar(
-                    //     backgroundColor: Theme.of(context).colorScheme.primary,
-                    //     content: const Text('Medication deleted successfully!'),
-                    //     action:
-                    //         SnackBarAction(label: 'Close', onPressed: () {}),
-                    //   );
-                    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    //   Navigator.pop(context);
-                    // }
+                    if (context.mounted) {
+                      final snackBar = SnackBar(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        content: const Text('Medication deleted successfully!'),
+                        action:
+                            SnackBarAction(label: 'Close', onPressed: () {}),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      Navigator.pop(context);
+                    }
                     Navigator.pop(context);
                   },
                 )

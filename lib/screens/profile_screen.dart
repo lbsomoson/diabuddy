@@ -1,8 +1,8 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/user_model.dart';
+import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/screens/add_appointment.dart';
 import 'package:diabuddy/screens/add_medication.dart';
@@ -19,7 +19,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -91,12 +91,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     user = context.read<UserAuthProvider>().user;
     context.read<MedicationBloc>().add(LoadMedications(user!.uid));
+    context.read<AppointmentBloc>().add(LoadAppointments(user!.uid));
   }
 
   @override
   Widget build(BuildContext context) {
     user = context.read<UserAuthProvider>().user;
-    print("Current user: $user");
     AppUser? appuser = context.watch<UserAuthProvider>().userInfo;
     if (appuser == null && user != null) {
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
@@ -229,36 +229,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: 10,
                   ),
                   Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       textBaseline: TextBaseline.alphabetic,
                       children: [
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextWidget(
-                              text: "Medicine", style: 'labelMedium'),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return AddMedicationScreen(id: user!.uid);
-                            })),
-                            child: Ink(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.transparent,
-                              ),
-                              child: Icon(
-                                Icons.add_circle_outline,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
+                        Row(
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextWidget(
+                                  text: "Medicine", style: 'labelMedium'),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                onTap: () => Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return AddMedicationScreen(id: user!.uid);
+                                })),
+                                child: Ink(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.transparent,
+                                  ),
+                                  child: Icon(
+                                    Icons.add_circle_outline,
+                                    size: 20,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () => {},
+                          child: Text("History",
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.primary)),
                         )
                       ]),
                   const SizedBox(
@@ -273,41 +286,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: 10,
                   ),
                   Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextWidget(
-                              text: "Medical Appointments",
-                              style: 'labelMedium'),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return AddAppointmentScreen(id: user!.uid);
-                              }))
-                            },
-                            child: Ink(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.transparent,
-                              ),
-                              child: Icon(
-                                Icons.add_circle_outline,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextWidget(
+                            text: "Medical Appointments", style: 'labelMedium'),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AddAppointmentScreen(id: user!.uid);
+                            }))
+                          },
+                          child: Ink(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.transparent,
+                            ),
+                            child: Icon(
+                              Icons.add_circle_outline,
+                              size: 20,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
-                        )
-                      ]),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -384,6 +397,7 @@ Widget _displayMedicines(BuildContext context, String id) {
           itemBuilder: (context, index) {
             MedicationIntake medication = state.medications[index];
             medication.medicationId = state.medications[index].medicationId;
+
             return CardWidget(
               leading: FontAwesomeIcons.pills,
               callback: () {
@@ -407,53 +421,101 @@ Widget _displayMedicines(BuildContext context, String id) {
 }
 
 Widget _displayAppointments(BuildContext context, String id) {
-  return StreamBuilder(
-      stream: context.watch<AppointmentProvider>().getAppointments(id),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text("Error encountered! ${snapshot.error}"),
+  return BlocBuilder<AppointmentBloc, AppointmentState>(
+      builder: (context, state) {
+    if (state is AppointmentLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (state is AppointmentLoaded) {
+      if (state.appointments.isEmpty) {
+        return const Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                    child:
+                        Text2Widget(text: "No medicines yet", style: 'body2'))
+              ]),
+        );
+      }
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: state.appointments.length,
+        itemBuilder: (context, index) {
+          Appointment appointment = state.appointments[index];
+          appointment.appointmentId = state.appointments[index].appointmentId;
+
+          return CardWidget(
+            leading: FontAwesomeIcons.pills,
+            callback: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return EditAppointmentScreen(appointment: appointment);
+              }));
+            },
+            trailing: Icons.edit,
+            title: appointment.title,
+            subtitle: appointment.date!.toString(),
           );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (!snapshot.hasData) {
-          return const Center(
-            child: Text("No Appointments Found"),
-          );
-        } else if (snapshot.data!.docs.isEmpty) {
-          return const Center(
-              child: Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                      child: Text2Widget(
-                          text: "No appointments yet", style: 'body2'))
-                ]),
-          ));
-        }
-        return ListView.builder(
-            shrinkWrap: true,
-            itemCount: snapshot.data?.docs.length,
-            itemBuilder: (context, index) {
-              Appointment appointment = Appointment.fromJson(
-                  snapshot.data?.docs[index].data() as Map<String, dynamic>);
-              appointment.appointmentId = snapshot.data?.docs[index].id;
-              return CardWidget(
-                leading: Icons.medical_services_rounded,
-                callback: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return EditAppointmentScreen(appointment: appointment);
-                  }));
-                },
-                trailing: Icons.edit,
-                title:
-                    "${appointment.title} with Doctor ${appointment.doctorName}",
-                subtitle: DateFormat('MMMM d, yyyy').format(appointment.date!),
-              );
-            });
-      });
+        },
+      );
+    } else {
+      return const Center(
+        child: Text("Error encountered!"),
+      );
+    }
+  });
 }
+
+// Widget _displayAppointments(BuildContext context, String id) {
+//   return StreamBuilder(
+//       stream: context.watch<AppointmentProvider>().getAppointments(id),
+//       builder: (context, snapshot) {
+//         if (snapshot.hasError) {
+//           return Center(
+//             child: Text("Error encountered! ${snapshot.error}"),
+//           );
+//         } else if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const Center(
+//             child: CircularProgressIndicator(),
+//           );
+//         } else if (!snapshot.hasData) {
+//           return const Center(
+//             child: Text("No Appointments Found"),
+//           );
+//         } else if (snapshot.data!.docs.isEmpty) {
+//           return const Center(
+//               child: Center(
+//             child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 crossAxisAlignment: CrossAxisAlignment.center,
+//                 children: [
+//                   Center(
+//                       child: Text2Widget(
+//                           text: "No appointments yet", style: 'body2'))
+//                 ]),
+//           ));
+//         }
+//         return ListView.builder(
+//             shrinkWrap: true,
+//             itemCount: snapshot.data?.docs.length,
+//             itemBuilder: (context, index) {
+//               Appointment appointment = Appointment.fromJson(
+//                   snapshot.data?.docs[index].data() as Map<String, dynamic>);
+//               appointment.appointmentId = snapshot.data?.docs[index].id;
+//               return CardWidget(
+//                 leading: Icons.medical_services_rounded,
+//                 callback: () {
+//                   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//                     return EditAppointmentScreen(appointment: appointment);
+//                   }));
+//                 },
+//                 trailing: Icons.edit,
+//                 title:
+//                     "${appointment.title} with Doctor ${appointment.doctorName}",
+//                 subtitle: DateFormat('MMMM d, yyyy').format(appointment.date!),
+//               );
+//             });
+//       });
+// }

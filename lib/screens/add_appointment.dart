@@ -33,12 +33,10 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   void initState() {
     super.initState();
     listenToNotification();
-    print("--------------------------------------------");
   }
 
   // to listen to any notification clicked or not
   listenToNotification() {
-    print("=======================================Listening to notification");
     LocalNotifications.onClickNotification.stream.listen((event) {
       print("Notification popped up");
     });
@@ -48,73 +46,66 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const AppBarTitle(title: "Add New appointment"),
+        title: const AppBarTitle(title: "Add New Appointment"),
       ),
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFieldWidget(
-                  callback: (String val) {
-                    setState(() {
-                      appointment.title = val;
-                    });
-                  },
-                  hintText: "Title",
-                  label: "Title",
-                  type: "String",
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextFieldWidget(
-                  callback: (String val) {
-                    setState(() {
-                      appointment.doctorName = val;
-                    });
-                  },
-                  hintText: "Name of Doctor",
-                  label: "Name of Doctor",
-                  type: "String",
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextFieldWidget(
-                  callback: (String val) {
-                    setState(() {
-                      appointment.clinicName = val;
-                    });
-                  },
-                  hintText: "Clinic name",
-                  label: "Clinic name",
-                  type: "String",
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                DatePickerWidget(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFieldWidget(
+                    callback: (String val) {
+                      setState(() {
+                        appointment.title = val;
+                      });
+                    },
+                    hintText: "Title",
+                    label: "Title",
+                    type: "String",
+                  ),
+                  const SizedBox(height: 10),
+                  TextFieldWidget(
+                    callback: (String val) {
+                      setState(() {
+                        appointment.doctorName = val;
+                      });
+                    },
+                    hintText: "Name of Doctor",
+                    label: "Name of Doctor",
+                    type: "String",
+                  ),
+                  const SizedBox(height: 10),
+                  TextFieldWidget(
+                    callback: (String val) {
+                      setState(() {
+                        appointment.clinicName = val;
+                      });
+                    },
+                    hintText: "Clinic Name",
+                    label: "Clinic Name",
+                    type: "String",
+                  ),
+                  const SizedBox(height: 10),
+                  DatePickerWidget(
                     callback: (String val) {
                       setState(() {
                         appointment.date = DateTime.parse(val);
                       });
                     },
                     hintText: "Date",
-                    label: "Date"),
-                Column(
-                  children: textFields
-                      .map((field) => field['widget'] as Widget)
-                      .toList(),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ButtonWidget(
+                    label: "Date",
+                  ),
+                  Column(
+                    children: textFields
+                        .map((field) => field['widget'] as Widget)
+                        .toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  ButtonWidget(
                     style: 'filled',
                     label: "Add Appointment",
                     callback: () async {
@@ -123,7 +114,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           appointment.userId = widget.id;
                         });
 
-                        // TODO: MOVE THIS TO /chooseReadOptionScreen
+                        // Add appointment
                         String res = await context
                             .read<AppointmentProvider>()
                             .addAppointment(appointment.toJson(appointment));
@@ -135,26 +126,33 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                             content:
                                 const Text('Added appointment successfully!'),
                             action: SnackBarAction(
-                                label: 'Close', onPressed: () {}),
+                              label: 'Close',
+                              onPressed: () {},
+                            ),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
+
                           await localNotifications
-                              .showScheduledNotificationAppointment(context,
-                                  id: widget.id,
-                                  date: appointment.date!,
-                                  title: "Appointment Reminder",
-                                  body:
-                                      "You have an appointment with ${appointment.doctorName}!",
-                                  payload: "Appointment Reminder");
+                              .showScheduledNotificationAppointment(
+                            context,
+                            id: widget.id,
+                            date: appointment.date!,
+                            title: "Appointment Reminder",
+                            body:
+                                "You have an appointment with ${appointment.doctorName}!",
+                            payload: "Appointment Reminder",
+                          );
                         }
                       }
-                    })
-              ],
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      )),
+      ),
     );
   }
 }
