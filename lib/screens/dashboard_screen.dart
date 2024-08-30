@@ -63,19 +63,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void translateText() async {
     // Translate the text
-    print("Translating.................");
+    // print("Translating.................");
     var translatedText = await translator.translate("Hello", to: 'tl');
     var viewHistoryText = await translator.translate("View history", to: 'tl');
     var viewStatisticsText =
         await translator.translate("View statistics", to: 'tl');
 
-    print(translatedText);
-    print(viewHistoryText);
-    print(viewStatisticsText);
+    // print(translatedText);
+    // print(viewHistoryText);
+    // print(viewStatisticsText);
   }
 
   void onStepCount(StepCount event) async {
-    print(event);
+    // print(event);
     final SharedPreferences prefs = await _prefs;
 
     setState(() {
@@ -98,7 +98,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
     print(_status);
     if (_status == "stopped") {
-      // Save daily record when pedestrian status is "stopped"
+      // save daily record when pedestrian status is "stopped"
       String res = await context
           .read<DailyHealthRecordProvider>()
           .addDailyHealthRecord(dHR.toJson(dHR));
@@ -172,14 +172,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, "/cameraScreen");
-        },
-        child: const Icon(Icons.camera_alt),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        shape: const CircleBorder(),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, "/cameraScreen");
+      //   },
+      //   child: const Icon(Icons.camera_alt),
+      //   backgroundColor: Theme.of(context).colorScheme.primary,
+      //   shape: const CircleBorder(),
+      // ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(

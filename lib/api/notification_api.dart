@@ -8,8 +8,8 @@ class FirebaseNotificationAPI {
     return db
         .collection('notifications')
         .where("userId", isEqualTo: id)
-        .where("time", isLessThanOrEqualTo: DateTime.now())
-        .orderBy("time", descending: true)
+        // .where("time", isLessThanOrEqualTo: DateTime.now())
+        // .orderBy("time", descending: true)
         .snapshots();
   }
 
@@ -17,7 +17,6 @@ class FirebaseNotificationAPI {
   Future<String> addNotification(Map<String, dynamic> data) async {
     try {
       await db.collection('notifications').add(data);
-      print("Successfully added!");
       return "Successfully added!";
     } on FirebaseException catch (e) {
       return "Error in ${e.code}: ${e.message}";

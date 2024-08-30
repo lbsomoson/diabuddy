@@ -201,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: "Height",
                             value:
                                 "${appuser.height?.toStringAsFixed(2) ?? "N/A"} m",
-                            icon: Icons.verified),
+                            icon: null),
                         const SizedBox(
                           height: 8,
                         ),
@@ -209,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: "Weight",
                             value:
                                 "${appuser.weight?.toStringAsFixed(2) ?? "N/A"} kg",
-                            icon: Icons.verified),
+                            icon: null),
                         const SizedBox(
                           height: 8,
                         ),
@@ -421,6 +421,10 @@ Widget _displayMedicines(BuildContext context, String id) {
 }
 
 Widget _displayAppointments(BuildContext context, String id) {
+  String dateFormatted(DateTime date) {
+    return "${date.month}/${date.day}/${date.year}";
+  }
+
   return BlocBuilder<AppointmentBloc, AppointmentState>(
       builder: (context, state) {
     if (state is AppointmentLoading) {
@@ -456,7 +460,7 @@ Widget _displayAppointments(BuildContext context, String id) {
             },
             trailing: Icons.edit,
             title: appointment.title,
-            subtitle: appointment.date!.toString(),
+            subtitle: dateFormatted(appointment.date!),
           );
         },
       );

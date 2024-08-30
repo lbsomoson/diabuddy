@@ -1,30 +1,21 @@
 {
   "project_info": {
-    "project_number": "535109141123",
-    "project_id": "diabuddy-7994e",
-    "storage_bucket": "diabuddy-7994e.appspot.com"
+    "project_number": "506583836414",
+    "project_id": "diabuddy-production",
+    "storage_bucket": "diabuddy-production.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:535109141123:android:8fc2221d4059771a1791b6",
+        "mobilesdk_app_id": "1:506583836414:android:ab0aa3844f50dcc65867af",
         "android_client_info": {
           "package_name": "com.example.diabuddy"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "535109141123-71t1c92f0hndukq10b2rcto74cppgfa8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.diabuddy",
-            "certificate_hash": "a0c4b4cec2135f39f7162e1422a07a941aa659f6"
-          }
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDwizktEZDagTs-DrTJmbuhMAme9ehUhUU"
+          "current_key": "AIzaSyCmBbo-v0KvHk9tUNwWkVI3uvd-Iceykis"
         }
       ],
       "services": {

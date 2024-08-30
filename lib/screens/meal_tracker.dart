@@ -18,7 +18,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const AppBarTitle(title: "Meal Tracker"),
+        title: const AppBarTitle(title: "Daily Meal Tracker"),
       ),
       body: SafeArea(
           child: SingleChildScrollView(

@@ -10,6 +10,10 @@ import 'package:diabuddy/widgets/textlink.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,6 +28,22 @@ class _LoginScreenState extends State<LoginScreen> {
   String password = '';
   String errorMessage = '';
 
+  // save meals to shared preferences
+  static Future<void> saveMeals(List<dynamic> meals) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String encodedData = jsonEncode(meals);
+    await prefs.setString("meals", encodedData);
+  }
+
+  static Future<List<dynamic>> getMeals() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? encodedData = prefs.getString('meals');
+    if (encodedData == null) {
+      return [];
+    }
+    return List<Map<String, dynamic>>.from(jsonDecode(encodedData));
+  }
+
   @override
   Widget build(BuildContext context) {
     void handleEmailChange(String value) {
@@ -36,6 +56,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     void handleLoginButtonClicked() {}
 
+    Future<Map<String, dynamic>> loadJsonData() async {
+      String jsonString = await rootBundle.loadString('assets/meal.json');
+      return jsonDecode(jsonString);
+    }
+
     Future<void> handleGoogleSignIn({required BuildContext context}) async {
       try {
         final user = await context
@@ -47,12 +72,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
           bool isNew =
               await context.read<UserAuthProvider>().addUser(signedInUser!.uid);
-          print(isNew);
+          // print(isNew);
           if (context.mounted && isNew == true) {
             // navigate to onboarding page
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return OnboardingScreen(id: signedInUser.uid);
             }));
+            // If data hasn't been loaded, proceed with loading and uploading
+            Map<String, dynamic> jsonData = await loadJsonData();
+            // save meals to SharedPreferences
+            await saveMeals(jsonData['meals']);
+
+            // Retrieve meals from SharedPreferences to verify they were saved
+            final List<dynamic> savedMeals = await getMeals();
+            print('Saved Meals: $savedMeals');
           } else if (context.mounted && isNew == false) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return const BottomNavBar();

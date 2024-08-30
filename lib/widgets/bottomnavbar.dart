@@ -38,7 +38,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           screen: const DashboardScreen(),
           item: ItemConfig(
             icon: const Icon(Icons.home),
-            title: "Home",
+            // title: "Home",
             inactiveForegroundColor: Colors.grey[400]!,
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
@@ -47,25 +47,25 @@ class _BottomNavBarState extends State<BottomNavBar> {
           screen: const MealTrackerScreen(),
           item: ItemConfig(
             icon: const Icon(FontAwesomeIcons.bowlFood),
-            title: "Tracker",
+            // title: "Daily Meal",
             inactiveForegroundColor: Colors.grey[400]!,
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
         ),
-        // PersistentTabConfig(
-        //   screen: const CameraScreen(),
-        //   item: ItemConfig(
-        //     icon: const Icon(FontAwesomeIcons.bowlFood, color: Colors.white),
-        //     title: "Meal",
-        //     inactiveForegroundColor: Colors.grey[400]!,
-        //     activeForegroundColor: Theme.of(context).colorScheme.primary,
-        //   ),
-        // ),
+        PersistentTabConfig(
+          screen: const CameraScreen(),
+          item: ItemConfig(
+            icon: const Icon(FontAwesomeIcons.camera, color: Colors.white),
+            // title: "Record",
+            inactiveForegroundColor: Colors.grey[400]!,
+            activeForegroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        ),
         PersistentTabConfig(
           screen: const NotificationScreen(),
           item: ItemConfig(
             icon: const Icon(Icons.notifications),
-            title: "Notifications",
+            // title: "Notifications",
             inactiveForegroundColor: Colors.grey[400]!,
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
@@ -74,7 +74,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           screen: const ProfileScreen(),
           item: ItemConfig(
             icon: const Icon(Icons.person),
-            title: "Profile",
+            // title: "Profile",
             inactiveForegroundColor: Colors.grey[400]!,
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
@@ -92,7 +92,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return PersistentTabView(
       controller: controller,
       tabs: _tabs(),
-      navBarBuilder: (navBarConfig) => Style5BottomNavBar(
+      navBarBuilder: (navBarConfig) => Style13BottomNavBar(
         navBarConfig: navBarConfig,
       ),
     );
