@@ -12,7 +12,20 @@
           "package_name": "com.example.diabuddy"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "506583836414-r437s2kk0g1c9goakd6n9dfm4o9f48n1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.diabuddy",
+            "certificate_hash": "a0c4b4cec2135f39f7162e1422a07a941aa659f6"
+          }
+        },
+        {
+          "client_id": "506583836414-oofd8ef70pdfvvmgdp11fqge4ksjstu9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCmBbo-v0KvHk9tUNwWkVI3uvd-Iceykis"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "506583836414-oofd8ef70pdfvvmgdp11fqge4ksjstu9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "506583836414-c69m6aa1ulq8cmt60jskhh8rieia56sl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.diabuddy"
+              }
+            }
+          ]
         }
       }
     }

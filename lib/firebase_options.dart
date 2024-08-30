@@ -64,6 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '506583836414',
     projectId: 'diabuddy-production',
     storageBucket: 'diabuddy-production.appspot.com',
+    androidClientId: '506583836414-r437s2kk0g1c9goakd6n9dfm4o9f48n1.apps.googleusercontent.com',
+    iosClientId: '506583836414-c69m6aa1ulq8cmt60jskhh8rieia56sl.apps.googleusercontent.com',
     iosBundleId: 'com.example.diabuddy',
   );
 
@@ -73,6 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '506583836414',
     projectId: 'diabuddy-production',
     storageBucket: 'diabuddy-production.appspot.com',
+    androidClientId: '506583836414-r437s2kk0g1c9goakd6n9dfm4o9f48n1.apps.googleusercontent.com',
+    iosClientId: '506583836414-c69m6aa1ulq8cmt60jskhh8rieia56sl.apps.googleusercontent.com',
     iosBundleId: 'com.example.diabuddy',
   );
 
