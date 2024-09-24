@@ -172,14 +172,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, "/cameraScreen");
-      //   },
-      //   child: const Icon(Icons.camera_alt),
-      //   backgroundColor: Theme.of(context).colorScheme.primary,
-      //   shape: const CircleBorder(),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/cameraScreen");
+        },
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.camera_alt),
+      ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -209,7 +209,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     const Expanded(
                         child: DashboardWidget(
-                            header: "Glycemic Index", value: 10.0)),
+                            header: "Glycemic Index", value: 99.0)),
                     SizedBox(width: sizedBoxHeight),
                     const Expanded(
                         child: DashboardWidget(
@@ -221,11 +221,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Expanded(
                         child:
-                            DashboardWidget(header: "Calories", value: 3.45)),
+                            DashboardWidget(header: "Calories", value: 2000)),
                     SizedBox(width: 10),
                     Expanded(
                         child: DashboardWidget(
-                            header: "Carbohydrates", value: 360)),
+                            header: "Carbohydrates",
+                            value: 1099,
+                            caloriesValue: 2000)),
                   ],
                 ),
                 SizedBox(height: sizedBoxHeight),

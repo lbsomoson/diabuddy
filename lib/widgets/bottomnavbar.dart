@@ -52,24 +52,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
         ),
-        PersistentTabConfig(
-          screen: const CameraScreen(),
-          item: ItemConfig(
-            icon: const Icon(FontAwesomeIcons.camera, color: Colors.white),
-            // title: "Record",
-            inactiveForegroundColor: Colors.grey[400]!,
-            activeForegroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        PersistentTabConfig(
-          screen: const NotificationScreen(),
-          item: ItemConfig(
-            icon: const Icon(Icons.notifications),
-            // title: "Notifications",
-            inactiveForegroundColor: Colors.grey[400]!,
-            activeForegroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        // PersistentTabConfig(
+        //   screen: const CameraScreen(),
+        //   item: ItemConfig(
+        //     icon: const Icon(FontAwesomeIcons.camera, color: Colors.white),
+        //     // title: "Record",
+        //     inactiveForegroundColor: Colors.grey[400]!,
+        //     activeForegroundColor: Theme.of(context).colorScheme.primary,
+        //   ),
+        // ),
+        // PersistentTabConfig(
+        //   screen: const NotificationScreen(),
+        //   item: ItemConfig(
+        //     icon: const Icon(Icons.notifications),
+        //     // title: "Notifications",
+        //     inactiveForegroundColor: Colors.grey[400]!,
+        //     activeForegroundColor: Theme.of(context).colorScheme.primary,
+        //   ),
+        // ),
         PersistentTabConfig(
           screen: const ProfileScreen(),
           item: ItemConfig(
@@ -92,7 +92,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return PersistentTabView(
       controller: controller,
       tabs: _tabs(),
-      navBarBuilder: (navBarConfig) => Style13BottomNavBar(
+      navBarBuilder: (navBarConfig) => Style4BottomNavBar(
         navBarConfig: navBarConfig,
       ),
     );
