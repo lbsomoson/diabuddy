@@ -10,8 +10,7 @@ class MedicationRepository {
   Future<void> addMedication(MedicationIntake medication) {
     return firestore
         .collection('medications')
-        .doc(medication.medicationId)
-        .set(medication.toJson(medication));
+        .add(medication.toJson(medication));
   }
 
   Future<void> updateMedication(
@@ -54,7 +53,7 @@ class MedicationRepository {
     return FirebaseFirestore.instance
         .collection('medications')
         .where("userId", isEqualTo: userId)
-        .where("isActive", isEqualTo: true)
+        // .where("isActive", isEqualTo: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {

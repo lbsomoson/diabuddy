@@ -10,8 +10,11 @@ class AppointmentRepository {
   Future<void> addAppointment(Appointment appointment) {
     return firestore
         .collection('appointments')
-        .doc(appointment.appointmentId)
-        .set(appointment.toJson(appointment));
+        .add(appointment.toJson(appointment));
+    // return firestore
+    //     .collection('appointments')
+    //     .doc(appointment.appointmentId)
+    //     .set(appointment.toJson(appointment));
   }
 
   Future<void> updateAppointment(

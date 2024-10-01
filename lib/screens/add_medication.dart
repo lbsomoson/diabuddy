@@ -1,12 +1,15 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
+import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/local_notifications.dart';
+import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class AddMedicationScreen extends StatefulWidget {
@@ -31,6 +34,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       dose: "",
       isVerifiedBy: false,
       isActive: true);
+
+  String dropdownvalue = 'None';
 
   @override
   void initState() {
@@ -129,8 +134,24 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     );
   }
 
+  var items = [
+    'None',
+    'Everyday',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    _showTimePicker() {
+      showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      ).then((value) {
+        if (value != null) {
+          print(value.format(context));
+        }
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const AppBarTitle(title: "Add New Medication"),
@@ -179,6 +200,51 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   hintText: "Time",
                   label: "Time",
                 ),
+                // const Column(
+                //   children: [
+                //     Padding(
+                //       padding: EdgeInsets.only(left: 10),
+                //       child: TextWidget(text: "Time", style: 'bodyMedium'),
+                //     ),
+                //     SizedBox(
+                //       height: 6,
+                //     ),
+                //   ],
+                // ),
+                // Container(
+                //   height: 52,
+                //   decoration: BoxDecoration(
+                //     border: Border.all(
+                //       color: Colors.grey[800]!,
+                //       width: 1.0,
+                //     ),
+                //     borderRadius: BorderRadius.circular(10.0),
+                //   ),
+                //   child: Row(
+                //     children: [
+                //       Expanded(
+                //           child: TextFormField(
+                //               readOnly: true,
+                //               autofocus: false,
+                //               decoration: InputDecoration(
+                //                 focusedBorder: InputBorder.none,
+                //                 border: InputBorder.none,
+                //                 labelStyle:
+                //                     Theme.of(context).textTheme.bodyMedium,
+                //                 hintText: "Time",
+                //                 hintStyle:
+                //                     Theme.of(context).textTheme.labelMedium,
+                //                 contentPadding: const EdgeInsets.symmetric(
+                //                     vertical: 10, horizontal: 16),
+                //               ),
+                //               style: Theme.of(context).textTheme.labelSmall)),
+                //       IconButton(
+                //         onPressed: _showTimePicker,
+                //         icon: const Icon(Icons.access_time),
+                //       )
+                //     ],
+                //   ),
+                // ),
                 Column(
                   children: textFields
                       .map((field) => field['widget'] as Widget)
@@ -213,6 +279,51 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   ),
                 ),
                 const SizedBox(
+                  height: 10,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: TextWidget(text: "Repeat", style: 'bodyMedium'),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: DropdownButtonFormField<String>(
+                    value: dropdownvalue,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(color: Colors.black)),
+                    ),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: items.map((String item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropdownvalue = newValue!;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
                   height: 20,
                 ),
                 ButtonWidget(
@@ -231,13 +342,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         medicationIntake.time = times;
 
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
-                        // checkInternetConnection();
-                        String res = await context
-                            .read<MedicationProvider>()
-                            .addMedication(
-                                medicationIntake.toJson(medicationIntake));
 
-                        if (context.mounted && res == "Successfully added!") {
+                        context
+                            .read<MedicationBloc>()
+                            .add(AddMedication(medicationIntake));
+
+                        // && res == "Successfully added!"
+                        if (context.mounted) {
                           final snackBar = SnackBar(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
@@ -247,18 +358,22 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                 label: 'Close', onPressed: () {}),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          await localNotifications.showScheduledNotification(
-                              context,
-                              id: widget.id,
-                              title: "Medication Reminder",
-                              time: medicationIntake.time,
-                              body:
-                                  "Time to take your ${medicationIntake.name}!",
-                              payload: "Medication Reminder");
+                          // await localNotifications.showScheduledNotification(
+                          //     context,
+                          //     id: widget.id,
+                          //     medicationId: medicationIntake.medicationId!,
+                          //     title: "Medication Reminder",
+                          //     time: medicationIntake.time,
+                          //     body:
+                          //         "Time to take your ${medicationIntake.name}!",
+                          //     payload: "Medication Reminder");
+
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');
+
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
                         }
-                        Navigator.pop(context);
                       }
                     })
               ],

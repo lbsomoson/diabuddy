@@ -267,7 +267,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         InkWell(
-                          onTap: () => {},
+                          onTap: () => {
+                            Navigator.pushNamed(context, '/medicationHistory')
+                          },
                           child: Text("History",
                               style: TextStyle(
                                   color:
@@ -398,17 +400,21 @@ Widget _displayMedicines(BuildContext context, String id) {
             MedicationIntake medication = state.medications[index];
             medication.medicationId = state.medications[index].medicationId;
 
-            return CardWidget(
-              leading: FontAwesomeIcons.pills,
-              callback: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return EditMedicationScreen(med: medication);
-                }));
-              },
-              trailing: Icons.edit,
-              title: medication.name,
-              subtitle: medication.time.join(", "),
-            );
+            if (medication.isActive == true) {
+              return CardWidget(
+                leading: FontAwesomeIcons.pills,
+                callback: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return EditMedicationScreen(med: medication);
+                  }));
+                },
+                trailing: Icons.edit,
+                title: medication.name,
+                subtitle: medication.time.join(", "),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
           },
         );
       } else {

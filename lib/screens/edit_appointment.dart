@@ -98,7 +98,7 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                     initialValue: widget.appointment.date,
                     callback: (String val) {
                       setState(() {
-                        widget.appointment.date = DateTime.parse(val);
+                        widget.appointment.date = DateTime.tryParse(val);
                       });
                     },
                     hintText: "Date",
@@ -136,6 +136,8 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                           await localNotifications
                               .showScheduledNotificationAppointment(context,
                                   id: widget.appointment.userId,
+                                  appointmentId:
+                                      widget.appointment.appointmentId!,
                                   title: "Appointment Reminder",
                                   date: widget.appointment.date!,
                                   body:
@@ -149,10 +151,6 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                   style: 'outlined',
                   label: "Delete",
                   callback: () async {
-                    // String res = await context
-                    //     .read<AppointmentProvider>()
-                    //     .deleteAppointment(widget.appointment.appointmentId!);
-
                     context.read<AppointmentBloc>().add(
                         DeleteAppointment(widget.appointment.appointmentId!));
 

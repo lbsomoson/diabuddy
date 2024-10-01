@@ -234,6 +234,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                           await localNotifications.showScheduledNotification(
                               context,
                               id: widget.med.userId,
+                              medicationId: widget.med.medicationId!,
                               time: widget.med.time,
                               title: "Medication Reminder",
                               body: "Time to take your ${widget.med.name}!",
@@ -262,7 +263,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       Navigator.pop(context);
                     }
-                    Navigator.pop(context);
                   },
                 )
               ],

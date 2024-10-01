@@ -1,3 +1,7 @@
+// import 'dart:convert';
+
+// class LocalNotifications {}
+
 import 'dart:convert';
 import 'package:diabuddy/models/notification_model.dart';
 import 'package:diabuddy/provider/notification_provider.dart';
@@ -10,59 +14,59 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotifications {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<List<Map<String, dynamic>>> notificationList;
   late Future<int> channelIdFuture;
   late int currentChannelId;
 
   LocalNotifications() {
-    _initializeChannelId();
+    // _initializeChannelId();
   }
 
-  // Initialize currentChannelId
-  Future<void> _initializeChannelId() async {
-    currentChannelId = await _getChannelId();
-  }
+  // // Initialize currentChannelId
+  // Future<void> _initializeChannelId() async {
+  //   currentChannelId = await _getChannelId();
+  // }
 
-  // Method to get the channelId from SharedPreferences
-  Future<int> _getChannelId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('channelIdFuture') ?? 1;
-  }
+  // // Method to get the channelId from SharedPreferences
+  // Future<int> _getChannelId() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   return prefs.getInt('channelIdFuture') ?? 1;
+  // }
 
-  // Method to set the channelId in SharedPreferences
-  Future<void> _setChannelId(int channelId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('channelIdFuture', channelId);
-  }
+  // // Method to set the channelId in SharedPreferences
+  // Future<void> _setChannelId(int channelId) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setInt('channelIdFuture', channelId);
+  // }
 
-  // Method to increment the channelId and save it to SharedPreferences
-  Future<void> incrementChannelId() async {
-    currentChannelId += 1;
-    await _setChannelId(currentChannelId);
-  }
+  // // Method to increment the channelId and save it to SharedPreferences
+  // Future<void> incrementChannelId() async {
+  //   currentChannelId += 1;
+  //   await _setChannelId(currentChannelId);
+  // }
 
   // Function to get the list of maps from shared preferences
-  Future<List<Map<String, dynamic>>> getNotificationList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonString = prefs.getString('notificationList');
-    if (jsonString != null) {
-      List<dynamic> decoded = jsonDecode(jsonString);
-      return decoded.map((e) => Map<String, dynamic>.from(e)).toList();
-    } else {
-      return [];
-    }
-  }
+  // Future<List<Map<String, dynamic>>> getNotificationList() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? jsonString = prefs.getString('notificationList');
+  //   if (jsonString != null) {
+  //     List<dynamic> decoded = jsonDecode(jsonString);
+  //     return decoded.map((e) => Map<String, dynamic>.from(e)).toList();
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
-  // Function to add a map to the list of maps in shared preferences
-  Future<void> addNotificationToPreferences(
-      Map<String, dynamic> newNotification) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<Map<String, dynamic>> notificationList = await getNotificationList();
-    notificationList.add(newNotification);
-    String jsonString = jsonEncode(notificationList);
-    await prefs.setString('notificationList', jsonString);
-  }
+  // // Function to add a map to the list of maps in shared preferences
+  // Future<void> addNotificationToPreferences(
+  //     Map<String, dynamic> newNotification) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   List<Map<String, dynamic>> notificationList = await getNotificationList();
+  //   notificationList.add(newNotification);
+  //   String jsonString = jsonEncode(notificationList);
+  //   await prefs.setString('notificationList', jsonString);
+  // }
 
   static final FlutterLocalNotificationsPlugin
       _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -97,6 +101,7 @@ class LocalNotifications {
 
   Future<void> showScheduledNotification(BuildContext context,
       {required String id,
+      required String medicationId,
       required String title,
       required String body,
       required List<String> time,
@@ -113,7 +118,7 @@ class LocalNotifications {
       'channelId': currentChannelId,
     };
 
-    await addNotificationToPreferences(newNotification);
+    // await addNotificationToPreferences(newNotification);
 
     if (!isPermissionGranted) {
       await Permission.notification.request();
@@ -123,9 +128,9 @@ class LocalNotifications {
       }
     }
 
-    List<Map<String, dynamic>> updatedNotificationList =
-        await getNotificationList();
-    print("updatedNotificationList::::: $updatedNotificationList");
+    // List<Map<String, dynamic>> updatedNotificationList =
+    // await getNotificationList();
+    // print("updatedNotificationList::::: $updatedNotificationList");
 
     final philippinesTimeZone = tz.getLocation('Asia/Manila');
     final philippinesTime = tz.TZDateTime.now(philippinesTimeZone);
@@ -133,7 +138,7 @@ class LocalNotifications {
 
     print("====== SCHEDULED TIME: $scheduledTime");
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        currentChannelId,
+        0, // medicationId
         title,
         body,
         scheduledTime,
@@ -157,8 +162,9 @@ class LocalNotifications {
           ticker: 'ticker'),
     );
 
+    // TODO: get the frequency of the medication
     await _flutterLocalNotificationsPlugin.periodicallyShow(
-      currentChannelId,
+      0, // medicationId,
       title,
       body,
       RepeatInterval.daily,
@@ -166,7 +172,7 @@ class LocalNotifications {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: payload,
     );
-    await incrementChannelId();
+    // await incrementChannelId();
 
     NotificationModel scheduledNotification = NotificationModel(
         userId: id, title: title, body: body, time: scheduledTime);
@@ -181,6 +187,7 @@ class LocalNotifications {
 
   Future<void> showScheduledNotificationAppointment(BuildContext context,
       {required String id,
+      required String appointmentId,
       required String title,
       required String body,
       required DateTime date,
@@ -195,7 +202,7 @@ class LocalNotifications {
       'channelId': currentChannelId,
     };
 
-    await addNotificationToPreferences(newNotification);
+    // await addNotificationToPreferences(newNotification);
 
     if (!isPermissionGranted) {
       await Permission.notification.request();
@@ -205,9 +212,9 @@ class LocalNotifications {
       }
     }
 
-    List<Map<String, dynamic>> updatedNotificationList =
-        await getNotificationList();
-    print("updatedNotificationList::::: $updatedNotificationList");
+    // List<Map<String, dynamic>> updatedNotificationList =
+    // await getNotificationList();
+    // print("updatedNotificationList::::: $updatedNotificationList");
 
     final philippinesTimeZone = tz.getLocation('Asia/Manila');
     final philippinesTime = tz.TZDateTime.now(philippinesTimeZone);
@@ -215,7 +222,7 @@ class LocalNotifications {
 
     print("====== SCHEDULED TIME: $scheduledTime");
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        currentChannelId,
+        1, // appointmentId,
         title,
         body,
         scheduledTime,
@@ -249,7 +256,7 @@ class LocalNotifications {
       payload: payload,
     );
 
-    await incrementChannelId();
+    // await incrementChannelId();
 
     NotificationModel scheduledNotification = NotificationModel(
         userId: id, title: title, body: body, time: scheduledTime);

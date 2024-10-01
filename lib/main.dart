@@ -17,6 +17,7 @@ import 'package:diabuddy/screens/history_all.dart';
 import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/screens/meal_tracker.dart';
+import 'package:diabuddy/screens/medications_history.dart';
 import 'package:diabuddy/screens/notification_screen.dart';
 import 'package:diabuddy/screens/notification_settings_screen.dart';
 import 'package:diabuddy/screens/onboarding.dart';
@@ -28,11 +29,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:gtext/gtext.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -212,7 +217,10 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(
                 builder: (context) => MealDetailsScreen(meal: args));
           }
-
+          if (settings.name == "/medicationHistory") {
+            return MaterialPageRoute(
+                builder: (context) => const MedicationHistory());
+          }
           // final name = settings.arguments as String;
           // final carbs = settings.arguments as String;
           // final cal = settings.arguments as String;

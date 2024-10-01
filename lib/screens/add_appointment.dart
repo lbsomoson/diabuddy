@@ -1,5 +1,6 @@
 import 'package:diabuddy/models/appointment_model.dart';
-import 'package:diabuddy/provider/appointment_provider.dart';
+// import 'package:diabuddy/provider/appointment_provider.dart';
+import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/datepicker.dart';
@@ -114,12 +115,11 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           appointment.userId = widget.id;
                         });
 
-                        // Add appointment
-                        String res = await context
-                            .read<AppointmentProvider>()
-                            .addAppointment(appointment.toJson(appointment));
+                        context
+                            .read<AppointmentBloc>()
+                            .add(AddAppointment(appointment));
 
-                        if (context.mounted && res == "Successfully added!") {
+                        if (context.mounted) {
                           final snackBar = SnackBar(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
@@ -131,18 +131,20 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                             ),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          Navigator.pop(context);
 
-                          await localNotifications
-                              .showScheduledNotificationAppointment(
-                            context,
-                            id: widget.id,
-                            date: appointment.date!,
-                            title: "Appointment Reminder",
-                            body:
-                                "You have an appointment with ${appointment.doctorName}!",
-                            payload: "Appointment Reminder",
-                          );
+                          // await localNotifications
+                          //     .showScheduledNotificationAppointment(
+                          //   context,
+                          //   id: widget.id,
+                          //   appointmentId: appointment.appointmentId!,
+                          //   date: appointment.date!,
+                          //   title: "Appointment Reminder",
+                          //   body:
+                          //       "You have an appointment with ${appointment.doctorName}!",
+                          //   payload: "Appointment Reminder",
+                          // );
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
                         }
                       }
                     },
