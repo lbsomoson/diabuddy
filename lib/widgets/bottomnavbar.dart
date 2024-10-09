@@ -1,9 +1,7 @@
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/screens/camera.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/meal_tracker.dart';
-import 'package:diabuddy/screens/notification_screen.dart';
 import 'package:diabuddy/screens/profile_screen.dart';
 import 'package:diabuddy/widgets/local_notifications.dart';
 import 'package:flutter/material.dart';

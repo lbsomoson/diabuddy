@@ -1,5 +1,4 @@
 import 'package:diabuddy/models/appointment_model.dart';
-import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';

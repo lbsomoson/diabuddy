@@ -12,18 +12,13 @@ class AppointmentRepository {
         .collection('appointments')
         .add(appointment.toJson(appointment));
 
-    // Update the document with the document ID
+    // update the document with the document ID
     await docRef.update({
       'appointmentId': docRef.id,
     });
 
     return docRef.id;
   }
-
-  // return firestore
-  //     .collection('appointments')
-  //     .doc(appointment.appointmentId)
-  //     .set(appointment.toJson(appointment));
 
   Future<void> updateAppointment(
       Appointment appointment, String appointmentId) async {
@@ -56,24 +51,6 @@ class AppointmentRepository {
   Future<void> deleteAppointment(String appointmentId) {
     return firestore.collection('appointments').doc(appointmentId).delete();
   }
-
-  // Stream<List<Appointment>> getAppointments(String userId) {
-  //   print(
-  //       "===================Fetching appointment for user: $userId===================");
-
-  //   print("Fetching appointment for user: $userId");
-  //   return firestore
-  //       .collection('appointments')
-  //       .where("userId", isEqualTo: userId)
-  //       .snapshots()
-  //       .map((snapshot) {
-  //     print(
-  //         "Appointments snapshot: ${snapshot.docs.length} documents fetched.");
-  //     return snapshot.docs
-  //         .map((doc) => Appointment.fromJson(doc.data()))
-  //         .toList();
-  //   });
-  // }
 
   Stream<List<Appointment>> getAppointments(String userId) {
     return FirebaseFirestore.instance

@@ -2,7 +2,6 @@
 
 // class LocalNotifications {}
 
-import 'dart:convert';
 import 'package:diabuddy/models/notification_model.dart';
 import 'package:diabuddy/provider/notification_provider.dart';
 import 'package:flutter/material.dart';

@@ -426,92 +426,6 @@ Widget _displayMedicines(BuildContext context, String id) {
   );
 }
 
-// Widget _displayAppointments(BuildContext context, String id) {
-//   String dateFormatted(DateTime date) {
-//     return "${date.month}/${date.day}/${date.year}";
-//   }
-
-//   return BlocBuilder<AppointmentBloc, AppointmentState>(
-//     builder: (context, state) {
-//       if (state is AppointmentLoading) {
-//         return const Center(
-//           child: CircularProgressIndicator(),
-//         );
-//       } else if (state is AppointmentLoaded) {
-//         if (state.appointments.isEmpty) {
-//           return const Center(
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               crossAxisAlignment: CrossAxisAlignment.center,
-//               children: [
-//                 Center(
-//                   child: Text2Widget(text: "No medicines yet", style: 'body2'),
-//                 )
-//               ],
-//             ),
-//           );
-//         }
-
-//         // Use Expanded to ensure ListView.builder has size
-//         return Expanded(
-//           child: ListView.builder(
-//             itemCount: state.appointments.length,
-//             itemBuilder: (context, index) {
-//               Appointment appointment = state.appointments[index];
-//               appointment.appointmentId =
-//                   state.appointments[index].appointmentId;
-
-//               return CardWidget(
-//                 leading: FontAwesomeIcons.pills,
-//                 callback: () {
-//                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//                     return EditAppointmentScreen(appointment: appointment);
-//                   }));
-//                 },
-//                 trailing: Icons.edit,
-//                 title: appointment.title,
-//                 subtitle: dateFormatted(appointment.date!),
-//               );
-//             },
-//           ),
-//         );
-//       } else if (state is AppointmentAdded) {
-//         final allAppointments = state.appointments;
-
-//         // Wrap ListView in Expanded
-//         return Expanded(
-//           child: ListView.builder(
-//             itemCount: allAppointments.length,
-//             itemBuilder: (context, index) {
-//               Appointment appointment = allAppointments[index];
-//               appointment.appointmentId = allAppointments[index].appointmentId;
-
-//               // Debug print to check the IDs
-//               print("Appointment ID: ${appointment.appointmentId}");
-
-//               return CardWidget(
-//                 leading: FontAwesomeIcons.pills,
-//                 callback: () {
-//                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//                     return EditAppointmentScreen(appointment: appointment);
-//                   }));
-//                 },
-//                 trailing: Icons.edit,
-//                 title: appointment.title,
-//                 subtitle: dateFormatted(appointment.date!),
-//               );
-//             },
-//           ),
-//         );
-//       } else {
-//         return const Center(
-//           child: Text("Error encountered!"),
-//         );
-//       }
-//     },
-//   );
-// }
-
 Widget _displayAppointments(BuildContext context, String id) {
   String dateFormatted(DateTime date) {
     return "${date.month}/${date.day}/${date.year}";
@@ -543,7 +457,6 @@ Widget _displayAppointments(BuildContext context, String id) {
           Appointment appointment = state.appointments[index];
           appointment.appointmentId = state.appointments[index].appointmentId;
 
-          print("Appointment ID: ${appointment.appointmentId}");
           return CardWidget(
             leading: FontAwesomeIcons.pills,
             callback: () {
@@ -558,11 +471,9 @@ Widget _displayAppointments(BuildContext context, String id) {
         },
       );
     } else if (state is AppointmentAdded) {
-      // final newAppointmentId = state.appointmentId;
       final allAppointments = state.appointments;
-      print("length of list: ${allAppointments.length}");
 
-      // You can use newAppointmentId or display the updated list
+      // display the appointments with the new appointment added
       return ListView.builder(
         shrinkWrap: true,
         itemCount: allAppointments.length,
@@ -570,7 +481,6 @@ Widget _displayAppointments(BuildContext context, String id) {
           Appointment appointment = allAppointments[index];
           appointment.appointmentId = allAppointments[index].appointmentId;
 
-          print("Updated Appointment ID: ${appointment.appointmentId}");
           return CardWidget(
             leading: FontAwesomeIcons.pills,
             callback: () {

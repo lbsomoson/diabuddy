@@ -1,5 +1,4 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
-import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -9,7 +8,6 @@ import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class AddMedicationScreen extends StatefulWidget {

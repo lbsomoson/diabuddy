@@ -1,5 +1,5 @@
-import 'package:diabuddy/models/meal_model.dart';
-import 'package:diabuddy/screens/meal_details.dart';
+// import 'package:diabuddy/models/meal_model.dart';
+// import 'package:diabuddy/screens/meal_details.dart';
 import 'package:flutter/material.dart';
 
 class MealInfo extends StatefulWidget {

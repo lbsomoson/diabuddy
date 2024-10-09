@@ -27,15 +27,6 @@ class AppointmentError extends AppointmentState {
   List<Object> get props => [message];
 }
 
-// class AppointmentAdded extends AppointmentState {
-//   final String appointmentId;
-
-//   const AppointmentAdded(this.appointmentId);
-
-//   @override
-//   List<Object> get props => [appointmentId];
-// }
-
 class AppointmentAdded extends AppointmentState {
   final String appointmentId;
   final List<Appointment> appointments;

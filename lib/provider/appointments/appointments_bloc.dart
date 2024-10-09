@@ -26,16 +26,16 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
 
   Future<void> _onAddAppointment(
       AddAppointment event, Emitter<AppointmentState> emit) async {
-    // Add the new appointment and get the appointmentId
+    // add the new appointment and get the appointmentId
     String appointmentId =
         await appointmentRepository.addAppointment(event.appointment);
 
-    // Fetch the updated list of appointments
+    // fetch the updated list of appointments
     final appointments = await appointmentRepository
         .getAppointments(event.appointment.userId)
         .first;
 
-    // Emit the AppointmentAdded state with both the appointmentId and the updated list of appointments
+    // emit the AppointmentAdded state with both the appointmentId and the updated list of appointments
     emit(AppointmentAdded(appointmentId, appointments));
   }
 
