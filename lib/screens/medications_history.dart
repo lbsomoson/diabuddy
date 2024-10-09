@@ -31,7 +31,7 @@ Widget _displayMedicationHistory(BuildContext context, String id) {
                 children: [
                   Center(
                       child: Text2Widget(
-                          text: "No medicine history yet", style: 'body2'))
+                          text: "No previous medicine yet", style: 'body2'))
                 ]),
           );
         }

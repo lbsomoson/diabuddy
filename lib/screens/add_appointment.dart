@@ -7,7 +7,8 @@ import 'package:diabuddy/widgets/datepicker.dart';
 import 'package:diabuddy/widgets/local_notifications.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddAppointmentScreen extends StatefulWidget {
   final String id;
@@ -106,49 +107,107 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                         .toList(),
                   ),
                   const SizedBox(height: 20),
-                  ButtonWidget(
-                    style: 'filled',
-                    label: "Add Appointment",
-                    callback: () async {
-                      if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          appointment.userId = widget.id;
-                        });
+                  // ButtonWidget(
+                  //   style: 'filled',
+                  //   label: "Add Appointment",
+                  //   callback: () async {
+                  //     if (_formKey.currentState!.validate()) {
+                  //       setState(() {
+                  //         appointment.userId = widget.id;
+                  //       });
 
-                        context
-                            .read<AppointmentBloc>()
-                            .add(AddAppointment(appointment));
+                  //       var appointmentId = context
+                  //           .read<AppointmentBloc>()
+                  //           .add(AddAppointment(appointment));
+                  //       // print("Document added with ID: $appointmentId");
 
-                        if (context.mounted) {
-                          final snackBar = SnackBar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            content:
-                                const Text('Added appointment successfully!'),
-                            action: SnackBarAction(
-                              label: 'Close',
-                              onPressed: () {},
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  //       if (context.mounted) {
+                  //         final snackBar = SnackBar(
+                  //           backgroundColor:
+                  //               Theme.of(context).colorScheme.primary,
+                  //           content:
+                  //               const Text('Added appointment successfully!'),
+                  //           action: SnackBarAction(
+                  //             label: 'Close',
+                  //             onPressed: () {},
+                  //           ),
+                  //         );
+                  //         ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                          // await localNotifications
-                          //     .showScheduledNotificationAppointment(
-                          //   context,
-                          //   id: widget.id,
-                          //   appointmentId: appointment.appointmentId!,
-                          //   date: appointment.date!,
-                          //   title: "Appointment Reminder",
-                          //   body:
-                          //       "You have an appointment with ${appointment.doctorName}!",
-                          //   payload: "Appointment Reminder",
-                          // );
-                          if (!context.mounted) return;
-                          Navigator.pop(context);
-                        }
+                  //         // await localNotifications
+                  //         //     .showScheduledNotificationAppointment(
+                  //         //   context,
+                  //         //   id: widget.id,
+                  //         //   appointmentId: appointment.appointmentId!,
+                  //         //   date: appointment.date!,
+                  //         //   title: "Appointment Reminder",
+                  //         //   body:
+                  //         //       "You have an appointment with ${appointment.doctorName}!",
+                  //         //   payload: "Appointment Reminder",
+                  //         // );
+                  //         if (!context.mounted) return;
+                  //         Navigator.pop(context);
+                  //       }
+                  //     }
+                  //   },
+                  // ),
+                  BlocListener<AppointmentBloc, AppointmentState>(
+                    listener: (context, state) {
+                      if (state is AppointmentAdded) {
+                        // Get the appointment ID from the success state
+                        String appointmentId = state.appointmentId;
+                        print(
+                            "ID ++++++++++++++++++++++++++++++++++ $appointmentId");
+
+                        // Display the snack bar or trigger notifications
+                        final snackBar = SnackBar(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          content:
+                              const Text('Added appointment successfully!'),
+                          action: SnackBarAction(
+                            label: 'Close',
+                            onPressed: () {},
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                        // Trigger local notifications using appointment ID
+                        localNotifications.showScheduledNotificationAppointment(
+                          context,
+                          id: widget.id,
+                          appointmentId: appointmentId,
+                          date: appointment.date!,
+                          title: "Appointment Reminder",
+                          body:
+                              "You have an appointment with ${appointment.doctorName}!",
+                          payload: "Appointment Reminder",
+                        );
+
+                        // Pop the screen after processing the appointment
+                        Navigator.pop(context);
+                      } else if (state is AppointmentError) {
+                        // Handle errors if needed
+                        print("Error: ${state.message}");
                       }
                     },
-                  ),
+                    child: ButtonWidget(
+                      style: 'filled',
+                      label: "Add Appointment",
+                      callback: () {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            appointment.userId = widget.id;
+                          });
+
+                          // Dispatch the event to add appointment
+                          context
+                              .read<AppointmentBloc>()
+                              .add(AddAppointment(appointment));
+                        }
+                      },
+                    ),
+                  )
                 ],
               ),
             ),

@@ -7,15 +7,23 @@ class AppointmentRepository {
   AppointmentRepository({FirebaseFirestore? firestore})
       : firestore = firestore ?? FirebaseFirestore.instance;
 
-  Future<void> addAppointment(Appointment appointment) {
-    return firestore
+  Future<String> addAppointment(Appointment appointment) async {
+    DocumentReference docRef = await firestore
         .collection('appointments')
         .add(appointment.toJson(appointment));
-    // return firestore
-    //     .collection('appointments')
-    //     .doc(appointment.appointmentId)
-    //     .set(appointment.toJson(appointment));
+
+    // Update the document with the document ID
+    await docRef.update({
+      'appointmentId': docRef.id,
+    });
+
+    return docRef.id;
   }
+
+  // return firestore
+  //     .collection('appointments')
+  //     .doc(appointment.appointmentId)
+  //     .set(appointment.toJson(appointment));
 
   Future<void> updateAppointment(
       Appointment appointment, String appointmentId) async {
