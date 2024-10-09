@@ -135,8 +135,7 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                           await localNotifications
                               .showScheduledNotificationAppointment(context,
                                   id: widget.appointment.userId,
-                                  appointmentId:
-                                      widget.appointment.appointmentId!,
+                                  appointmentId: widget.appointment.channelId,
                                   title: "Appointment Reminder",
                                   date: widget.appointment.date!,
                                   body:

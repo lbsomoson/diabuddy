@@ -186,22 +186,12 @@ class LocalNotifications {
 
   Future<void> showScheduledNotificationAppointment(BuildContext context,
       {required String id,
-      required String appointmentId,
+      required int appointmentId,
       required String title,
       required String body,
       required DateTime date,
       required String payload}) async {
     final bool isPermissionGranted = await Permission.notification.isGranted;
-
-    Map<String, dynamic> newNotification = {
-      'userId': id,
-      'title': title,
-      'body': body,
-      'payload': payload,
-      'channelId': currentChannelId,
-    };
-
-    // await addNotificationToPreferences(newNotification);
 
     if (!isPermissionGranted) {
       await Permission.notification.request();
@@ -211,17 +201,13 @@ class LocalNotifications {
       }
     }
 
-    // List<Map<String, dynamic>> updatedNotificationList =
-    // await getNotificationList();
-    // print("updatedNotificationList::::: $updatedNotificationList");
-
     final philippinesTimeZone = tz.getLocation('Asia/Manila');
     final philippinesTime = tz.TZDateTime.now(philippinesTimeZone);
     final scheduledTime = philippinesTime.add(const Duration(seconds: 5));
 
-    print("====== SCHEDULED TIME: $scheduledTime");
+    print("======== SCHEDULED TIME: $scheduledTime");
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        1, // appointmentId,
+        appointmentId,
         title,
         body,
         scheduledTime,
@@ -237,7 +223,7 @@ class LocalNotifications {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload);
 
-    final repeatNotificationDetails = NotificationDetails(
+    const repeatNotificationDetails = NotificationDetails(
       android: AndroidNotificationDetails('channel 3', 'your channel name',
           channelDescription: 'your channel description',
           importance: Importance.max,
@@ -246,7 +232,7 @@ class LocalNotifications {
     );
 
     await _flutterLocalNotificationsPlugin.periodicallyShow(
-      currentChannelId,
+      appointmentId,
       title,
       body,
       RepeatInterval.daily,
@@ -254,16 +240,5 @@ class LocalNotifications {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: payload,
     );
-
-    // await incrementChannelId();
-
-    NotificationModel scheduledNotification = NotificationModel(
-        userId: id, title: title, body: body, time: scheduledTime);
-
-    if (context.mounted) {
-      await context
-          .read<NotificationProvider>()
-          .addNotification(scheduledNotification.toJson(scheduledNotification));
-    }
   }
 }

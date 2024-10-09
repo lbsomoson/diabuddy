@@ -5,8 +5,10 @@ import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/datepicker.dart';
 import 'package:diabuddy/widgets/local_notifications.dart';
 import 'package:diabuddy/widgets/textfield.dart';
+import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
 
 class AddAppointmentScreen extends StatefulWidget {
   final String id;
@@ -17,22 +19,29 @@ class AddAppointmentScreen extends StatefulWidget {
 }
 
 class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
+  var uuid = const Uuid();
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
   LocalNotifications localNotifications = LocalNotifications();
+  late int uniqueId;
 
-  Appointment appointment = Appointment(
-      appointmentId: "",
-      doctorName: "",
-      title: "",
-      clinicName: "",
-      date: DateTime.now(),
-      userId: "");
+  late Appointment appointment;
+  TimeOfDay time = TimeOfDay.now();
 
   @override
   void initState() {
     super.initState();
     listenToNotification();
+    String v1 = uuid.v1();
+    uniqueId = v1.hashCode;
+    appointment = Appointment(
+        appointmentId: "",
+        channelId: uniqueId,
+        doctorName: "",
+        title: "",
+        clinicName: "",
+        date: DateTime.now(),
+        userId: "");
   }
 
   // to listen to any notification clicked or not
@@ -40,6 +49,42 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
     LocalNotifications.onClickNotification.stream.listen((event) {
       print("Notification popped up");
     });
+  }
+
+  // function to merge selected date and time into DateTime
+  void _mergeDateAndTime(TimeOfDay time) {
+    setState(() {
+      appointment.date = DateTime(
+        appointment.date!.year,
+        appointment.date!.month,
+        appointment.date!.day,
+        time.hour,
+        time.minute,
+      );
+    });
+  }
+
+  TimeOfDay stringToTimeOfDay(String timeString) {
+    // Check if the string contains "AM" or "PM"
+    bool isPm = timeString.toLowerCase().contains('pm');
+    bool isAm = timeString.toLowerCase().contains('am');
+
+    // Remove any non-time parts like AM/PM
+    String cleanedTime = timeString.replaceAll(RegExp(r'[^\d:]'), '').trim();
+
+    // Split the cleaned string into hours and minutes
+    final parts = cleanedTime.split(':');
+    int hour = int.parse(parts[0]);
+    int minute = int.parse(parts[1]);
+
+    // Convert 12-hour time to 24-hour format if necessary
+    if (isPm && hour != 12) {
+      hour += 12; // Convert PM to 24-hour format
+    } else if (isAm && hour == 12) {
+      hour = 0; // Convert 12 AM to 00
+    }
+
+    return TimeOfDay(hour: hour, minute: minute);
   }
 
   @override
@@ -93,11 +138,32 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                   DatePickerWidget(
                     callback: (String val) {
                       setState(() {
-                        appointment.date = DateTime.parse(val);
+                        try {
+                          // Ensure the date is in the 'yyyy-MM-dd' format before parsing
+                          if (val.contains('/')) {
+                            // If the date uses '/' as a separator (e.g., "12/31/2024"), convert it to 'yyyy-MM-dd'
+                            List<String> parts = val.split('/');
+                            val = '${parts[2]}-${parts[0]}-${parts[1]}';
+                          }
+                          appointment.date = DateTime.parse(val);
+                        } catch (e) {
+                          print("Invalid date format");
+                          // Handle invalid date format (you can display an error to the user)
+                        }
                       });
                     },
                     hintText: "Date",
                     label: "Date",
+                  ),
+                  const SizedBox(height: 10),
+                  TimePickerWidget(
+                    callback: (String value) {
+                      setState(() {
+                        time = stringToTimeOfDay(value);
+                      });
+                    },
+                    hintText: "Time",
+                    label: "Time",
                   ),
                   Column(
                     children: textFields
@@ -130,7 +196,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                         localNotifications.showScheduledNotificationAppointment(
                           context,
                           id: widget.id,
-                          appointmentId: appointmentId,
+                          appointmentId: appointment.channelId,
                           date: appointment.date!,
                           title: "Appointment Reminder",
                           body:
@@ -153,6 +219,8 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           setState(() {
                             appointment.userId = widget.id;
                           });
+
+                          _mergeDateAndTime(time);
 
                           // dispatch the event to add appointment
                           context

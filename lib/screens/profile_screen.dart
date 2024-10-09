@@ -445,8 +445,8 @@ Widget _displayAppointments(BuildContext context, String id) {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Center(
-                    child:
-                        Text2Widget(text: "No medicines yet", style: 'body2'))
+                    child: Text2Widget(
+                        text: "No medical appointments yet", style: 'body2'))
               ]),
         );
       }

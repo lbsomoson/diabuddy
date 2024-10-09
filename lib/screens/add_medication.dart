@@ -72,15 +72,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     });
   }
 
-  // void checkInternetConnection() async {
-  //   var connectivityResult = await (Connectivity().checkConnectivity());
-  //   if (connectivityResult == ConnectivityResult.none) {
-  //     print('No internet connection');
-  //   } else {
-  //     print('Connected to the internet');
-  //   }
-  // }
-
   Widget _buildTextField(int index) {
     return Center(
       child: Column(
@@ -139,17 +130,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _showTimePicker() {
-      showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      ).then((value) {
-        if (value != null) {
-          print(value.format(context));
-        }
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const AppBarTitle(title: "Add New Medication"),
@@ -198,51 +178,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   hintText: "Time",
                   label: "Time",
                 ),
-                // const Column(
-                //   children: [
-                //     Padding(
-                //       padding: EdgeInsets.only(left: 10),
-                //       child: TextWidget(text: "Time", style: 'bodyMedium'),
-                //     ),
-                //     SizedBox(
-                //       height: 6,
-                //     ),
-                //   ],
-                // ),
-                // Container(
-                //   height: 52,
-                //   decoration: BoxDecoration(
-                //     border: Border.all(
-                //       color: Colors.grey[800]!,
-                //       width: 1.0,
-                //     ),
-                //     borderRadius: BorderRadius.circular(10.0),
-                //   ),
-                //   child: Row(
-                //     children: [
-                //       Expanded(
-                //           child: TextFormField(
-                //               readOnly: true,
-                //               autofocus: false,
-                //               decoration: InputDecoration(
-                //                 focusedBorder: InputBorder.none,
-                //                 border: InputBorder.none,
-                //                 labelStyle:
-                //                     Theme.of(context).textTheme.bodyMedium,
-                //                 hintText: "Time",
-                //                 hintStyle:
-                //                     Theme.of(context).textTheme.labelMedium,
-                //                 contentPadding: const EdgeInsets.symmetric(
-                //                     vertical: 10, horizontal: 16),
-                //               ),
-                //               style: Theme.of(context).textTheme.labelSmall)),
-                //       IconButton(
-                //         onPressed: _showTimePicker,
-                //         icon: const Icon(Icons.access_time),
-                //       )
-                //     ],
-                //   ),
-                // ),
                 Column(
                   children: textFields
                       .map((field) => field['widget'] as Widget)

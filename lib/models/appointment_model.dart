@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Appointment {
   String? appointmentId;
+  int channelId;
   String title;
   String doctorName;
   String? clinicName;
@@ -10,6 +11,7 @@ class Appointment {
 
   Appointment({
     this.appointmentId,
+    required this.channelId,
     required this.title,
     required this.doctorName,
     this.clinicName,
@@ -21,6 +23,7 @@ class Appointment {
   factory Appointment.fromJson(Map<String, dynamic> json, String id) {
     return Appointment(
         appointmentId: id,
+        channelId: json['channelId'],
         title: json['title'],
         doctorName: json['doctorName'],
         clinicName: json['clinicName'],
@@ -38,6 +41,7 @@ class Appointment {
   Map<String, dynamic> toJson(Appointment appointment) {
     return {
       'appointmentId': appointment.appointmentId,
+      'channelId': appointment.channelId,
       'title': appointment.title,
       'doctorName': appointment.doctorName,
       'clinicName': appointment.clinicName,
