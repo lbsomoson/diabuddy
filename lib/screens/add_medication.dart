@@ -9,6 +9,7 @@ import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class AddMedicationScreen extends StatefulWidget {
   final String id;
@@ -20,18 +21,12 @@ class AddMedicationScreen extends StatefulWidget {
 
 class _AddMedicationScreenState extends State<AddMedicationScreen> {
   static int indexCounter = 1;
+  var uuid = const Uuid();
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
   LocalNotifications localNotifications = LocalNotifications();
-
-  MedicationIntake medicationIntake = MedicationIntake(
-      medicationId: "",
-      userId: "",
-      name: "Biogesic",
-      time: [],
-      dose: "",
-      isVerifiedBy: false,
-      isActive: true);
+  late int uniqueId;
+  late MedicationIntake medicationIntake;
 
   String dropdownvalue = 'None';
 
@@ -39,7 +34,18 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   void initState() {
     super.initState();
     listenToNotification();
-    print("--------------------------------------------");
+    String v1 = uuid.v1();
+    uniqueId = v1.hashCode;
+    medicationIntake = MedicationIntake(
+        medicationId: "",
+        channelId: uniqueId,
+        userId: "",
+        name: "Biogesic",
+        time: [],
+        dose: "",
+        frequency: 'None',
+        isVerifiedBy: false,
+        isActive: true);
   }
 
   // to listen to any notification clicked or not
@@ -172,6 +178,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 TimePickerWidget(
                   callback: (String value) {
                     setState(() {
+                      medicationIntake.time.clear();
                       medicationIntake.time.add(value);
                     });
                   },
@@ -224,7 +231,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: DropdownButtonFormField<String>(
-                    value: dropdownvalue,
+                    // value: dropdownvalue,
+                    value: medicationIntake.frequency,
                     isExpanded: true,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
@@ -251,7 +259,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
-                        dropdownvalue = newValue!;
+                        medicationIntake.frequency = newValue!;
                       });
                     },
                   ),
@@ -274,11 +282,16 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         times.insertAll(0, medicationIntake.time);
                         medicationIntake.time = times;
 
+                        print("time: ${medicationIntake.time}");
+                        print("frequency: ${medicationIntake.frequency}");
+
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
 
                         context
                             .read<MedicationBloc>()
                             .add(AddMedication(medicationIntake));
+
+                        print(medicationIntake.time);
 
                         // && res == "Successfully added!"
                         if (context.mounted) {
@@ -291,15 +304,16 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                 label: 'Close', onPressed: () {}),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          // await localNotifications.showScheduledNotification(
-                          //     context,
-                          //     id: widget.id,
-                          //     medicationId: medicationIntake.medicationId!,
-                          //     title: "Medication Reminder",
-                          //     time: medicationIntake.time,
-                          //     body:
-                          //         "Time to take your ${medicationIntake.name}!",
-                          //     payload: "Medication Reminder");
+                          await localNotifications.showScheduledNotification(
+                              context,
+                              id: widget.id,
+                              medicationId: uniqueId,
+                              title: "Medication Reminder",
+                              time: medicationIntake.time,
+                              frequency: medicationIntake.frequency,
+                              body:
+                                  "Time to take your ${medicationIntake.name}!",
+                              payload: "Medication Reminder");
 
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');

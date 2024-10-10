@@ -132,15 +132,15 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          await localNotifications
-                              .showScheduledNotificationAppointment(context,
-                                  id: widget.appointment.userId,
-                                  appointmentId: widget.appointment.channelId,
-                                  title: "Appointment Reminder",
-                                  date: widget.appointment.date!,
-                                  body:
-                                      "You have an appointment with ${widget.appointment.doctorName}!",
-                                  payload: "Appointment Reminder");
+                          // await localNotifications
+                          //     .showScheduledNotificationAppointment(context,
+                          //         id: widget.appointment.userId,
+                          //         appointmentId: widget.appointment.channelId,
+                          //         title: "Appointment Reminder",
+                          //         date: widget.appointment.date!,
+                          //         body:
+                          //             "You have an appointment with ${widget.appointment.doctorName}!",
+                          //         payload: "Appointment Reminder");
                         }
                       }
                     }),

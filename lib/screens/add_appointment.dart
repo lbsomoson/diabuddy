@@ -148,7 +148,6 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           appointment.date = DateTime.parse(val);
                         } catch (e) {
                           print("Invalid date format");
-                          // Handle invalid date format (you can display an error to the user)
                         }
                       });
                     },
@@ -193,16 +192,16 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
                         // trigger local notifications using appointment ID
-                        localNotifications.showScheduledNotificationAppointment(
-                          context,
-                          id: widget.id,
-                          appointmentId: appointment.channelId,
-                          date: appointment.date!,
-                          title: "Appointment Reminder",
-                          body:
-                              "You have an appointment with ${appointment.doctorName}!",
-                          payload: "Appointment Reminder",
-                        );
+                        // localNotifications.showScheduledNotificationAppointment(
+                        //   context,
+                        //   id: widget.id,
+                        //   appointmentId: appointment.channelId,
+                        //   date: appointment.date!,
+                        //   title: "Appointment Reminder",
+                        //   body:
+                        //       "You have an appointment with ${appointment.doctorName}!",
+                        //   payload: "Appointment Reminder",
+                        // );
 
                         // pop the screen after processing the appointment
                         Navigator.pop(context);
