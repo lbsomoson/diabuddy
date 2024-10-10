@@ -65,23 +65,23 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   }
 
   TimeOfDay stringToTimeOfDay(String timeString) {
-    // Check if the string contains "AM" or "PM"
+    // check if the string contains "AM" or "PM"
     bool isPm = timeString.toLowerCase().contains('pm');
     bool isAm = timeString.toLowerCase().contains('am');
 
-    // Remove any non-time parts like AM/PM
+    // remove any non-time parts like AM/PM
     String cleanedTime = timeString.replaceAll(RegExp(r'[^\d:]'), '').trim();
 
-    // Split the cleaned string into hours and minutes
+    // split the cleaned string into hours and minutes
     final parts = cleanedTime.split(':');
     int hour = int.parse(parts[0]);
     int minute = int.parse(parts[1]);
 
-    // Convert 12-hour time to 24-hour format if necessary
+    // convert 12-hour time to 24-hour format if necessary
     if (isPm && hour != 12) {
-      hour += 12; // Convert PM to 24-hour format
+      hour += 12; // convert PM to 24-hour format
     } else if (isAm && hour == 12) {
-      hour = 0; // Convert 12 AM to 00
+      hour = 0; // convert 12 AM to 00
     }
 
     return TimeOfDay(hour: hour, minute: minute);
@@ -139,9 +139,9 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                     callback: (String val) {
                       setState(() {
                         try {
-                          // Ensure the date is in the 'yyyy-MM-dd' format before parsing
+                          // ensure the date is in the 'yyyy-MM-dd' format before parsing
                           if (val.contains('/')) {
-                            // If the date uses '/' as a separator (e.g., "12/31/2024"), convert it to 'yyyy-MM-dd'
+                            // if the date uses '/' as a separator (e.g., "12/31/2024"), convert it to 'yyyy-MM-dd'
                             List<String> parts = val.split('/');
                             val = '${parts[2]}-${parts[0]}-${parts[1]}';
                           }
@@ -173,11 +173,6 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                   BlocListener<AppointmentBloc, AppointmentState>(
                     listener: (context, state) {
                       if (state is AppointmentAdded) {
-                        // get the appointment ID from the success state
-                        String appointmentId = state.appointmentId;
-                        print(
-                            "ID ++++++++++++++++++++++++++++++++++ $appointmentId");
-
                         // display the snack bar or trigger notifications
                         final snackBar = SnackBar(
                           backgroundColor:
@@ -191,17 +186,19 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
+                        _mergeDateAndTime(time);
+
                         // trigger local notifications using appointment ID
-                        // localNotifications.showScheduledNotificationAppointment(
-                        //   context,
-                        //   id: widget.id,
-                        //   appointmentId: appointment.channelId,
-                        //   date: appointment.date!,
-                        //   title: "Appointment Reminder",
-                        //   body:
-                        //       "You have an appointment with ${appointment.doctorName}!",
-                        //   payload: "Appointment Reminder",
-                        // );
+                        localNotifications.showScheduledNotificationAppointment(
+                          context,
+                          id: widget.id,
+                          appointmentId: appointment.channelId,
+                          date: appointment.date!,
+                          title: appointment.title,
+                          body:
+                              "You have a medical appointment with ${appointment.doctorName}!",
+                          payload: "Appointment Reminder",
+                        );
 
                         // pop the screen after processing the appointment
                         Navigator.pop(context);

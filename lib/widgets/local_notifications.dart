@@ -66,7 +66,7 @@ class LocalNotifications {
     if (!isPermissionGranted) {
       await Permission.notification.request();
       if (await Permission.notification.isDenied) {
-        print('Notification permission is still not granted.');
+        // print('Notification permission is still not granted.');
         return;
       }
     }
@@ -92,11 +92,8 @@ class LocalNotifications {
         hour += 12; // Convert PM hours to 24-hour format
       }
 
-      // print("time == hour: $hour, minute $minute");
-
       final timeZoneName = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(timeZoneName));
-      // print("timezone: ${tz.local}");
 
       // schedule the notification at the specific time
       await _flutterLocalNotificationsPlugin.zonedSchedule(
@@ -151,14 +148,12 @@ class LocalNotifications {
           .substring(timeString.length - 2)
           .toUpperCase(); // Get AM/PM
 
-      // Adjust hour based on AM/PM
+      // adjust hour based on AM/PM
       if (amPm == 'AM' && hour == 12) {
         hour = 0; // 12 AM is midnight, so set hour to 0
       } else if (amPm == 'PM' && hour != 12) {
         hour += 12; // Convert PM hours to 24-hour format
       }
-
-      print("Rescheduling notification for time: hour $hour, minute $minute");
 
       final timeZoneName = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(timeZoneName));
@@ -196,7 +191,6 @@ class LocalNotifications {
     for (int i = 0; i < time.length; i++) {
       // cancel each notification using the same unique ID pattern (medicationId + i)
       await _flutterLocalNotificationsPlugin.cancel(medicationId + i);
-      print('Cancelled notification with ID: ${medicationId + i}');
     }
   }
 
@@ -212,21 +206,20 @@ class LocalNotifications {
     if (!isPermissionGranted) {
       await Permission.notification.request();
       if (await Permission.notification.isDenied) {
-        print('Notification permission is still not granted.');
+        // print('Notification permission is still not granted.');
         return;
       }
     }
 
-    final philippinesTimeZone = tz.getLocation('Asia/Manila');
-    final philippinesTime = tz.TZDateTime.now(philippinesTimeZone);
-    final scheduledTime = philippinesTime.add(const Duration(seconds: 5));
+    final timeZoneName = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-    print("======== SCHEDULED TIME: $scheduledTime");
     await _flutterLocalNotificationsPlugin.zonedSchedule(
         appointmentId,
         title,
         body,
-        scheduledTime,
+        tz.TZDateTime(
+            tz.local, date.year, date.month, date.day, date.hour, date.minute),
         const NotificationDetails(
             android: AndroidNotificationDetails(
                 'channel 3', 'your channel name',
@@ -238,23 +231,52 @@ class LocalNotifications {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload);
+  }
 
-    const repeatNotificationDetails = NotificationDetails(
-      android: AndroidNotificationDetails('channel 3', 'your channel name',
-          channelDescription: 'your channel description',
-          importance: Importance.max,
-          priority: Priority.high,
-          ticker: 'ticker'),
-    );
+  Future<void> updateScheduledNotificationAppointment(BuildContext context,
+      {required String id,
+      required int appointmentId,
+      required String title,
+      required String body,
+      required DateTime date,
+      required String payload}) async {
+    final bool isPermissionGranted = await Permission.notification.isGranted;
 
-    await _flutterLocalNotificationsPlugin.periodicallyShow(
-      appointmentId,
-      title,
-      body,
-      RepeatInterval.daily,
-      repeatNotificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      payload: payload,
-    );
+    await _flutterLocalNotificationsPlugin.cancel(appointmentId);
+
+    if (!isPermissionGranted) {
+      await Permission.notification.request();
+      if (await Permission.notification.isDenied) {
+        // print('Notification permission is still not granted.');
+        return;
+      }
+    }
+
+    final timeZoneName = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
+
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        appointmentId,
+        title,
+        body,
+        tz.TZDateTime(
+            tz.local, date.year, date.month, date.day, date.hour, date.minute),
+        const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'channel 3', 'your channel name',
+                channelDescription: 'your channel description',
+                importance: Importance.max,
+                priority: Priority.high,
+                ticker: 'ticker')),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: payload);
+  }
+
+  Future<void> cancelScheduledNotificationsAppointments({
+    required int appointmentId,
+  }) async {
+    await _flutterLocalNotificationsPlugin.cancel(appointmentId);
   }
 }

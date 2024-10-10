@@ -25,15 +25,11 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
   void initState() {
     super.initState();
     listenToNotification();
-    print("--------------------------------------------");
   }
 
   // to listen to any notification clicked or not
   listenToNotification() {
-    print("=======================================Listening to notification");
-    LocalNotifications.onClickNotification.stream.listen((event) {
-      print("Notification popped up");
-    });
+    LocalNotifications.onClickNotification.stream.listen((event) {});
   }
 
   @override
@@ -121,6 +117,16 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                             widget.appointment,
                             widget.appointment.appointmentId!));
 
+                        localNotifications.updateScheduledNotificationAppointment(
+                            context,
+                            id: widget.appointment.userId,
+                            appointmentId: widget.appointment.channelId,
+                            title: widget.appointment.title,
+                            date: widget.appointment.date!,
+                            body:
+                                "You have an appointment with ${widget.appointment.doctorName} today at ${widget.appointment.clinicName}!",
+                            payload: "Appointment Reminder");
+
                         if (context.mounted) {
                           final snackBar = SnackBar(
                             backgroundColor:
@@ -132,15 +138,15 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          // await localNotifications
-                          //     .showScheduledNotificationAppointment(context,
-                          //         id: widget.appointment.userId,
-                          //         appointmentId: widget.appointment.channelId,
-                          //         title: "Appointment Reminder",
-                          //         date: widget.appointment.date!,
-                          //         body:
-                          //             "You have an appointment with ${widget.appointment.doctorName}!",
-                          //         payload: "Appointment Reminder");
+                          await localNotifications
+                              .showScheduledNotificationAppointment(context,
+                                  id: widget.appointment.userId,
+                                  appointmentId: widget.appointment.channelId,
+                                  title: "Appointment Reminder",
+                                  date: widget.appointment.date!,
+                                  body:
+                                      "You have an appointment with ${widget.appointment.doctorName}!",
+                                  payload: "Appointment Reminder");
                         }
                       }
                     }),
@@ -151,6 +157,9 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                   callback: () async {
                     context.read<AppointmentBloc>().add(
                         DeleteAppointment(widget.appointment.appointmentId!));
+
+                    localNotifications.cancelScheduledNotificationsAppointments(
+                        appointmentId: widget.appointment.channelId);
 
                     if (context.mounted) {
                       final snackBar = SnackBar(
