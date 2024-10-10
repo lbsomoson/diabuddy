@@ -52,14 +52,31 @@ class AppointmentRepository {
     return firestore.collection('appointments').doc(appointmentId).delete();
   }
 
+  // Stream<List<Appointment>> getAppointments(String userId) {
+  //   return FirebaseFirestore.instance
+  //       .collection('appointments')
+  //       .where("userId", isEqualTo: userId)
+  //       .snapshots()
+  //       .map((snapshot) {
+  //     return snapshot.docs.map((doc) {
+  //       // include the document ID when creating the Application object
+  //       return Appointment.fromJson(doc.data(), doc.id);
+  //     }).toList();
+  //   });
+  // }
+
   Stream<List<Appointment>> getAppointments(String userId) {
+    DateTime now = DateTime.now(); // current date and time
+
     return FirebaseFirestore.instance
         .collection('appointments')
         .where("userId", isEqualTo: userId)
+        .where("date",
+            isGreaterThanOrEqualTo:
+                now) // filter for appointments in the future
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        // include the document ID when creating the Application object
         return Appointment.fromJson(doc.data(), doc.id);
       }).toList();
     });
