@@ -3,6 +3,7 @@ import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/local_notifications.dart';
+import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/widgets/text2.dart';
@@ -108,6 +109,11 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
     );
   }
 
+  var items = [
+    'None',
+    'Everyday',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,6 +208,52 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   ),
                 ),
                 const SizedBox(
+                  height: 10,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: TextWidget(text: "Repeat", style: 'bodyMedium'),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: DropdownButtonFormField<String>(
+                    // value: dropdownvalue,
+                    value: widget.med.frequency,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(color: Colors.black)),
+                    ),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: items.map((String item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        widget.med.frequency = newValue!;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
                   height: 20,
                 ),
                 ButtonWidget(
@@ -231,14 +283,14 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          // await localNotifications.showScheduledNotification(
-                          //     context,
-                          //     id: widget.med.userId,
-                          //     medicationId: widget.med.channelId,
-                          //     time: widget.med.time,
-                          //     title: "Medication Reminder",
-                          //     body: "Time to take your ${widget.med.name}!",
-                          //     payload: "Medication Reminder");
+                          await localNotifications.updateScheduledNotification(
+                              context,
+                              medicationId: widget.med.channelId,
+                              time: widget.med.time,
+                              frequency: widget.med.frequency,
+                              title: "Medication Reminder",
+                              body: "Time to take your ${widget.med.name}!",
+                              payload: "Medication Reminder");
                           // Navigator.pushNamed(
                           //     context, '/chooseReadOptionScreen');
                         }
@@ -252,6 +304,10 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                     context
                         .read<MedicationBloc>()
                         .add(DeleteMedication(widget.med.medicationId!));
+
+                    await localNotifications.cancelScheduledNotifications(
+                        medicationId: widget.med.channelId,
+                        time: widget.med.time);
 
                     if (context.mounted) {
                       final snackBar = SnackBar(

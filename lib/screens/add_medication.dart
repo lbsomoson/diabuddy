@@ -231,7 +231,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: DropdownButtonFormField<String>(
-                    // value: dropdownvalue,
                     value: medicationIntake.frequency,
                     isExpanded: true,
                     decoration: InputDecoration(
