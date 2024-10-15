@@ -1,5 +1,6 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
+import 'package:diabuddy/utils/text_to_speech.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/local_notifications.dart';
@@ -291,6 +292,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                             .add(AddMedication(medicationIntake));
 
                         print(medicationIntake.time);
+
+                        TextToSpeechService().dispose();
+                        TextToSpeechService().speak(
+                            "Oras na para inumin ang ${medicationIntake.name}!");
+                        TextToSpeechService().dispose();
 
                         // && res == "Successfully added!"
                         if (context.mounted) {
