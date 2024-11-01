@@ -45,6 +45,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // TODO: COMMENT/UNCOMMENT THIS BLOCK OF CODE
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
+  // await flutterLocalNotificationsPlugin.cancelAll();
+
   FirebaseFirestore.instance.settings =
       const Settings(persistenceEnabled: true);
 

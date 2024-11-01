@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/meal_provider.dart';
+import 'package:diabuddy/screens/add_food_manually.dart';
 import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -143,73 +144,162 @@ class _CameraScreenState extends State<CameraScreen> {
       appBar: AppBar(
         title: const AppBarTitle(title: "Add Meal"),
       ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Center(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                selectedImage != null
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(vertical: 50),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.grey[100],
-                            border:
-                                Border.all(width: 2, color: Colors.grey[200]!)),
-                        child: Column(
-                          children: [
-                            Image.file(
-                              selectedImage!,
-                              fit: BoxFit.fitHeight,
-                            ),
-                          ],
-                        ))
-                    : Container(),
-                ButtonWidget(
-                  block: true,
-                  callback: () {
-                    checkAndRequestPermissions();
-                  },
-                  label: "Open Camera",
-                  style: 'filled',
-                ),
-                Form(
-                  key: _formKey,
-                  child: TextFieldWidget(
-                    callback: (String val) {
-                      mealName = val;
-                    },
-                    hintText: "Meal Name",
-                    label: "Meal Name",
-                    type: 'String',
+                // selectedImage != null
+                //     ? Container(
+                //         padding: const EdgeInsets.symmetric(vertical: 50),
+                //         width: double.infinity,
+                //         decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(10),
+                //             color: Colors.grey[100],
+                //             border:
+                //                 Border.all(width: 2, color: Colors.grey[200]!)),
+                //         child: Column(
+                //           children: [
+                //             Image.file(
+                //               selectedImage!,
+                //               fit: BoxFit.fitHeight,
+                //             ),
+                //           ],
+                //         ))
+                //     : Container(),
+                // ButtonWidget(
+                //   block: true,
+                //   callback: () {
+                //     checkAndRequestPermissions();
+                //   },
+                //   label: "Open Camera",
+                //   style: 'filled',
+                // ),
+                // Form(
+                //   key: _formKey,
+                //   child: TextFieldWidget(
+                //     callback: (String val) {
+                //       mealName = val;
+                //     },
+                //     hintText: "Meal Name",
+                //     label: "Meal Name",
+                //     type: 'String',
+                //   ),
+                // ),
+                // ButtonWidget(
+                //   block: true,
+                //   callback: () async {
+                //     if (_formKey.currentState!.validate()) {
+                //       Map<String, dynamic>? mealMap = await context
+                //           .read<MealProvider>()
+                //           .getMealInfo(mealName);
+
+                //       if (mealMap != null && context.mounted) {
+                //         Meal meal = Meal.fromJson(mealMap);
+                //         Navigator.push(context,
+                //             MaterialPageRoute(builder: (context) {
+                //           return MealDetailsScreen(meal: meal);
+                //         }));
+                //       } else {
+                //         print(
+                //             "Meal information is null or context is not mounted");
+                //       }
+                //     }
+                //   },
+                //   label: "Add Food Manually",
+                //   style: 'filled',
+                // )
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2.0,
+                    ),
+                  ),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                  width: double.infinity,
+                  child: Material(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(15.0),
+                      splashColor: Theme.of(context).colorScheme.secondary,
+                      onTap: () {
+                        checkAndRequestPermissions();
+                      },
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Icon(
+                            Icons.camera_alt_rounded,
+                            color: Color.fromRGBO(100, 204, 197, 1),
+                            size: 100,
+                          ),
+                          Text("Buksan ang camera",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Color.fromRGBO(100, 204, 197, 1),
+                              )),
+                          SizedBox(
+                            height: 40,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                ButtonWidget(
-                  block: true,
-                  callback: () async {
-                    if (_formKey.currentState!.validate()) {
-                      Map<String, dynamic>? mealMap = await context
-                          .read<MealProvider>()
-                          .getMealInfo(mealName);
-
-                      if (mealMap != null && context.mounted) {
-                        Meal meal = Meal.fromJson(mealMap);
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2.0,
+                    ),
+                  ),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                  width: double.infinity,
+                  child: Material(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(15.0),
+                      splashColor: Theme.of(context).colorScheme.secondary,
+                      onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return MealDetailsScreen(meal: meal);
+                          return const AddFoodManually();
                         }));
-                      } else {
-                        print(
-                            "Meal information is null or context is not mounted");
-                      }
-                    }
-                  },
-                  label: "Add Food Manually",
-                  style: 'filled',
-                )
+                      },
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Icon(
+                            Icons.search_rounded,
+                            color: Color.fromRGBO(100, 204, 197, 1),
+                            size: 100,
+                          ), // icon
+                          Text("Add food manually",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Color.fromRGBO(100, 204, 197, 1),
+                              )), // text
+                          SizedBox(
+                            height: 40,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
