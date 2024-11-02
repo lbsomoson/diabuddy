@@ -56,9 +56,9 @@ class Meal {
     this.phytochemicalIndex,
   });
 
-  factory Meal.fromJson(Map<String, dynamic> json) {
+  factory Meal.fromJson(Map<String, dynamic> json, String id) {
     return Meal(
-      mealId: json['mealId'],
+      mealId: id,
       mealName: json['Meal Name'],
       foodCode: json['Food Code'],
       carbohydrate: json['Carbohydrate']?.toDouble(),
@@ -86,9 +86,14 @@ class Meal {
     );
   }
 
-  static List<Meal> fromJsonArray(String jsonData) {
-    final Iterable<dynamic> data = jsonDecode(jsonData);
-    return data.map<Meal>((dynamic d) => Meal.fromJson(d)).toList();
+  static List<Meal> fromJsonArray(List<Map<String, dynamic>> jsonData) {
+    return jsonData.map<Meal>((data) {
+      String id = data['mealId'];
+      return Meal.fromJson(data, id);
+    }).toList();
+    // final Iterable<dynamic> data = jsonDecode(jsonData);
+    // String id = data['mealId'];
+    // return data.map<Meal>((dynamic d) => Meal.fromJson(d, id)).toList();
   }
 
   Map<String, dynamic> toJson() {

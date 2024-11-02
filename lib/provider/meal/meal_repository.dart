@@ -18,8 +18,20 @@ class MealRepository {
       Map<String, dynamic> mealData =
           documentSnapshot.data() as Map<String, dynamic>;
 
-      return Meal.fromJson(mealData);
+      return Meal.fromJson(mealData, mealData['mealId']);
     }
     return null;
+  }
+
+  Stream<List<Meal>> getMeals() {
+    return FirebaseFirestore.instance
+        .collection('meals')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        // include the document ID when creating the MedicationIntake object
+        return Meal.fromJson(doc.data(), doc.id);
+      }).toList();
+    });
   }
 }

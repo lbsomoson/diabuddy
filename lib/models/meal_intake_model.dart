@@ -4,14 +4,14 @@ class MealIntake {
   String? mealIntakeId;
   String photoUrl;
   String proofPath;
-  Timestamp timestamp;
-  final List<String> foodIds;
-  final String type;
-  final double totalCarbohydrates;
-  final double totalCalories;
-  final double totalHealthIndexScore;
-  final double totalGlycemicIndex;
-  final double totalDietDiversityScore;
+  DateTime? timestamp;
+  List<String> foodIds;
+  String mealTime;
+  num totalCarbohydrates;
+  num totalCalories;
+  num totalHealthIndexScore;
+  num totalGlycemicIndex;
+  num totalDietDiversityScore;
 
   MealIntake({
     this.mealIntakeId,
@@ -19,7 +19,7 @@ class MealIntake {
     required this.photoUrl,
     required this.proofPath,
     required this.timestamp,
-    required this.type,
+    required this.mealTime,
     required this.totalCarbohydrates,
     required this.totalCalories,
     required this.totalHealthIndexScore,
@@ -33,8 +33,8 @@ class MealIntake {
         foodIds: json['foodIds'],
         photoUrl: json['photoUrl'],
         proofPath: json['proofPath'],
-        timestamp: json['timestamp'],
-        type: json['type'],
+        timestamp: (json['date'] as Timestamp).toDate(),
+        mealTime: json['mealTime'],
         totalCarbohydrates: json['totalCarbohydrates'],
         totalCalories: json['totalCalories'],
         totalHealthIndexScore: json['totalHealthIndexScore'],
@@ -56,7 +56,7 @@ class MealIntake {
       'photoUrl': mealIntake.photoUrl,
       'proofPath': mealIntake.proofPath,
       'timestamp': mealIntake.timestamp,
-      'type': mealIntake.type,
+      'mealTime': mealIntake.mealTime,
       'totalCarbohydrates': mealIntake.totalCarbohydrates,
       'totalCalories': mealIntake.totalCalories,
       'totalHealthIndexScore': mealIntake.totalHealthIndexScore,

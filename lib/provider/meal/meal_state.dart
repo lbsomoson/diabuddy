@@ -7,12 +7,6 @@ abstract class MealState extends Equatable {
   List<Object> get props => [];
 }
 
-// class SingleMealLoaded extends MealState {
-//   final Meal meal;
-
-//   const SingleMealLoaded(this.meal);
-// }
-
 class MealNotFound extends MealState {}
 
 class MealLoading extends MealState {}
@@ -24,6 +18,15 @@ class SingleMealLoaded extends MealState {
 
   @override
   List<Object> get props => [meal];
+}
+
+class MealLoaded extends MealState {
+  final List<Meal> meals;
+
+  const MealLoaded(this.meals);
+
+  @override
+  List<Object> get props => [meals];
 }
 
 class MealError extends MealState {

@@ -12,6 +12,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
 
   MealBloc(this.mealRepository) : super(MealLoading()) {
     on<GetMeal>(_onGetMeal);
+    on<LoadMeals>(_onLoadMeals);
+    on<MealsUpdated>(_onMealsUpdated);
   }
 
   Future<void> _onGetMeal(GetMeal event, Emitter<MealState> emit) async {
@@ -25,5 +27,15 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     } catch (e) {
       emit(const MealError("Failed to load meal"));
     }
+  }
+
+  Future<void> _onLoadMeals(LoadMeals event, Emitter<MealState> emit) async {
+    mealRepository.getMeals().listen((meals) {
+      add(MealsUpdated(meals));
+    });
+  }
+
+  void _onMealsUpdated(MealsUpdated event, Emitter<MealState> emit) {
+    emit(MealLoaded(event.meals));
   }
 }

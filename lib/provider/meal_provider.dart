@@ -9,11 +9,6 @@ class MealProvider with ChangeNotifier {
   Meal? _meal;
   Meal? get mealInfo => _meal;
 
-  // Future<Map<String, dynamic>?> getMealInfo(String mealName) async {
-  //   Map<String, dynamic>? meal = await firebaseService.getMealInfo(mealName);
-  //   notifyListeners();
-  //   return meal;
-  // }
   Future<Map<String, dynamic>?> getMealInfo(String mealName) async {
     // retrieve meal document
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -27,7 +22,6 @@ class MealProvider with ChangeNotifier {
       final DocumentSnapshot doc = snapshot.docs.first;
       final Map<String, dynamic> meal = doc.data() as Map<String, dynamic>;
       meal['mealId'] = doc.id;
-      print("----------------------- ${meal['mealId']}");
       return meal;
     }
 
