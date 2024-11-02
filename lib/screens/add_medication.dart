@@ -277,17 +277,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         List<String> stringList = timeValues
                             .map<String>((time) => formatTimeOfDay(time!))
                             .toList();
-
-                        // List<String> times = textFields
-                        //     .map((item) => item['value'] as String)
-                        //     .toList();
-                        // stringList.insertAll(0, medicationIntake.time);
-                        // medicationIntake.time = stringList;
                         medicationIntake.time =
                             medicationIntake.time + stringList;
-
-                        print("time: ${medicationIntake.time}");
-                        print("frequency: ${medicationIntake.frequency}");
 
                         // TODO: MOVE THIS TO /chooseReadOptionScreen
 

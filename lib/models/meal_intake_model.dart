@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MealIntake {
   String? mealIntakeId;
+  String photoUrl;
+  String proofPath;
+  Timestamp timestamp;
   final List<String> foodIds;
-  final DateTime timestamp;
   final String type;
   final double totalCarbohydrates;
   final double totalCalories;
@@ -12,6 +16,8 @@ class MealIntake {
   MealIntake({
     this.mealIntakeId,
     required this.foodIds,
+    required this.photoUrl,
+    required this.proofPath,
     required this.timestamp,
     required this.type,
     required this.totalCarbohydrates,
@@ -25,6 +31,8 @@ class MealIntake {
     return MealIntake(
         mealIntakeId: id,
         foodIds: json['foodIds'],
+        photoUrl: json['photoUrl'],
+        proofPath: json['proofPath'],
         timestamp: json['timestamp'],
         type: json['type'],
         totalCarbohydrates: json['totalCarbohydrates'],
@@ -45,6 +53,8 @@ class MealIntake {
     return {
       'mealIntakeId': mealIntake.mealIntakeId,
       'foodIds': mealIntake.foodIds,
+      'photoUrl': mealIntake.photoUrl,
+      'proofPath': mealIntake.proofPath,
       'timestamp': mealIntake.timestamp,
       'type': mealIntake.type,
       'totalCarbohydrates': mealIntake.totalCarbohydrates,

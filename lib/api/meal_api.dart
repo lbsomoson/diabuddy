@@ -11,7 +11,7 @@ class FirebaseMealAPI {
   }
 
   Future<void> uploadJsonDataToFirestore() async {
-    // Check if the data has already been loaded
+    // check if the data has already been loaded
     var snapshot =
         await firestore.collection('metadata').doc('dataLoaded').get();
     if (snapshot.exists) {
@@ -19,12 +19,13 @@ class FirebaseMealAPI {
       return;
     }
 
-    // If data hasn't been loaded, proceed with loading and uploading
+    // if data hasn't been loaded, proceed with loading and uploading
     Map<String, dynamic> jsonData = await loadJsonData();
     List<dynamic> meals = jsonData['meals'];
 
     for (var meal in meals) {
-      await firestore.collection('meals').add({
+      // add the meal data to the 'meals' collection
+      DocumentReference docRef = await firestore.collection('meals').add({
         'Meal Name': meal['Meal Name'],
         'Food Code': meal['Food Code'],
         'Carbohydrate': meal['Carbohydrate'],
@@ -50,9 +51,12 @@ class FirebaseMealAPI {
         'Diversity Score': meal['Diversity Score'],
         'Phytochemical Index': meal['Phytochemical Index'],
       });
+
+      // retrieve the document ID and update the document to include 'mealId'
+      await docRef.update({'mealId': docRef.id});
     }
 
-    // Mark that the data has been loaded
+    // mark that the data has been loaded
     await firestore
         .collection('metadata')
         .doc('dataLoaded')

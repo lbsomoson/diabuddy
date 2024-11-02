@@ -1,3 +1,4 @@
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -16,7 +17,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
   final _formKey = GlobalKey<FormState>();
 
   String mealName = "";
-  List<String> meals = [];
+  List<Meal> meals = [];
 
   @override
   Widget build(BuildContext context) {
@@ -41,22 +42,20 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                           });
                         },
                         hintText: "Meal Name",
-                        // label: "Meal Name",
                         type: "String",
                       ),
                       const SizedBox(height: 10),
                       BlocListener<MealBloc, MealState>(
                         listener: (context, state) {
                           if (state is SingleMealLoaded) {
-                            // Medication was found, you can access it here
                             final meal = state.meal;
 
                             setState(() {
-                              // Add the medication or perform any action with it
-                              meals.add(meal.mealName!);
+                              // add the meal or perform any action with it
+                              meals.add(meal);
                             });
                           } else if (state is MealNotFound) {
-                            // Show an error message if the medication was not found
+                            // show an error message if the medication was not found
                             final snackBar = SnackBar(
                               backgroundColor: Colors.red,
                               content: const Text('Meal not found!'),
@@ -68,7 +67,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(snackBar);
                           } else if (state is MealError) {
-                            // Handle any errors here
+                            // handle any errors here
                             final snackBar = SnackBar(
                               backgroundColor: Colors.red,
                               content: Text(state.message),
@@ -125,7 +124,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                                                 horizontal: 0.0),
                                         horizontalTitleGap: 0,
                                         title: Text(
-                                          meals[index],
+                                          meals[index].mealName!,
                                           style: const TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.w400,
@@ -168,7 +167,13 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                     left: 25,
                     right: 25,
                     child: ButtonWidget(
-                        style: 'filled', label: "Submit", callback: () {}),
+                        style: 'filled',
+                        label: "Submit",
+                        callback: () {
+                          for (Meal m in meals) {
+                            print('${m.mealId}: ${m.mealName}');
+                          }
+                        }),
                   ),
           ],
         )));

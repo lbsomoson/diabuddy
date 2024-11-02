@@ -6,6 +6,8 @@ import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/provider/meal/meal_repository.dart';
+import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
+import 'package:diabuddy/provider/meal_intake/meal_intake_repository.dart';
 import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
@@ -48,9 +50,9 @@ void main() async {
   );
 
   // TODO: COMMENT/UNCOMMENT THIS BLOCK OF CODE
-  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //     FlutterLocalNotificationsPlugin();
-  // await flutterLocalNotificationsPlugin.cancelAll();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin.cancelAll();
 
   FirebaseFirestore.instance.settings =
       const Settings(persistenceEnabled: true);
@@ -98,6 +100,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
             create: (context) => AppointmentBloc(AppointmentRepository())),
         BlocProvider(create: (context) => MealBloc(MealRepository())),
+        BlocProvider(
+            create: (context) => MealIntakeBloc(MealIntakeRepository())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
