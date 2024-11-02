@@ -19,9 +19,8 @@ class EditMedicationScreen extends StatefulWidget {
 }
 
 class _EditMedicationScreenState extends State<EditMedicationScreen> {
-  static int indexCounter = 1;
   final _formKey = GlobalKey<FormState>();
-  List<Map<String, dynamic>> textFields = [];
+  List<TimeOfDay?> timeValues = [];
   LocalNotifications localNotifications = LocalNotifications();
 
   @override
@@ -37,76 +36,104 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
     });
   }
 
+  // void _addNewTextField() {
+  //   setState(() {
+  //     textFields.add({
+  //       'widget': _buildTextField(indexCounter),
+  //       'index': indexCounter,
+  //       'value': ''
+  //     });
+  //     indexCounter++;
+  //   });
+  // }
+
+  // void _deleteTextField(int index) {
+  //   setState(() {
+  //     int textFieldIndex =
+  //         textFields.indexWhere((field) => field['index'] == index);
+  //     if (textFieldIndex != -1) {
+  //       textFields.removeAt(textFieldIndex);
+  //     }
+  //   });
+  // }
+
+  // Widget _buildTextField(int index) {
+  //   return Center(
+  //     child: Column(
+  //       children: [
+  //         const SizedBox(
+  //           height: 10,
+  //         ),
+  //         Row(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Expanded(
+  //               flex: 6,
+  //               child: TimePickerWidget(
+  //                 callback: (String val) {
+  //                   setState(() {
+  //                     int textFieldIndex = textFields
+  //                         .indexWhere((field) => field['index'] == index);
+  //                     if (textFieldIndex != -1) {
+  //                       textFields[textFieldIndex]['value'] = val;
+  //                     }
+  //                   });
+  //                 },
+  //                 hintText: "Time",
+  //                 label: "Time",
+  //               ),
+  //             ),
+  //             InkWell(
+  //               onTap: () => _deleteTextField(index),
+  //               child: Ink(
+  //                 decoration: const BoxDecoration(
+  //                   shape: BoxShape.circle,
+  //                   color: Colors.transparent,
+  //                 ),
+  //                 child: Icon(
+  //                   Icons.remove_circle_outline,
+  //                   size: 20,
+  //                   color: Theme.of(context).colorScheme.primary,
+  //                 ),
+  //               ),
+  //             ),
+  //             const SizedBox(
+  //               height: 10,
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   void _addNewTextField() {
     setState(() {
-      textFields.add({
-        'widget': _buildTextField(indexCounter),
-        'index': indexCounter,
-        'value': ''
-      });
-      indexCounter++;
+      timeValues.add(null);
     });
   }
 
-  void _deleteTextField(int index) {
-    setState(() {
-      int textFieldIndex =
-          textFields.indexWhere((field) => field['index'] == index);
-      if (textFieldIndex != -1) {
-        textFields.removeAt(textFieldIndex);
-      }
-    });
-  }
-
-  Widget _buildTextField(int index) {
-    return Center(
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 6,
-                child: TimePickerWidget(
-                  callback: (String val) {
-                    setState(() {
-                      int textFieldIndex = textFields
-                          .indexWhere((field) => field['index'] == index);
-                      if (textFieldIndex != -1) {
-                        textFields[textFieldIndex]['value'] = val;
-                      }
-                    });
-                  },
-                  hintText: "Time",
-                  label: "Time",
-                ),
-              ),
-              InkWell(
-                onTap: () => _deleteTextField(index),
-                child: Ink(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.transparent,
-                  ),
-                  child: Icon(
-                    Icons.remove_circle_outline,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
-        ],
-      ),
+  Future<void> _updateTimeValue(BuildContext context, int index) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: timeValues[index] ?? TimeOfDay.now(),
     );
+    if (picked != null) {
+      setState(() {
+        timeValues[index] = picked;
+      });
+    }
+  }
+
+  void _removeTimePicker(int index) {
+    setState(() {
+      timeValues.removeAt(index);
+    });
+  }
+
+  String formatTimeOfDay(TimeOfDay time) {
+    return time.format(context);
   }
 
   var items = [
@@ -162,23 +189,71 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                 Column(
                   children: List.generate(
                     widget.med.time.length,
-                    (index) => TimePickerWidget(
-                      initialValue: widget.med.time[index],
-                      callback: (String value) {
-                        setState(() {
-                          widget.med.time[index] = value;
-                        });
-                      },
-                      hintText: "Time",
-                      label: "Time",
+                    (index) => Column(
+                      children: [
+                        TimePickerWidget(
+                          initialValue: widget.med.time[index],
+                          callback: (String value) {
+                            setState(() {
+                              widget.med.time[index] = value;
+                            });
+                          },
+                          hintText: "Time",
+                          label: index == 0 ? "Time" : null,
+                        ),
+                        const SizedBox(height: 10.0),
+                      ],
                     ),
-                  ),
+                  ).toList(),
                 ),
-                Column(
-                  children: textFields
-                      .map((field) => field['widget'] as Widget)
-                      .toList(),
-                ),
+                timeValues.isEmpty
+                    ? const SizedBox()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: timeValues.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    color: Colors.grey[100],
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16),
+                                      timeValues[index]?.format(context) ??
+                                          TimeOfDay.now().format(context),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.delete,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          onPressed: () =>
+                                              _removeTimePicker(index),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () =>
+                                        _updateTimeValue(context, index),
+                                  ),
+                                );
+                              })
+                        ],
+                      ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -261,11 +336,17 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                     label: "Edit",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        List<String> times = textFields
-                            .map((item) => item['value'] as String)
+                        // List<String> times = textFields
+                        //     .map((item) => item['value'] as String)
+                        //     .toList();
+                        // times.insertAll(0, widget.med.time);
+                        // widget.med.time = times;
+
+                        List<String> stringList = timeValues
+                            .map<String>((time) => formatTimeOfDay(time!))
                             .toList();
-                        times.insertAll(0, widget.med.time);
-                        widget.med.time = times;
+
+                        widget.med.time = widget.med.time + stringList;
 
                         context.read<MedicationBloc>().add(UpdateMedication(
                             widget.med, widget.med.medicationId!));

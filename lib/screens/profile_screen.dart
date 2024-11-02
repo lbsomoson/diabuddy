@@ -394,6 +394,7 @@ Widget _displayMedicines(BuildContext context, String id) {
           );
         }
         return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: state.medications.length,
           itemBuilder: (context, index) {
@@ -451,6 +452,7 @@ Widget _displayAppointments(BuildContext context, String id) {
         );
       }
       return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: state.appointments.length,
         itemBuilder: (context, index) {

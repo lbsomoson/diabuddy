@@ -49,7 +49,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           validator: (value) {
             // asks for a value if the textfield is empty
             if (value == null || value.isEmpty) {
-              return "Please enter your ${widget.label?.toLowerCase()}";
+              return "Please enter your ${widget.hintText.toLowerCase()}";
             }
             // if the type is a number, it checks if the value is a number
             if (widget.type == "Number" && int.tryParse(value) == null) {

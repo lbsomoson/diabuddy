@@ -1,12 +1,9 @@
-import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/meal/meal_bloc.dart';
-import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class AddFoodManually extends StatefulWidget {
   const AddFoodManually({super.key});
@@ -44,6 +41,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                           });
                         },
                         hintText: "Meal Name",
+                        // label: "Meal Name",
                         type: "String",
                       ),
                       const SizedBox(height: 10),
@@ -113,6 +111,8 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Container(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 0, 5, 0),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[100],
                                         borderRadius:
@@ -120,6 +120,10 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                                       ),
                                       child: ListTile(
                                         dense: true,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 0.0),
+                                        horizontalTitleGap: 0,
                                         title: Text(
                                           meals[index],
                                           style: const TextStyle(
