@@ -1,12 +1,7 @@
 import 'dart:io';
-import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/screens/add_food_manually.dart';
-import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
-import 'package:diabuddy/widgets/button.dart';
-import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';

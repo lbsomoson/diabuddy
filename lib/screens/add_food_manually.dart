@@ -1,10 +1,11 @@
 import 'package:diabuddy/models/meal_model.dart';
+import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/provider/meal_provider.dart';
-import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class AddFoodManually extends StatefulWidget {
@@ -18,7 +19,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
   final _formKey = GlobalKey<FormState>();
 
   String mealName = "";
-  List<String> meals = ["Scrambled Egg", "Coffee 3-in-1", "Rice"];
+  List<String> meals = [];
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +32,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
           children: [
             SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    25, 20, 25, 80), // Bottom padding for button space
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -47,36 +47,56 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                         type: "String",
                       ),
                       const SizedBox(height: 10),
-                      ButtonWidget(
-                        style: 'filled',
-                        label: "Add Food",
-                        callback: () async {
-                          if (_formKey.currentState!.validate()) {
-                            Map<String, dynamic>? mealMap = await context
-                                .read<MealProvider>()
-                                .getMealInfo(mealName);
+                      BlocListener<MealBloc, MealState>(
+                        listener: (context, state) {
+                          if (state is SingleMealLoaded) {
+                            // Medication was found, you can access it here
+                            final meal = state.meal;
 
-                            if (mealMap != null && context.mounted) {
-                              setState(() {
-                                meals.add(mealName);
-                              });
-                            } else {
-                              final snackBar = SnackBar(
-                                backgroundColor: Colors.red,
-                                content: const Text('Meal not found!'),
-                                action: SnackBarAction(
-                                  label: 'Close',
-                                  onPressed: () {},
-                                ),
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                            }
+                            setState(() {
+                              // Add the medication or perform any action with it
+                              meals.add(meal.mealName!);
+                            });
+                          } else if (state is MealNotFound) {
+                            // Show an error message if the medication was not found
+                            final snackBar = SnackBar(
+                              backgroundColor: Colors.red,
+                              content: const Text('Meal not found!'),
+                              action: SnackBarAction(
+                                label: 'Close',
+                                onPressed: () {},
+                              ),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          } else if (state is MealError) {
+                            // Handle any errors here
+                            final snackBar = SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(state.message),
+                              action: SnackBarAction(
+                                label: 'Close',
+                                onPressed: () {},
+                              ),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
                           }
                         },
+                        child: ButtonWidget(
+                          style: 'filled',
+                          label: "Add Food",
+                          callback: () {
+                            if (_formKey.currentState!.validate()) {
+                              context.read<MealBloc>().add(GetMeal(mealName));
+                            }
+                          },
+                        ),
                       ),
                       const SizedBox(height: 10),
-                      Divider(color: Colors.grey[400]),
+                      meals.isEmpty
+                          ? const SizedBox()
+                          : Divider(color: Colors.grey[400]),
                       const SizedBox(height: 10),
                       meals.isEmpty
                           ? const SizedBox(height: 5)
@@ -137,13 +157,15 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 25,
-              left: 25,
-              right: 25,
-              child: ButtonWidget(
-                  style: 'filled', label: "Submit", callback: () {}),
-            ),
+            meals.isEmpty
+                ? const SizedBox()
+                : Positioned(
+                    bottom: 25,
+                    left: 25,
+                    right: 25,
+                    child: ButtonWidget(
+                        style: 'filled', label: "Submit", callback: () {}),
+                  ),
           ],
         )));
   }

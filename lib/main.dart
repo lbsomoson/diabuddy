@@ -4,6 +4,8 @@ import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/provider/appointments/appointments_repository.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
+import 'package:diabuddy/provider/meal/meal_bloc.dart';
+import 'package:diabuddy/provider/meal/meal_repository.dart';
 import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
@@ -95,6 +97,7 @@ class _MyAppState extends State<MyApp> {
             create: (context) => MedicationBloc(MedicationRepository())),
         BlocProvider(
             create: (context) => AppointmentBloc(AppointmentRepository())),
+        BlocProvider(create: (context) => MealBloc(MealRepository())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
