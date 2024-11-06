@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
+import 'package:pytorch_lite/pytorch_lite.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -19,13 +20,15 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen> {
   final _formKey = GlobalKey<FormState>();
+  late String mealName;
+  String? userId;
   File? selectedImage;
   String? path;
-  String? userId;
   bool imageSelected = false;
-  late List results = [];
-  List _recognitions = [];
-  late String mealName;
+  ModelObjectDetection? _objectModel;
+  List<ResultObjectDetection?> objDetect = [];
+  // late List results = [];
+  // List _recognitions = [];
 
   @override
   void initState() {
@@ -48,61 +51,45 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
-  detectObjects(File? image) async {
-    if (image == null) return;
-    try {
-      img.Image imageInput = img.decodeImage(image.readAsBytesSync())!;
-      img.Image resizedImage =
-          img.copyResize(imageInput, width: 320, height: 320);
-
-      final tempDir = await getTemporaryDirectory();
-      final tempFile = File('${tempDir.path}/temp_image.png');
-      tempFile.writeAsBytesSync(img.encodePng(resizedImage));
-
-      var recognitions = await Tflite.detectObjectOnImage(
-        path: tempFile.path,
-        model: "SSDMobileNet",
-        imageMean: 127.5,
-        imageStd: 127.5,
-        threshold: 0.4,
-        numResultsPerClass: 4,
-        asynch: true,
-        // blockSize: 32,
-        // numBoxesPerBlock: 5,
-        // asynch: true,
-      );
-
-      if (recognitions == null) {
-        print("No recognitions found.");
-        return;
-      }
-
-      print("Recognitions: $recognitions");
-
-      setState(() {
-        _recognitions = recognitions;
-      });
-
-      return recognitions;
-    } catch (e) {
-      print("Error during image prediction: $e");
-      return null;
-    }
-  }
-
-  Future<void> loadModel() async {
+  Future loadModel() async {
     try {
       print("Attempting to load model...");
-      String? res = await Tflite.loadModel(
-        model: 'assets/sp2_metadata_v4.tflite',
-      );
-      if (res != null) {
-        print("Model loaded successfully: $res");
+      _objectModel = await PytorchLite.loadObjectDetectionModel(
+          "assets/models/yolov5s.torchscript", 80, 640, 640,
+          labelPath: "assets/models/labels_coco.txt",
+          objectDetectionModelType: ObjectDetectionModelType.yolov5);
+
+      if (_objectModel != null) {
+        print("Model loaded successfully: $_objectModel");
       } else {
         print("Model loaded with null response.");
       }
     } catch (e) {
       print("Exception during model load: $e");
+    }
+  }
+
+  detectObjects() async {
+    print("detecting objects ------");
+    objDetect = await _objectModel!.getImagePrediction(
+        await File(selectedImage!.path).readAsBytes(),
+        minimumScore: 0.1,
+        iOUThreshold: 0.3);
+
+    for (var element in objDetect) {
+      print({
+        "score": element?.score,
+        "className": element?.className,
+        "class": element?.classIndex,
+        "rect": {
+          "left": element?.rect.left,
+          "top": element?.rect.top,
+          "width": element?.rect.width,
+          "height": element?.rect.height,
+          "right": element?.rect.right,
+          "bottom": element?.rect.bottom,
+        },
+      });
     }
   }
 
@@ -130,7 +117,8 @@ class _CameraScreenState extends State<CameraScreen> {
       path = '/$id/uploads/$fileName';
     });
 
-    detectObjects(selectedImage!);
+    print('selectedImage: $path');
+    detectObjects();
   }
 
   @override
