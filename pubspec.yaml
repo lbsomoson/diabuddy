@@ -50,6 +50,7 @@ dependencies:
   flutter_tts: ^4.0.2
   searchfield: ^1.1.7
   pytorch_lite: ^4.3.0
+  flutter_tesseract_ocr: ^0.4.27
 
 flutter_launcher_icons:
   android: "launcher_icon"

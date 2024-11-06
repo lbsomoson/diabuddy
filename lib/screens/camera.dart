@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/screens/add_food_manually.dart';
+import 'package:diabuddy/screens/detected_page.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
 import 'package:pytorch_lite/pytorch_lite.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -27,8 +27,9 @@ class _CameraScreenState extends State<CameraScreen> {
   bool imageSelected = false;
   ModelObjectDetection? _objectModel;
   List<ResultObjectDetection?> objDetect = [];
-  // late List results = [];
-  // List _recognitions = [];
+
+  // classnames of the detected objects
+  List<String> detectedObjectsList = [];
 
   @override
   void initState() {
@@ -71,11 +72,16 @@ class _CameraScreenState extends State<CameraScreen> {
 
   detectObjects() async {
     print("detecting objects ------");
+
+    if (context.mounted) return;
+
+    // get object predictions
     objDetect = await _objectModel!.getImagePrediction(
         await File(selectedImage!.path).readAsBytes(),
         minimumScore: 0.1,
         iOUThreshold: 0.3);
 
+    // print detected object details
     for (var element in objDetect) {
       print({
         "score": element?.score,
@@ -90,6 +96,24 @@ class _CameraScreenState extends State<CameraScreen> {
           "bottom": element?.rect.bottom,
         },
       });
+    }
+
+    // update the state with the modified image
+    setState(() {
+      detectedObjectsList =
+          objDetect.map((obj) => obj!.className.toString().trim()).toList();
+      detectedObjectsList = detectedObjectsList.toSet().toList();
+    });
+
+    // navigate to DetectedPage with the modified image
+    if (mounted) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return DetectedPage(
+          detectedObjectsList: detectedObjectsList,
+          imgBoundingBox:
+              _objectModel!.renderBoxesOnImage(selectedImage!, objDetect!),
+        );
+      }));
     }
   }
 
