@@ -1,7 +1,14 @@
+import 'dart:io';
+import 'dart:core';
+
+import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChooseReadOptionScreen extends StatefulWidget {
   const ChooseReadOptionScreen({super.key});
@@ -11,6 +18,25 @@ class ChooseReadOptionScreen extends StatefulWidget {
 }
 
 class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
+  String? _ocrText = '';
+  File? selectedImage;
+  String? path = '';
+  String? userId;
+  String? licenseNo;
+  String? ptrNo;
+  final ptrRegExp = RegExp(r"(PTR\.? No\.?|PTR No:|PTR No)\s*[:.]?\s*(\d+)");
+  final licenseRegExp = RegExp(
+      r"(Lic\.? No\.?| Lic\. No|License No\.?|License No)\s*[:.]?\s*(\d+)");
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      userId = context.read<UserAuthProvider>().user?.uid;
+    });
+    print(userId);
+  }
+
   void _showDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -56,6 +82,58 @@ class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
         });
   }
 
+  Future _pickImageFromGallery(String id) async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (returnedImage == null) return;
+
+    setState(() {
+      selectedImage = File(returnedImage.path);
+    });
+    // get the file path from the File object
+    String filePath = selectedImage!.path;
+    // find the index of the last occurrence of "/"
+    int lastIndex = filePath.lastIndexOf('/');
+
+    // extract the substring starting from the position after the last occurrence of "/"
+    String fileName = filePath.substring(lastIndex + 1);
+
+    setState(() {
+      path = '/$id/uploads/$fileName';
+    });
+
+    if (selectedImage != null) {
+      _ocr(selectedImage!.path);
+    }
+  }
+
+  void _ocr(image) async {
+    _ocrText =
+        await FlutterTesseractOcr.extractText(image, language: 'eng', args: {
+      "preserve_interword_spaces": "1",
+    });
+    setState(() {});
+    if (_ocrText != null) {
+      extractLicenseAndPTR(_ocrText!);
+    }
+  }
+
+  void extractLicenseAndPTR(String extractedText) {
+    // extract License Number
+
+    final licenseMatch = licenseRegExp.firstMatch(extractedText);
+    licenseNo = licenseMatch?.group(2);
+
+    // extract PTR Number
+    final ptrMatch = ptrRegExp.firstMatch(extractedText);
+    ptrNo = ptrMatch?.group(2);
+
+    // print results
+    print("License Number: $licenseNo");
+    print("PTR Number: $ptrNo");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +144,6 @@ class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
         body: SafeArea(
             child: Center(
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
@@ -85,7 +162,9 @@ class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15.0),
                     splashColor: Theme.of(context).colorScheme.secondary,
-                    onTap: () {},
+                    onTap: () {
+                      _pickImageFromGallery(userId!);
+                    },
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -96,12 +175,12 @@ class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
                           Icons.photo_size_select_actual_rounded,
                           color: Color.fromRGBO(100, 204, 197, 1),
                           size: 100,
-                        ), // icon
+                        ),
                         Text("I-upload mula sa gallery",
                             style: TextStyle(
                               fontSize: 18,
                               color: Color.fromRGBO(100, 204, 197, 1),
-                            )), // text
+                            )),
                         SizedBox(
                           height: 40,
                         ),
@@ -114,10 +193,8 @@ class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary, // Set the border color to primary color
-                    width: 2.0, // Set the border width
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 2.0,
                   ),
                 ),
                 margin:
@@ -127,8 +204,7 @@ class _ChooseReadOptionScreenState extends State<ChooseReadOptionScreen> {
                   borderRadius: BorderRadius.circular(15.0),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15.0),
-                    splashColor:
-                        Theme.of(context).colorScheme.secondary, // splash color
+                    splashColor: Theme.of(context).colorScheme.secondary,
                     onTap: () {
                       _showDialog(context);
                     }, // button pressed

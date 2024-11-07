@@ -74,9 +74,10 @@ flutter:
     - assets/images/slide_1.png
     - assets/images/meal.jpg
     - assets/meal.json
-    # - assets/sp2_metadata_v4.tflite
     - assets/models/yolov5s.torchscript
     - assets/models/labels_coco.txt
+    - assets/tessdata_config.json
+    - assets/tessdata/eng.traineddata
 
   fonts:
     - family: Roboto

@@ -315,11 +315,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                   "Time to take your ${medicationIntake.name}!",
                               payload: "Medication Reminder");
 
-                          // Navigator.pushNamed(
-                          //     context, '/chooseReadOptionScreen');
-
                           if (!context.mounted) return;
-                          Navigator.pop(context);
+                          Navigator.pushNamed(
+                              context, '/chooseReadOptionScreen');
+
+                          // Navigator.pop(context);
                         }
                       }
                     })
