@@ -1,15 +1,16 @@
+import 'dart:io';
+
 import 'package:diabuddy/models/medication_intake_model.dart';
-import 'package:diabuddy/provider/medications/medications_bloc.dart';
-import 'package:diabuddy/utils/text_to_speech.dart';
+import 'package:diabuddy/screens/reader.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
-import 'package:diabuddy/widgets/local_notifications.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
 import 'package:uuid/uuid.dart';
 
 class AddMedicationScreen extends StatefulWidget {
@@ -24,16 +25,22 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   var uuid = const Uuid();
   final _formKey = GlobalKey<FormState>();
   List<TimeOfDay?> timeValues = [];
-  LocalNotifications localNotifications = LocalNotifications();
   late int uniqueId;
   late MedicationIntake medicationIntake;
-
   String dropdownvalue = 'None';
+  String? _ocrText = '';
+  File? selectedImage;
+  String? path = '';
+  String? _licenseNo;
+  String? _ptrNo;
+  final ptrRegExp =
+      RegExp(r"(PTR\.? No\.?|PT|PTR[[:space:]].+|PTR)\s*[:.]?\s*(\d+)");
+  final licenseRegExp = RegExp(
+      r"(Lic\.? No\.?| Lic\. No|License No\.?|License No|LICENSE NO.?:?)\s*[:.]?\s*(\d+)");
 
   @override
   void initState() {
     super.initState();
-    listenToNotification();
     String v1 = uuid.v1();
     uniqueId = v1.hashCode;
     medicationIntake = MedicationIntake(
@@ -44,18 +51,14 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
         time: [],
         dose: "",
         frequency: 'None',
-        isVerifiedBy: false,
+        verifiedBy: {},
         isActive: true);
   }
 
-  // to listen to any notification clicked or not
-  listenToNotification() {
-    print("=======================================Listening to notification");
-    LocalNotifications.onClickNotification.stream.listen((event) {
-      print("Notification clicked");
-      print(event);
-    });
-  }
+  var items = [
+    'None',
+    'Everyday',
+  ];
 
   void _addNewTextField() {
     setState(() {
@@ -85,10 +88,80 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     return time.format(context);
   }
 
-  var items = [
-    'None',
-    'Everyday',
-  ];
+  Future _pickImageFromGallery(String id) async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (returnedImage == null) return;
+
+    setState(() {
+      selectedImage = File(returnedImage.path);
+    });
+    // get the file path from the File object
+    String filePath = selectedImage!.path;
+    // find the index of the last occurrence of "/"
+    int lastIndex = filePath.lastIndexOf('/');
+
+    // extract the substring starting from the position after the last occurrence of "/"
+    String fileName = filePath.substring(lastIndex + 1);
+
+    setState(() {
+      path = '/$id/uploads/$fileName';
+    });
+
+    if (selectedImage != null) {
+      _ocr(selectedImage!.path);
+    }
+  }
+
+  void _ocr(image) async {
+    _ocrText =
+        await FlutterTesseractOcr.extractText(image, language: 'eng', args: {
+      "preserve_interword_spaces": "1",
+    });
+    if (_ocrText != null) {
+      print(_ocrText);
+      extractLicenseAndPTR(_ocrText!);
+    }
+  }
+
+  void updateVerifiedBy(String newPtrNo, String newLicenseNo) {
+    medicationIntake.verifiedBy = {
+      'ptrNo': newPtrNo,
+      'licenseNo': newLicenseNo,
+    };
+  }
+
+  void extractLicenseAndPTR(String extractedText) async {
+    // Extract License and PTR Numbers
+    final licenseMatch = licenseRegExp.firstMatch(extractedText);
+    _licenseNo = licenseMatch?.group(2);
+
+    final ptrMatch = ptrRegExp.firstMatch(extractedText);
+    _ptrNo = ptrMatch?.group(2);
+
+    // print the extracted values for debugging
+    print("License Number: $_licenseNo");
+    print("PTR Number: $_ptrNo");
+
+    // ensure the extracted values are not null or empty before updating
+    if (_ptrNo != null && _ptrNo!.isNotEmpty ||
+        _licenseNo != null && _licenseNo!.isNotEmpty) {
+      // update the verifiedBy map
+      updateVerifiedBy(_ptrNo!, _licenseNo!);
+
+      // trigger UI update after updating the state
+      setState(() {});
+
+      if (!mounted) return;
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return VerifySubmit(
+          medicationIntake: medicationIntake,
+        );
+      }));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -280,47 +353,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         medicationIntake.time =
                             medicationIntake.time + stringList;
 
-                        // TODO: MOVE THIS TO /chooseReadOptionScreen
-
-                        context
-                            .read<MedicationBloc>()
-                            .add(AddMedication(medicationIntake));
-
-                        print(medicationIntake.time);
-
-                        TextToSpeechService().dispose();
-                        TextToSpeechService().speak(
-                            "Oras na para inumin ang ${medicationIntake.name}!");
-                        TextToSpeechService().dispose();
-
-                        // && res == "Successfully added!"
-                        if (context.mounted) {
-                          final snackBar = SnackBar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            content:
-                                const Text('Added medication successfully!'),
-                            action: SnackBarAction(
-                                label: 'Close', onPressed: () {}),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          await localNotifications.showScheduledNotification(
-                              context,
-                              id: widget.id,
-                              medicationId: uniqueId,
-                              title: "Medication Reminder",
-                              time: medicationIntake.time,
-                              frequency: medicationIntake.frequency,
-                              body:
-                                  "Time to take your ${medicationIntake.name}!",
-                              payload: "Medication Reminder");
-
-                          if (!context.mounted) return;
-                          Navigator.pushNamed(
-                              context, '/chooseReadOptionScreen');
-
-                          // Navigator.pop(context);
-                        }
+                        await _pickImageFromGallery(medicationIntake.userId);
                       }
                     })
               ],

@@ -6,7 +6,7 @@ class MedicationIntake {
   List<String> time;
   String dose;
   String frequency;
-  bool isVerifiedBy;
+  Map<String, dynamic>? verifiedBy;
   bool isActive;
 
   MedicationIntake({
@@ -17,7 +17,7 @@ class MedicationIntake {
     required this.time,
     required this.dose,
     required this.frequency,
-    required this.isVerifiedBy,
+    required this.verifiedBy,
     required this.isActive,
   });
 
@@ -29,7 +29,7 @@ class MedicationIntake {
       userId: json['userId'],
       dose: json['dose'],
       frequency: json['frequency'],
-      isVerifiedBy: json['isVerifiedBy'],
+      verifiedBy: json['verifiedBy'],
       isActive: json['isActive'],
       name: json['name'],
       time: List<String>.from(json['time']),
@@ -53,7 +53,7 @@ class MedicationIntake {
       'time': medicationIntake.time,
       'dose': medicationIntake.dose,
       'frequency': medicationIntake.frequency,
-      'isVerifiedBy': medicationIntake.isVerifiedBy,
+      'verifiedBy': medicationIntake.verifiedBy,
       'isActive': medicationIntake.isActive,
     };
   }
