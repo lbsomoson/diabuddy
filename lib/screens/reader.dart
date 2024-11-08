@@ -114,6 +114,7 @@ class _VerifySubmitState extends State<VerifySubmit> {
                         action:
                             SnackBarAction(label: 'Close', onPressed: () {}),
                       );
+
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       await localNotifications.showScheduledNotification(
                           context,
@@ -126,6 +127,11 @@ class _VerifySubmitState extends State<VerifySubmit> {
                               "Time to take your ${widget.medicationIntake.name}!",
                           payload: "Medication Reminder");
                     }
+
+                    if (!context.mounted) return;
+
+                    Navigator.pushNamedAndRemoveUntil(context, '/profileScreen',
+                        (Route<dynamic> route) => false);
                   },
                   label: 'Submit Medication',
                   style: 'filled')
