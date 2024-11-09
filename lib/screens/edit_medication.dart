@@ -144,26 +144,57 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Column(
-                  children: List.generate(
-                    widget.med.time.length,
-                    (index) => Column(
-                      children: [
-                        TimePickerWidget(
-                          initialValue: widget.med.time[index],
-                          callback: (String value) {
-                            setState(() {
-                              widget.med.time[index] = value;
-                            });
-                          },
-                          hintText: "Time",
-                          label: index == 0 ? "Time" : null,
-                        ),
-                        const SizedBox(height: 10.0),
-                      ],
-                    ),
-                  ).toList(),
-                ),
+                // Column(
+                //   children: List.generate(
+                //     widget.med.time.length,
+                //     (index) => Column(
+                //       children: [
+                //         TimePickerWidget(
+                //           initialValue: widget.med.time[index],
+                //           callback: (String value) {
+                //             setState(() {
+                //               widget.med.time[index] = value;
+                //             });
+                //           },
+                //           hintText: "Time",
+                //           label: index == 0 ? "Time" : null,
+                //         ),
+                //         const SizedBox(height: 10.0),
+                //       ],
+                //     ),
+                //   ).toList(),
+                // ),
+                widget.med.time.isEmpty
+                    ? const SizedBox()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          ListView.separated(
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return const SizedBox(height: 5.0);
+                              },
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: widget.med.time.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return TimePickerWidget(
+                                  initialValue: widget.med.time[index],
+                                  callback: (String value) {
+                                    setState(() {
+                                      widget.med.time[index] = value;
+                                    });
+                                  },
+                                  hintText: "Time",
+                                  label: index == 0 ? "Time" : null,
+                                );
+                              })
+                        ],
+                      ),
                 timeValues.isEmpty
                     ? const SizedBox()
                     : Column(

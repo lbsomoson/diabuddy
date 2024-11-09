@@ -133,7 +133,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   }
 
   void extractLicenseAndPTR(String extractedText) async {
-    // Extract License and PTR Numbers
+    // extract License and PTR Numbers
     final licenseMatch = licenseRegExp.firstMatch(extractedText);
     _licenseNo = licenseMatch?.group(2);
 
@@ -144,23 +144,19 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     print("License Number: $_licenseNo");
     print("PTR Number: $_ptrNo");
 
-    // ensure the extracted values are not null or empty before updating
-    if (_ptrNo != null && _ptrNo!.isNotEmpty ||
-        _licenseNo != null && _licenseNo!.isNotEmpty) {
-      // update the verifiedBy map
-      updateVerifiedBy(_ptrNo!, _licenseNo!);
+    // update the verifiedBy map
+    updateVerifiedBy(_ptrNo!, _licenseNo!);
 
-      // trigger UI update after updating the state
-      setState(() {});
+    // trigger UI update after updating the state
+    setState(() {});
 
-      if (!mounted) return;
+    if (!mounted) return;
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return VerifySubmit(
-          medicationIntake: medicationIntake,
-        );
-      }));
-    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return VerifySubmit(
+        medicationIntake: medicationIntake,
+      );
+    }));
   }
 
   @override
@@ -350,8 +346,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         List<String> stringList = timeValues
                             .map<String>((time) => formatTimeOfDay(time!))
                             .toList();
-                        medicationIntake.time =
-                            medicationIntake.time + stringList;
+                        setState(() {
+                          medicationIntake.time =
+                              medicationIntake.time + stringList;
+                        });
+
+                        print(medicationIntake.time);
+                        print(medicationIntake.time.length);
 
                         await _pickImageFromGallery(medicationIntake.userId);
                       }

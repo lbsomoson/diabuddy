@@ -43,6 +43,8 @@ class _VerifySubmitState extends State<VerifySubmit> {
       print("Notification clicked");
       print(event);
     });
+
+    print(widget.medicationIntake.time);
   }
 
   var items = [
@@ -93,32 +95,63 @@ class _VerifySubmitState extends State<VerifySubmit> {
                 const SizedBox(
                   height: 10,
                 ),
-                Column(
-                  children: List.generate(
-                    widget.medicationIntake.time.length,
-                    (index) => Column(
-                      children: [
-                        // Text(
-                        //   widget.medicationIntake.time[index],
-                        // ),
-                        TimePickerWidget(
-                          callback: (String value) {
-                            setState(() {
-                              widget.medicationIntake.time.clear();
-                              widget.medicationIntake.time.add(value);
-                            });
-                          },
-                          hintText: "Time",
-                          label: "Time",
-                        ),
-                        const SizedBox(height: 10.0),
-                      ],
-                    ),
-                  ).toList(),
-                ),
-                // const SizedBox(
-                //   height: 10,
+                // Column(
+                //   children: List.generate(
+                //     widget.medicationIntake.time.length,
+                //     (index) => Column(
+                //       children: [
+                //         TimePickerWidget(
+                //           initialValue: widget.medicationIntake.time[index],
+                //           callback: (String value) {
+                //             setState(() {
+                //               widget.medicationIntake.time.clear();
+                //               widget.medicationIntake.time.add(value);
+                //             });
+                //           },
+                //           hintText: "Time",
+                //           label: "Time",
+                //         ),
+                //         const SizedBox(height: 10.0),
+                //       ],
+                //     ),
+                //   ).toList(),
                 // ),
+                widget.medicationIntake.time.isEmpty
+                    ? const SizedBox()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          ListView.separated(
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return const SizedBox(height: 5.0);
+                              },
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: widget.medicationIntake.time.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return TimePickerWidget(
+                                  initialValue:
+                                      widget.medicationIntake.time[index],
+                                  callback: (String value) {
+                                    setState(() {
+                                      widget.medicationIntake.time[index] =
+                                          value;
+                                    });
+                                  },
+                                  hintText: "Time",
+                                  label: index == 0 ? "Time" : null,
+                                );
+                              }),
+                        ],
+                      ),
+                const SizedBox(
+                  height: 10,
+                ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: TextWidget(text: "Repeat", style: 'bodyMedium'),
@@ -172,8 +205,8 @@ class _VerifySubmitState extends State<VerifySubmit> {
                       widget.medicationIntake.verifiedBy?['licenseNo'] = val;
                     });
                   },
-                  hintText: 'License Numnber',
-                  label: 'License Numnber',
+                  hintText: 'License Number',
+                  label: 'License Number',
                   type: 'String',
                 ),
                 const SizedBox(
@@ -187,8 +220,8 @@ class _VerifySubmitState extends State<VerifySubmit> {
                       widget.medicationIntake.verifiedBy?['ptrNo'] = val;
                     });
                   },
-                  hintText: 'PTR Numnber',
-                  label: 'PTR Numnber',
+                  hintText: 'PTR Number',
+                  label: 'PTR Number',
                   type: 'String',
                 ),
                 const SizedBox(
