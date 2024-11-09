@@ -257,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   child: Icon(
                                     Icons.add_circle_outline,
-                                    size: 20,
+                                    size: 22,
                                     color:
                                         Theme.of(context).colorScheme.primary,
                                   ),
@@ -315,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             child: Icon(
                               Icons.add_circle_outline,
-                              size: 20,
+                              size: 22,
                               color: Theme.of(context).colorScheme.primary,
                             ),
                           ),

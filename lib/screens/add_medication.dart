@@ -278,7 +278,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         children: [
                           Icon(
                             Icons.add_circle_outline,
-                            size: 20,
+                            size: 22,
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(
