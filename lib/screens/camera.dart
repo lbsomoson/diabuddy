@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
-import 'package:image/image.dart' as img;
 import 'package:pytorch_lite/pytorch_lite.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -19,7 +18,6 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  final _formKey = GlobalKey<FormState>();
   late String mealName;
   String? userId;
   File? selectedImage;
@@ -111,7 +109,7 @@ class _CameraScreenState extends State<CameraScreen> {
         return DetectedPage(
           detectedObjectsList: detectedObjectsList,
           imgBoundingBox:
-              _objectModel!.renderBoxesOnImage(selectedImage!, objDetect!),
+              _objectModel!.renderBoxesOnImage(selectedImage!, objDetect),
         );
       }));
     }
@@ -158,66 +156,6 @@ class _CameraScreenState extends State<CameraScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // selectedImage != null
-                //     ? Container(
-                //         padding: const EdgeInsets.symmetric(vertical: 50),
-                //         width: double.infinity,
-                //         decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: Colors.grey[100],
-                //             border:
-                //                 Border.all(width: 2, color: Colors.grey[200]!)),
-                //         child: Column(
-                //           children: [
-                //             Image.file(
-                //               selectedImage!,
-                //               fit: BoxFit.fitHeight,
-                //             ),
-                //           ],
-                //         ))
-                //     : Container(),
-                // ButtonWidget(
-                //   block: true,
-                //   callback: () {
-                //     checkAndRequestPermissions();
-                //   },
-                //   label: "Open Camera",
-                //   style: 'filled',
-                // ),
-                // Form(
-                //   key: _formKey,
-                //   child: TextFieldWidget(
-                //     callback: (String val) {
-                //       mealName = val;
-                //     },
-                //     hintText: "Meal Name",
-                //     label: "Meal Name",
-                //     type: 'String',
-                //   ),
-                // ),
-                // ButtonWidget(
-                //   block: true,
-                //   callback: () async {
-                //     if (_formKey.currentState!.validate()) {
-                //       Map<String, dynamic>? mealMap = await context
-                //           .read<MealProvider>()
-                //           .getMealInfo(mealName);
-
-                //       if (mealMap != null && context.mounted) {
-                //         Meal meal = Meal.fromJson(mealMap);
-                //         Navigator.push(context,
-                //             MaterialPageRoute(builder: (context) {
-                //           return MealDetailsScreen(meal: meal);
-                //         }));
-                //       } else {
-                //         print(
-                //             "Meal information is null or context is not mounted");
-                //       }
-                //     }
-                //   },
-                //   label: "Add Food Manually",
-                //   style: 'filled',
-                // )
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),
@@ -248,7 +186,7 @@ class _CameraScreenState extends State<CameraScreen> {
                             color: Color.fromRGBO(100, 204, 197, 1),
                             size: 100,
                           ),
-                          Text("Buksan ang camera",
+                          Text("Open Camera",
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Color.fromRGBO(100, 204, 197, 1),

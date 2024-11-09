@@ -1,5 +1,4 @@
 import 'package:diabuddy/models/meal_model.dart';
-import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/provider/appointments/appointments_repository.dart';
@@ -210,10 +209,11 @@ class _MyAppState extends State<MyApp> {
                 builder: (context) => const NotificationSettingsScreen());
           }
           if (settings.name == "/verifySumbitScreen") {
-            final args = settings.arguments as MedicationIntake;
+            final args = settings.arguments as Map<String, dynamic>;
             return MaterialPageRoute(
                 builder: (context) => VerifySubmit(
-                      medicationIntake: args,
+                      medicationIntake: args['medicationIntake'],
+                      showWarningSnackBar: args['showWarningSnackBar'],
                     ));
           }
           if (settings.name == "/history") {

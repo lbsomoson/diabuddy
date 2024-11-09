@@ -130,10 +130,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       'ptrNo': newPtrNo,
       'licenseNo': newLicenseNo,
     };
-    // print the extracted values for debugging
-    print("====");
-    print("License Number: ${medicationIntake.verifiedBy?['ptrNo']}");
-    print("PTR Number: ${medicationIntake.verifiedBy?['licenseNo']}");
   }
 
   void extractLicenseAndPTR(String extractedText) async {
@@ -144,10 +140,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     final ptrMatch = ptrRegExp.firstMatch(extractedText);
     _ptrNo = ptrMatch?.group(2);
 
-    // print the extracted values for debugging
-    print("License Number: $_licenseNo");
-    print("PTR Number: $_ptrNo");
-
     // update the verifiedBy map
     updateVerifiedBy(_ptrNo, _licenseNo);
 
@@ -156,10 +148,15 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
 
     if (!mounted) return;
 
+    bool showWarningSnackBar = medicationIntake.verifiedBy!['ptrNo'] == null ||
+            medicationIntake.verifiedBy!['licenseNo'] == null
+        ? true
+        : false;
+
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return VerifySubmit(
-        medicationIntake: medicationIntake,
-      );
+          medicationIntake: medicationIntake,
+          showWarningSnackBar: showWarningSnackBar);
     }));
   }
 

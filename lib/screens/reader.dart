@@ -16,7 +16,9 @@ import 'package:diabuddy/utils/text_to_speech.dart';
 
 class VerifySubmit extends StatefulWidget {
   final MedicationIntake medicationIntake;
-  const VerifySubmit({super.key, required this.medicationIntake});
+  final bool? showWarningSnackBar;
+  const VerifySubmit(
+      {required this.medicationIntake, this.showWarningSnackBar, super.key});
 
   @override
   State<VerifySubmit> createState() => _VerifySubmitState();
@@ -34,17 +36,24 @@ class _VerifySubmitState extends State<VerifySubmit> {
     Future.delayed(Duration.zero, () {
       userId = context.read<UserAuthProvider>().user?.uid;
     });
+
+    // Check the flag for showing SnackBar right after the build phase.
+    if (widget.showWarningSnackBar ?? false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('License or PTR number not detected!'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
+    }
   }
 
   // to listen to any notification clicked or not
   listenToNotification() {
-    print("=======================================Listening to notification");
-    LocalNotifications.onClickNotification.stream.listen((event) {
-      print("Notification clicked");
-      print(event);
-    });
-
-    print(widget.medicationIntake.time);
+    LocalNotifications.onClickNotification.stream.listen((event) {});
   }
 
   var items = [
