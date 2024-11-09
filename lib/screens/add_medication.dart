@@ -125,11 +125,15 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     }
   }
 
-  void updateVerifiedBy(String newPtrNo, String newLicenseNo) {
+  void updateVerifiedBy(String? newPtrNo, String? newLicenseNo) {
     medicationIntake.verifiedBy = {
       'ptrNo': newPtrNo,
       'licenseNo': newLicenseNo,
     };
+    // print the extracted values for debugging
+    print("====");
+    print("License Number: ${medicationIntake.verifiedBy?['ptrNo']}");
+    print("PTR Number: ${medicationIntake.verifiedBy?['licenseNo']}");
   }
 
   void extractLicenseAndPTR(String extractedText) async {
@@ -145,7 +149,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     print("PTR Number: $_ptrNo");
 
     // update the verifiedBy map
-    updateVerifiedBy(_ptrNo!, _licenseNo!);
+    updateVerifiedBy(_ptrNo, _licenseNo);
 
     // trigger UI update after updating the state
     setState(() {});
@@ -350,9 +354,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           medicationIntake.time =
                               medicationIntake.time + stringList;
                         });
-
-                        print(medicationIntake.time);
-                        print(medicationIntake.time.length);
 
                         await _pickImageFromGallery(medicationIntake.userId);
                       }

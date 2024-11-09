@@ -144,26 +144,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                // Column(
-                //   children: List.generate(
-                //     widget.med.time.length,
-                //     (index) => Column(
-                //       children: [
-                //         TimePickerWidget(
-                //           initialValue: widget.med.time[index],
-                //           callback: (String value) {
-                //             setState(() {
-                //               widget.med.time[index] = value;
-                //             });
-                //           },
-                //           hintText: "Time",
-                //           label: index == 0 ? "Time" : null,
-                //         ),
-                //         const SizedBox(height: 10.0),
-                //       ],
-                //     ),
-                //   ).toList(),
-                // ),
                 widget.med.time.isEmpty
                     ? const SizedBox()
                     : Column(
@@ -325,12 +305,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                     label: "Edit",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        // List<String> times = textFields
-                        //     .map((item) => item['value'] as String)
-                        //     .toList();
-                        // times.insertAll(0, widget.med.time);
-                        // widget.med.time = times;
-
                         List<String> stringList = timeValues
                             .map<String>((time) => formatTimeOfDay(time!))
                             .toList();
@@ -361,8 +335,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                               title: "Medication Reminder",
                               body: "Time to take your ${widget.med.name}!",
                               payload: "Medication Reminder");
-                          // Navigator.pushNamed(
-                          //     context, '/chooseReadOptionScreen');
                         }
                       }
                     }),

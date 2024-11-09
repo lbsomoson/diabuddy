@@ -95,27 +95,6 @@ class _VerifySubmitState extends State<VerifySubmit> {
                 const SizedBox(
                   height: 10,
                 ),
-                // Column(
-                //   children: List.generate(
-                //     widget.medicationIntake.time.length,
-                //     (index) => Column(
-                //       children: [
-                //         TimePickerWidget(
-                //           initialValue: widget.medicationIntake.time[index],
-                //           callback: (String value) {
-                //             setState(() {
-                //               widget.medicationIntake.time.clear();
-                //               widget.medicationIntake.time.add(value);
-                //             });
-                //           },
-                //           hintText: "Time",
-                //           label: "Time",
-                //         ),
-                //         const SizedBox(height: 10.0),
-                //       ],
-                //     ),
-                //   ).toList(),
-                // ),
                 widget.medicationIntake.time.isEmpty
                     ? const SizedBox()
                     : Column(
