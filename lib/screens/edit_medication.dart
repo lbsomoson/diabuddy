@@ -114,6 +114,36 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                 const SizedBox(
                   height: 10,
                 ),
+                TextFieldWidget(
+                  initialValue: widget.med.verifiedBy!['ptrNo'],
+                  isDisabled: true,
+                  callback: (String val) {
+                    setState(() {
+                      widget.med.verifiedBy!['ptrNo'] = val;
+                    });
+                  },
+                  hintText: "PTR Number",
+                  label: "PTR Number",
+                  type: "String",
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFieldWidget(
+                  initialValue: widget.med.verifiedBy!['licenseNo'],
+                  isDisabled: true,
+                  callback: (String val) {
+                    setState(() {
+                      widget.med.verifiedBy!['licenseNo'] = val;
+                    });
+                  },
+                  hintText: "License Number",
+                  label: "License Number",
+                  type: "String",
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 Column(
                   children: List.generate(
                     widget.med.time.length,
