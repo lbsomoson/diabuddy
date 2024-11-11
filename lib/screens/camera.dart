@@ -1,13 +1,15 @@
 import 'dart:io';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/screens/add_food_manually.dart';
-import 'package:diabuddy/screens/detected_page.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
+import 'package:diabuddy/widgets/button.dart';
+import 'package:diabuddy/widgets/text.dart';
+import 'package:diabuddy/widgets/text2.dart';
+import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:tflite/tflite.dart';
 import 'package:pytorch_lite/pytorch_lite.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -18,6 +20,7 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
+  final _formKey = GlobalKey<FormState>();
   late String mealName;
   String? userId;
   File? selectedImage;
@@ -25,9 +28,8 @@ class _CameraScreenState extends State<CameraScreen> {
   bool imageSelected = false;
   ModelObjectDetection? _objectModel;
   List<ResultObjectDetection?> objDetect = [];
-
-  // classnames of the detected objects
-  List<String> detectedObjectsList = [];
+  List<String?> addedFood = [];
+  String newFood = '';
 
   @override
   void initState() {
@@ -44,7 +46,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> checkAndRequestPermissions() async {
     if (await Permission.camera.request().isGranted) {
-      await _pickImageFromGallery(userId!);
+      await _pickImageFromCamera(userId!);
     } else {
       print('Camera permission denied');
     }
@@ -69,18 +71,13 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   detectObjects() async {
-    print("detecting objects ------");
-
-    if (context.mounted) return;
-
-    // get object predictions
     objDetect = await _objectModel!.getImagePrediction(
         await File(selectedImage!.path).readAsBytes(),
         minimumScore: 0.1,
         iOUThreshold: 0.3);
 
-    // print detected object details
     for (var element in objDetect) {
+      addedFood.add(element?.className);
       print({
         "score": element?.score,
         "className": element?.className,
@@ -96,51 +93,67 @@ class _CameraScreenState extends State<CameraScreen> {
       });
     }
 
-    // update the state with the modified image
-    setState(() {
-      detectedObjectsList =
-          objDetect.map((obj) => obj!.className.toString().trim()).toList();
-      detectedObjectsList = detectedObjectsList.toSet().toList();
-    });
-
-    // navigate to DetectedPage with the modified image
-    if (mounted) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return DetectedPage(
-          detectedObjectsList: detectedObjectsList,
-          imgBoundingBox:
-              _objectModel!.renderBoxesOnImage(selectedImage!, objDetect),
-        );
-      }));
-    }
+    // trigger setState to update ui
+    setState(() {});
   }
 
-  @override
-  void dispose() {
-    Tflite.close();
-    super.dispose();
-  }
+  // Future _pickImageFromGallery(String id) async {
+  //   final returnedImage =
+  //       await ImagePicker().pickImage(source: ImageSource.gallery);
 
-  Future _pickImageFromGallery(String id) async {
+  //   if (returnedImage == null) return;
+
+  //   setState(() {
+  //     selectedImage = File(returnedImage.path);
+  //   });
+
+  //   String filePath = selectedImage!.path;
+  //   int lastIndex = filePath.lastIndexOf('/');
+  //   String fileName = filePath.substring(lastIndex + 1);
+
+  //   setState(() {
+  //     path = '/$id/uploads/$fileName';
+  //   });
+
+  //   print('selectedImage: $path');
+  //   detectObjects();
+  // }
+
+  Future _pickImageFromCamera(String id) async {
     final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (returnedImage == null) return;
-
     setState(() {
       selectedImage = File(returnedImage.path);
     });
-
+    // get the file path from the File object
     String filePath = selectedImage!.path;
+    // find the index of the last occurrence of "/"
     int lastIndex = filePath.lastIndexOf('/');
+
+    // extract the substring starting from the position after the last occurrence of "/"
     String fileName = filePath.substring(lastIndex + 1);
 
     setState(() {
       path = '/$id/uploads/$fileName';
     });
-
-    print('selectedImage: $path');
+    print(path);
     detectObjects();
+  }
+
+  void _addNewTextField() {
+    setState(() {
+      addedFood.add(newFood);
+      newFood = '';
+    });
+    print(addedFood);
+  }
+
+  void _removeTextField(int index) {
+    setState(() {
+      addedFood.removeAt(index);
+    });
+    print(addedFood);
   }
 
   @override
@@ -150,103 +163,242 @@ class _CameraScreenState extends State<CameraScreen> {
         title: const AppBarTitle(title: "Add Meal"),
       ),
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2.0,
-                    ),
-                  ),
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                  width: double.infinity,
-                  child: Material(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(15.0),
-                      splashColor: Theme.of(context).colorScheme.secondary,
-                      onTap: () {
-                        checkAndRequestPermissions();
-                      },
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 30,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _objectModel != null
+                  ? Column(
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 0.8,
+                          child: _objectModel!
+                              .renderBoxesOnImage(selectedImage!, objDetect),
+                        ),
+                        Form(
+                          key: _formKey,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
+                            child: Column(
+                              children: [
+                                addedFood.isEmpty
+                                    ? const SizedBox()
+                                    : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          const TextWidget(
+                                              text: "Detected Food",
+                                              style: 'bodyMedium'),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          ListView.builder(
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: addedFood.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                  ),
+                                                  child: ListTile(
+                                                    dense: true,
+                                                    title: TextFieldWidget(
+                                                      callback: (String val) {
+                                                        setState(() {
+                                                          newFood = val;
+                                                        });
+                                                      },
+                                                      initialValue:
+                                                          addedFood[index] ??
+                                                              '',
+                                                      hintText: '',
+                                                      type: 'String',
+                                                    ),
+                                                    trailing: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        IconButton(
+                                                          icon: Icon(
+                                                              Icons.delete,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColor),
+                                                          onPressed: () =>
+                                                              _removeTextField(
+                                                                  index),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              })
+                                        ],
+                                      ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: InkWell(
+                                    onTap: () => _addNewTextField(),
+                                    child: Ink(
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.transparent,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.add_circle_outline,
+                                            size: 22,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          const Text2Widget(
+                                              text: "Add food", style: "body2"),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                ButtonWidget(
+                                    callback: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        print(addedFood);
+                                      }
+                                    },
+                                    label: "Submit",
+                                    style: 'filled')
+                              ],
+                            ),
                           ),
-                          Icon(
-                            Icons.camera_alt_rounded,
-                            color: Color.fromRGBO(100, 204, 197, 1),
-                            size: 100,
+                        ),
+                      ],
+                    )
+                  : Center(
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.0),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2.0,
+                              ),
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 40),
+                            width: double.infinity,
+                            child: Material(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(15.0),
+                                splashColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                onTap: () {
+                                  checkAndRequestPermissions();
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    Icon(
+                                      Icons.camera_alt_rounded,
+                                      color: Color.fromRGBO(100, 204, 197, 1),
+                                      size: 100,
+                                    ),
+                                    Text("Open Camera",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color:
+                                              Color.fromRGBO(100, 204, 197, 1),
+                                        )),
+                                    SizedBox(
+                                      height: 40,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          Text("Open Camera",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Color.fromRGBO(100, 204, 197, 1),
-                              )),
-                          SizedBox(
-                            height: 40,
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.0),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2.0,
+                              ),
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 40),
+                            width: double.infinity,
+                            child: Material(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(15.0),
+                                splashColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return const AddFoodManually();
+                                  }));
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    Icon(
+                                      Icons.search_rounded,
+                                      color: Color.fromRGBO(100, 204, 197, 1),
+                                      size: 100,
+                                    ),
+                                    Text("Add food manually",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color:
+                                              Color.fromRGBO(100, 204, 197, 1),
+                                        )),
+                                    SizedBox(
+                                      height: 40,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2.0,
-                    ),
-                  ),
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                  width: double.infinity,
-                  child: Material(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(15.0),
-                      splashColor: Theme.of(context).colorScheme.secondary,
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const AddFoodManually();
-                        }));
-                      },
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Icon(
-                            Icons.search_rounded,
-                            color: Color.fromRGBO(100, 204, 197, 1),
-                            size: 100,
-                          ), // icon
-                          Text("Add food manually",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Color.fromRGBO(100, 204, 197, 1),
-                              )), // text
-                          SizedBox(
-                            height: 40,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ),

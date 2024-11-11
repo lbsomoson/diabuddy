@@ -254,7 +254,10 @@ class _VerifySubmitState extends State<VerifySubmit> {
                           '/profileScreen', (Route<dynamic> route) => false);
                     },
                     label: 'Submit Medication',
-                    style: 'filled')
+                    style: 'filled'),
+                const SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),
