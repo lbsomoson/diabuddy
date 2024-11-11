@@ -4,7 +4,6 @@ import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/text2.dart';
-import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,6 +29,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
   List<String?> foodList = [];
   List<TextEditingController> controllers = [];
+  // Set<String?> foodList = LinkedHashSet();
+  // Map<String?, TextEditingController> controllers = {};
 
   @override
   void initState() {
@@ -78,8 +79,17 @@ class _CameraScreenState extends State<CameraScreen> {
         iOUThreshold: 0.3);
 
     for (var element in objDetect) {
-      foodList.add(element?.className);
-      controllers.add(TextEditingController(text: element?.className));
+      // final className = element?.className;
+      // if (foodList.add(className)) {
+      //   // only add unique items
+      //   controllers[className] = TextEditingController(text: className);
+      // }
+      final item = element?.className;
+      // only add unique items
+      if (!foodList.contains(item)) {
+        foodList.add(element?.className);
+        controllers.add(TextEditingController(text: element?.className));
+      }
       print({
         "score": element?.score,
         "className": element?.className,
