@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/screens/add_food_manually.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
@@ -28,8 +27,9 @@ class _CameraScreenState extends State<CameraScreen> {
   bool imageSelected = false;
   ModelObjectDetection? _objectModel;
   List<ResultObjectDetection?> objDetect = [];
-  List<String?> addedFood = [];
-  // String newFood = '';
+
+  List<String?> foodList = [];
+  List<TextEditingController> controllers = [];
 
   @override
   void initState() {
@@ -78,7 +78,8 @@ class _CameraScreenState extends State<CameraScreen> {
         iOUThreshold: 0.3);
 
     for (var element in objDetect) {
-      addedFood.add(element?.className);
+      foodList.add(element?.className);
+      controllers.add(TextEditingController(text: element?.className));
       print({
         "score": element?.score,
         "className": element?.className,
@@ -108,7 +109,7 @@ class _CameraScreenState extends State<CameraScreen> {
         );
       });
     }
-    print(addedFood);
+    print(foodList);
   }
 
   // Future _pickImageFromGallery(String id) async {
@@ -157,16 +158,27 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void _addNewTextField() {
     setState(() {
-      addedFood.add('');
+      foodList.add('');
+      controllers.add(TextEditingController(text: ''));
     });
-    print(addedFood);
+    print(foodList);
   }
 
   void _removeTextField(int index) {
-    setState(() {
-      addedFood.removeAt(index);
-    });
-    print(addedFood);
+    print('removeItem: ${foodList[index]}');
+    // setState(() {
+    //   foodList.removeAt(index);
+    //   controllers.removeAt(index);
+    // });
+    if (index < foodList.length && index < controllers.length) {
+      setState(() {
+        // remove the food item and its corresponding controller
+        foodList.removeAt(index);
+        controllers.removeAt(index);
+      });
+    }
+    print(index);
+    print(foodList);
   }
 
   @override
@@ -195,13 +207,13 @@ class _CameraScreenState extends State<CameraScreen> {
                             padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
                             child: Column(
                               children: [
-                                addedFood.isEmpty
+                                foodList.isEmpty
                                     ? Container()
                                     : Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        // mainAxisAlignment:
+                                        //     MainAxisAlignment.spaceBetween,
                                         children: [
                                           const SizedBox(
                                             height: 5,
@@ -216,7 +228,7 @@ class _CameraScreenState extends State<CameraScreen> {
                                               physics:
                                                   const NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
-                                              itemCount: addedFood.length,
+                                              itemCount: foodList.length,
                                               itemBuilder:
                                                   (BuildContext context,
                                                       int index) {
@@ -228,18 +240,73 @@ class _CameraScreenState extends State<CameraScreen> {
                                                   ),
                                                   child: ListTile(
                                                     dense: true,
-                                                    title: TextFieldWidget(
-                                                      callback: (String val) {
+                                                    // title: TextFieldWidget(
+                                                    //   callback: (String val) {
+                                                    //     setState(() {
+                                                    //       foodList[index] = val;
+                                                    //     });
+                                                    //   },
+                                                    //   initialValue:
+                                                    //       foodList[index],
+                                                    //   hintText:
+                                                    //       foodList[index]!,
+                                                    //   type: 'String',
+                                                    // ),
+                                                    // leading: Text(
+                                                    //   foodList[index]!,
+                                                    // ),
+                                                    title: TextField(
+                                                      controller:
+                                                          controllers[index],
+                                                      onChanged: (val) {
                                                         setState(() {
-                                                          addedFood[index] =
-                                                              val;
+                                                          foodList[index] = val;
                                                         });
                                                       },
-                                                      initialValue:
-                                                          addedFood[index] ??
-                                                              '',
-                                                      hintText: '',
-                                                      type: 'String',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .labelSmall,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderSide: BorderSide(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                              width: 2.0),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10.0),
+                                                        ),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      200]!),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10.0),
+                                                        ),
+                                                        labelStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .bodyMedium,
+                                                        hintStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .labelMedium,
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 10,
+                                                                horizontal: 16),
+                                                      ),
                                                     ),
                                                     trailing: Row(
                                                       mainAxisSize:
@@ -302,7 +369,7 @@ class _CameraScreenState extends State<CameraScreen> {
                                 ButtonWidget(
                                     callback: () {
                                       if (_formKey.currentState!.validate()) {
-                                        print(addedFood);
+                                        print(foodList);
                                       }
                                     },
                                     label: "Submit",
