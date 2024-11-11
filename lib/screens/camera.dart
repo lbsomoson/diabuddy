@@ -29,7 +29,7 @@ class _CameraScreenState extends State<CameraScreen> {
   ModelObjectDetection? _objectModel;
   List<ResultObjectDetection?> objDetect = [];
   List<String?> addedFood = [];
-  String newFood = '';
+  // String newFood = '';
 
   @override
   void initState() {
@@ -42,6 +42,7 @@ class _CameraScreenState extends State<CameraScreen> {
         loadModel();
       }
     });
+    checkAndRequestPermissions();
   }
 
   Future<void> checkAndRequestPermissions() async {
@@ -95,6 +96,19 @@ class _CameraScreenState extends State<CameraScreen> {
 
     // trigger setState to update ui
     setState(() {});
+
+    if (objDetect.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('No food detected!'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
+    }
+    print(addedFood);
   }
 
   // Future _pickImageFromGallery(String id) async {
@@ -143,8 +157,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void _addNewTextField() {
     setState(() {
-      addedFood.add(newFood);
-      newFood = '';
+      addedFood.add('');
     });
     print(addedFood);
   }
@@ -183,7 +196,7 @@ class _CameraScreenState extends State<CameraScreen> {
                             child: Column(
                               children: [
                                 addedFood.isEmpty
-                                    ? const SizedBox()
+                                    ? Container()
                                     : Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -194,7 +207,7 @@ class _CameraScreenState extends State<CameraScreen> {
                                             height: 5,
                                           ),
                                           const TextWidget(
-                                              text: "Detected Food",
+                                              text: "Food",
                                               style: 'bodyMedium'),
                                           const SizedBox(
                                             height: 10,
@@ -218,7 +231,8 @@ class _CameraScreenState extends State<CameraScreen> {
                                                     title: TextFieldWidget(
                                                       callback: (String val) {
                                                         setState(() {
-                                                          newFood = val;
+                                                          addedFood[index] =
+                                                              val;
                                                         });
                                                       },
                                                       initialValue:
@@ -299,105 +313,7 @@ class _CameraScreenState extends State<CameraScreen> {
                         ),
                       ],
                     )
-                  : Center(
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 2.0,
-                              ),
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 40),
-                            width: double.infinity,
-                            child: Material(
-                              borderRadius: BorderRadius.circular(15.0),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(15.0),
-                                splashColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                onTap: () {
-                                  checkAndRequestPermissions();
-                                },
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Icon(
-                                      Icons.camera_alt_rounded,
-                                      color: Color.fromRGBO(100, 204, 197, 1),
-                                      size: 100,
-                                    ),
-                                    Text("Open Camera",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color:
-                                              Color.fromRGBO(100, 204, 197, 1),
-                                        )),
-                                    SizedBox(
-                                      height: 40,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 2.0,
-                              ),
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 40),
-                            width: double.infinity,
-                            child: Material(
-                              borderRadius: BorderRadius.circular(15.0),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(15.0),
-                                splashColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return const AddFoodManually();
-                                  }));
-                                },
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Icon(
-                                      Icons.search_rounded,
-                                      color: Color.fromRGBO(100, 204, 197, 1),
-                                      size: 100,
-                                    ),
-                                    Text("Add food manually",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color:
-                                              Color.fromRGBO(100, 204, 197, 1),
-                                        )),
-                                    SizedBox(
-                                      height: 40,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  : Container()
             ],
           ),
         ),
