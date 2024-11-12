@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
-import 'package:diabuddy/widgets/local_notifications.dart';
+import 'package:diabuddy/utils/local_notifications.dart';
 
 import 'package:diabuddy/utils/text_to_speech.dart';
 

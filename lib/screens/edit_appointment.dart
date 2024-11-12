@@ -3,7 +3,7 @@ import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/datepicker.dart';
-import 'package:diabuddy/widgets/local_notifications.dart';
+import 'package:diabuddy/utils/local_notifications.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
