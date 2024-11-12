@@ -19,7 +19,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -90,15 +89,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     user = context.read<UserAuthProvider>().user;
-    context.read<MedicationBloc>().add(LoadMedications(user!.uid));
-    context.read<AppointmentBloc>().add(LoadAppointments(user!.uid));
+
+    if (user != null) {
+      context.read<MedicationBloc>().add(LoadMedications(user!.uid));
+      context.read<AppointmentBloc>().add(LoadAppointments(user!.uid));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     user = context.read<UserAuthProvider>().user;
     AppUser? appuser = context.watch<UserAuthProvider>().userInfo;
-    if (appuser == null && user != null) {
+    // if (appuser == null && user != null) {
+    //   context.read<UserAuthProvider>().getUserInfo(user!.uid);
+    // }
+    if (user == null) {
+      // Show a loading indicator or a message if `user` is not available yet
+      return Scaffold(
+        appBar: AppBar(title: Text("Profile")),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (appuser == null) {
+      // Fetch user info if `appuser` is not loaded yet
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
 
@@ -187,20 +201,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         PersonalInformation(
-                            title: "Gender", value: appuser!.gender ?? "N/A"),
+                            title: "Gender", value: appuser?.gender ?? "N/A"),
                         const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
                             title: "Age",
-                            value: appuser.age?.toString() ?? "N/A"),
+                            value: appuser?.age?.toString() ?? "N/A"),
                         const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
                             title: "Height",
                             value:
-                                "${appuser.height?.toStringAsFixed(2) ?? "N/A"} m",
+                                "${appuser?.height?.toStringAsFixed(2) ?? "N/A"} m",
                             icon: null),
                         const SizedBox(
                           height: 8,
@@ -208,7 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         PersonalInformation(
                             title: "Weight",
                             value:
-                                "${appuser.weight?.toStringAsFixed(2) ?? "N/A"} kg",
+                                "${appuser?.weight?.toStringAsFixed(2) ?? "N/A"} kg",
                             icon: null),
                         const SizedBox(
                           height: 8,
