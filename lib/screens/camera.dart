@@ -58,9 +58,13 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       print("Attempting to load model...");
       _objectModel = await PytorchLite.loadObjectDetectionModel(
-          "assets/models/yolov5s.torchscript", 80, 640, 640,
+          // "assets/models/yolov5s.torchscript", 80, 640, 640,
+          "assets/models/yolov8s.torchscript",
+          80,
+          640,
+          640,
           labelPath: "assets/models/labels_coco.txt",
-          objectDetectionModelType: ObjectDetectionModelType.yolov5);
+          objectDetectionModelType: ObjectDetectionModelType.yolov8);
 
       if (_objectModel != null) {
         print("Model loaded successfully: $_objectModel");
@@ -78,13 +82,17 @@ class _CameraScreenState extends State<CameraScreen> {
         minimumScore: 0.1,
         iOUThreshold: 0.3);
 
+    print(objDetect);
+
     for (var element in objDetect) {
+      // print(element);
       // final className = element?.className;
       // if (foodList.add(className)) {
       //   // only add unique items
       //   controllers[className] = TextEditingController(text: className);
       // }
       final item = element?.className;
+
       // only add unique items
       if (!foodList.contains(item)) {
         foodList.add(element?.className);

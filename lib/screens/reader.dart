@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
@@ -217,9 +218,11 @@ class _VerifySubmitState extends State<VerifySubmit> {
                 ),
                 ButtonWidget(
                     callback: () async {
+                      await Permission.storage.request();
                       TextToSpeechService().dispose();
                       TextToSpeechService().speak(
-                          "Oras na para inumin ang ${widget.medicationIntake.name}!");
+                          "Oras na para inumin ang ${widget.medicationIntake.name}!",
+                          widget.medicationIntake.channelId.toString());
                       TextToSpeechService().dispose();
 
                       context

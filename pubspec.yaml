@@ -14,6 +14,7 @@ dependencies:
     path: ./flutter_tflite
   gtext: ^0.0.3
   flutter_local_notifications: ^17.1.2
+  # awesome_notifications: ^0.7.4+1
   cupertino_icons: ^1.0.2
   persistent_bottom_nav_bar_v2: ^5.2.3
   flutter_onboarding_slider: ^1.0.11
@@ -75,6 +76,7 @@ flutter:
     - assets/images/meal.jpg
     - assets/meal.json
     - assets/models/yolov5s.torchscript
+    - assets/models/yolov8s.torchscript
     - assets/models/labels_coco.txt
     - assets/tessdata_config.json
     - assets/tessdata/eng.traineddata
