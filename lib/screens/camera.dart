@@ -29,8 +29,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   List<String?> foodList = [];
   List<TextEditingController> controllers = [];
-  // Set<String?> foodList = LinkedHashSet();
-  // Map<String?, TextEditingController> controllers = {};
 
   @override
   void initState() {
@@ -48,7 +46,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> checkAndRequestPermissions() async {
     if (await Permission.camera.request().isGranted) {
-      await _pickImageFromCamera(userId!);
     } else {
       print('Camera permission denied');
     }
@@ -58,13 +55,9 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       print("Attempting to load model...");
       _objectModel = await PytorchLite.loadObjectDetectionModel(
-          // "assets/models/yolov5s.torchscript", 80, 640, 640,
-          "assets/models/yolov8s.torchscript",
-          80,
-          640,
-          640,
-          labelPath: "assets/models/labels_coco.txt",
-          objectDetectionModelType: ObjectDetectionModelType.yolov8);
+          "assets/models/best.torchscript", 8, 640, 640,
+          labelPath: "assets/models/labels.txt",
+          objectDetectionModelType: ObjectDetectionModelType.yolov5);
 
       if (_objectModel != null) {
         print("Model loaded successfully: $_objectModel");
@@ -79,25 +72,17 @@ class _CameraScreenState extends State<CameraScreen> {
   detectObjects() async {
     objDetect = await _objectModel!.getImagePrediction(
         await File(selectedImage!.path).readAsBytes(),
-        minimumScore: 0.1,
+        minimumScore: 0.5,
         iOUThreshold: 0.3);
 
-    print(objDetect);
-
     for (var element in objDetect) {
-      // print(element);
-      // final className = element?.className;
-      // if (foodList.add(className)) {
-      //   // only add unique items
-      //   controllers[className] = TextEditingController(text: className);
-      // }
       final item = element?.className;
-
       // only add unique items
       if (!foodList.contains(item)) {
         foodList.add(element?.className);
         controllers.add(TextEditingController(text: element?.className));
       }
+
       print({
         "score": element?.score,
         "className": element?.className,
@@ -127,30 +112,29 @@ class _CameraScreenState extends State<CameraScreen> {
         );
       });
     }
-    print(foodList);
   }
 
-  // Future _pickImageFromGallery(String id) async {
-  //   final returnedImage =
-  //       await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future _pickImageFromGallery(String id) async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
-  //   if (returnedImage == null) return;
+    if (returnedImage == null) return;
 
-  //   setState(() {
-  //     selectedImage = File(returnedImage.path);
-  //   });
+    setState(() {
+      selectedImage = File(returnedImage.path);
+    });
 
-  //   String filePath = selectedImage!.path;
-  //   int lastIndex = filePath.lastIndexOf('/');
-  //   String fileName = filePath.substring(lastIndex + 1);
+    String filePath = selectedImage!.path;
+    int lastIndex = filePath.lastIndexOf('/');
+    String fileName = filePath.substring(lastIndex + 1);
 
-  //   setState(() {
-  //     path = '/$id/uploads/$fileName';
-  //   });
+    setState(() {
+      path = '/$id/uploads/$fileName';
+    });
 
-  //   print('selectedImage: $path');
-  //   detectObjects();
-  // }
+    print('selectedImage: $path');
+    detectObjects();
+  }
 
   Future _pickImageFromCamera(String id) async {
     final returnedImage =
@@ -179,15 +163,9 @@ class _CameraScreenState extends State<CameraScreen> {
       foodList.add('');
       controllers.add(TextEditingController(text: ''));
     });
-    print(foodList);
   }
 
   void _removeTextField(int index) {
-    print('removeItem: ${foodList[index]}');
-    // setState(() {
-    //   foodList.removeAt(index);
-    //   controllers.removeAt(index);
-    // });
     if (index < foodList.length && index < controllers.length) {
       setState(() {
         // remove the food item and its corresponding controller
@@ -195,8 +173,6 @@ class _CameraScreenState extends State<CameraScreen> {
         controllers.removeAt(index);
       });
     }
-    print(index);
-    print(foodList);
   }
 
   @override
@@ -230,8 +206,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                     : Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        // mainAxisAlignment:
-                                        //     MainAxisAlignment.spaceBetween,
                                         children: [
                                           const SizedBox(
                                             height: 5,
@@ -258,21 +232,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                                   ),
                                                   child: ListTile(
                                                     dense: true,
-                                                    // title: TextFieldWidget(
-                                                    //   callback: (String val) {
-                                                    //     setState(() {
-                                                    //       foodList[index] = val;
-                                                    //     });
-                                                    //   },
-                                                    //   initialValue:
-                                                    //       foodList[index],
-                                                    //   hintText:
-                                                    //       foodList[index]!,
-                                                    //   type: 'String',
-                                                    // ),
-                                                    // leading: Text(
-                                                    //   foodList[index]!,
-                                                    // ),
                                                     title: TextField(
                                                       controller:
                                                           controllers[index],
@@ -398,7 +357,103 @@ class _CameraScreenState extends State<CameraScreen> {
                         ),
                       ],
                     )
-                  : Container()
+                  : Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2.0,
+                                ),
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 40),
+                              width: double.infinity,
+                              child: Material(
+                                borderRadius: BorderRadius.circular(15.0),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  splashColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  onTap: () async {
+                                    await _pickImageFromCamera(userId!);
+                                  },
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Icon(
+                                        Icons.camera_alt_rounded,
+                                        color: Color.fromRGBO(100, 204, 197, 1),
+                                        size: 100,
+                                      ),
+                                      Text("Open Camera",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Color.fromRGBO(
+                                                100, 204, 197, 1),
+                                          )),
+                                      SizedBox(
+                                        height: 40,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2.0,
+                                ),
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 40),
+                              width: double.infinity,
+                              child: Material(
+                                borderRadius: BorderRadius.circular(15.0),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  splashColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  onTap: () async {
+                                    await _pickImageFromGallery(userId!);
+                                  },
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Icon(
+                                        Icons.photo_size_select_actual_rounded,
+                                        color: Color.fromRGBO(100, 204, 197, 1),
+                                        size: 100,
+                                      ),
+                                      Text("Open Gallery",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Color.fromRGBO(
+                                                100, 204, 197, 1),
+                                          )),
+                                      SizedBox(
+                                        height: 40,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ]),
+                    )
             ],
           ),
         ),

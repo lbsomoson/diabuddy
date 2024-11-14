@@ -75,9 +75,8 @@ flutter:
     - assets/images/slide_1.png
     - assets/images/meal.jpg
     - assets/meal.json
-    - assets/models/yolov5s.torchscript
-    - assets/models/yolov8s.torchscript
-    - assets/models/labels_coco.txt
+    - assets/models/best.torchscript
+    - assets/models/labels.txt
     - assets/tessdata_config.json
     - assets/tessdata/eng.traineddata
 
