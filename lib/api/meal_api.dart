@@ -63,7 +63,7 @@ class FirebaseMealAPI {
   }
 
   Future<Map<String, dynamic>> loadJsonData() async {
-    String jsonString = await rootBundle.loadString('assets/meal2.json');
+    String jsonString = await rootBundle.loadString('assets/cleaned_meal2.json');
     return jsonDecode(jsonString);
   }
 

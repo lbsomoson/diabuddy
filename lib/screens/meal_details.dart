@@ -19,8 +19,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     // }
 
     return Scaffold(
-      appBar: AppBar(
-          title: TextWidget(text: widget.meal.mealName, style: 'bodyLarge')),
+      appBar: AppBar(title: TextWidget(text: widget.meal.mealName, style: 'bodyLarge')),
       body: SafeArea(
           child: SingleChildScrollView(
         child: Container(
@@ -29,8 +28,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
             children: [
               ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child:
-                      const Image(image: AssetImage('assets/images/meal.jpg'))),
+                  child: const Image(image: AssetImage('assets/images/meal.jpg'))),
               const SizedBox(
                 height: 10,
               ),
@@ -69,8 +67,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               fontFamily: 'Roboto',
                             )),
                         TextWidget(
-                            text: "${widget.meal.carbohydrate.toString()} g",
-                            style: "bodySmall")
+                            text: "${widget.meal.carbohydrate.toString()} g", style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -84,8 +81,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               fontFamily: 'Roboto',
                             )),
                         TextWidget(
-                            text: "${widget.meal.energyKcal.toString()} kCal",
-                            style: "bodySmall")
+                            text: "${widget.meal.energyKcal.toString()} kCal", style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -98,9 +94,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.glycemicIndex.toString(),
-                            style: "bodySmall")
+                        TextWidget(text: widget.meal.glycemicIndex.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -113,9 +107,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.diversityScore.toString(),
-                            style: "bodySmall")
+                        TextWidget(text: widget.meal.diversityScore.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -128,9 +120,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.calcium.toString(),
-                            style: "bodySmall")
+                        TextWidget(text: widget.meal.calcium.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -143,9 +133,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.fat.toString(),
-                            style: "bodySmall")
+                        TextWidget(text: widget.meal.fat.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -158,9 +146,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.iron.toString(),
-                            style: "bodySmall")
+                        TextWidget(text: widget.meal.iron.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -173,9 +159,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.phosphorus.toString(),
-                            style: "bodySmall")
+                        TextWidget(text: widget.meal.phosphorus.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -188,9 +172,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.protein.toString(),
-                            style: "bodySmall")
+                        TextWidget(text: widget.meal.protein.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -203,7 +185,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(text: widget.meal.niacin, style: "bodySmall")
+                        TextWidget(text: widget.meal.niacin.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -216,8 +198,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.cholesterol, style: "bodySmall")
+                        TextWidget(text: widget.meal.cholesterol.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -231,8 +212,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               fontFamily: 'Roboto',
                             )),
                         TextWidget(
-                            text: widget.meal.phytochemicalIndex,
-                            style: "bodySmall")
+                            text: widget.meal.phytochemicalIndex.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -245,8 +225,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.potassium, style: "bodySmall")
+                        TextWidget(text: widget.meal.potassium.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -259,8 +238,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.retinol, style: "bodySmall")
+                        TextWidget(text: widget.meal.retinol.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -273,8 +251,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.riboflavin, style: "bodySmall")
+                        TextWidget(text: widget.meal.riboflavin.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -287,8 +264,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.thiamin, style: "bodySmall")
+                        TextWidget(text: widget.meal.thiamin.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -302,8 +278,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               fontFamily: 'Roboto',
                             )),
                         TextWidget(
-                            text: widget.meal.totalDietaryFiber,
-                            style: "bodySmall")
+                            text: widget.meal.totalDietaryFiber.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -316,8 +291,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.totalSugar, style: "bodySmall")
+                        TextWidget(text: widget.meal.totalSugar.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -330,8 +304,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.vitaminC, style: "bodySmall")
+                        TextWidget(text: widget.meal.vitaminC.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -344,7 +317,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(text: widget.meal.zinc, style: "bodySmall")
+                        TextWidget(text: widget.meal.zinc.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -357,8 +330,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                               color: Color.fromRGBO(4, 54, 74, 1),
                               fontFamily: 'Roboto',
                             )),
-                        TextWidget(
-                            text: widget.meal.betaCarotene, style: "bodySmall")
+                        TextWidget(text: widget.meal.betaCarotene.toString(), style: "bodySmall")
                       ],
                     ),
                     Row(
@@ -380,9 +352,9 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            for (String value in widget.meal.sodium ?? [])
+                            for (double value in widget.meal.sodium ?? [])
                               TextWidget(
-                                text: value,
+                                text: value.toString(),
                                 style: "bodySmall",
                               ),
                           ],

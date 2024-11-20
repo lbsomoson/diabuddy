@@ -72,6 +72,7 @@ flutter:
     - assets/images/meal.jpg
     - assets/meal.json
     - assets/meal2.json
+    - assets/cleaned_meal2.json
     - assets/models/best.torchscript
     - assets/models/labels.txt
     - assets/tessdata_config.json

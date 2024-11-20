@@ -12,20 +12,19 @@ class Meal {
   final double? phosphorus;
   final double? protein;
   final double? healtyEatingIndex;
-
-  final String? niacin;
-  final String? cholesterol;
-  final String? phytochemicalIndex;
-  final String? potassium;
-  final String? retinol;
-  final String? riboflavin;
-  final List<String>? sodium;
-  final String? thiamin;
-  final String? totalDietaryFiber;
-  final String? totalSugar;
-  final String? vitaminC;
-  final String? zinc;
-  final String? betaCarotene;
+  final double? niacin;
+  final double? cholesterol;
+  final double? phytochemicalIndex;
+  final double? potassium;
+  final double? retinol;
+  final double? riboflavin;
+  final List<double>? sodium;
+  final double? thiamin;
+  final double? totalDietaryFiber;
+  final double? totalSugar;
+  final double? vitaminC;
+  final double? zinc;
+  final double? betaCarotene;
   final String? heiClassification;
 
   Meal({
@@ -64,27 +63,27 @@ class Meal {
       mealName: json['Meal Name'],
       foodCode: json['Food Code'],
       carbohydrate: json['Carbohydrate']?.toDouble(),
-      totalDietaryFiber: json['Total Dietary Fiber'],
-      totalSugar: json['Total Sugar'],
+      totalDietaryFiber: json['Total Dietary Fiber']?.toDouble(),
+      totalSugar: json['Total Sugar']?.toDouble(),
       protein: json['Protein']?.toDouble(),
       fat: json['Fat']?.toDouble(),
       energyKcal: json['Energy (Kcal)']?.toDouble(),
-      sodium: json['Sodium']?.cast<String>(),
-      cholesterol: json['Cholesterol'],
+      sodium: json['Sodium']?.cast<double>(),
+      cholesterol: json['Cholesterol']?.toDouble(),
       calcium: json['Calcium']?.toDouble(),
       phosphorus: json['Phosphorus']?.toDouble(),
       iron: json['Iron']?.toDouble(),
-      potassium: json['Potassium'],
-      zinc: json['Zinc'],
-      retinol: json['Retinol'],
-      betaCarotene: json['beta-carotene'],
-      thiamin: json['Thiamin'],
-      riboflavin: json['Riboflavin'],
-      niacin: json['Niacin'],
-      vitaminC: json['Vitamin C'],
+      potassium: json['Potassium']?.toDouble(),
+      zinc: json['Zinc']?.toDouble(),
+      retinol: json['Retinol']?.toDouble(),
+      betaCarotene: json['beta-carotene']?.toDouble(),
+      thiamin: json['Thiamin']?.toDouble(),
+      riboflavin: json['Riboflavin']?.toDouble(),
+      niacin: json['Niacin']?.toDouble(),
+      vitaminC: json['Vitamin C']?.toDouble(),
       glycemicIndex: json['Glycemic Index']?.toDouble(),
       diversityScore: json['Diversity Score']?.toDouble(),
-      phytochemicalIndex: json['Phytochemical Index'],
+      phytochemicalIndex: json['Phytochemical Index']?.toDouble(),
       healtyEatingIndex: json['Healthy Eating Index']?.toDouble(),
       heiClassification: json['HEI Classification'],
     );
