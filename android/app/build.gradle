@@ -79,6 +79,7 @@ dependencies {
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "androidx.appcompat:appcompat:1.4.0"
     implementation "androidx.window:window:1.0.0"
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'org.pytorch:pytorch_android:1.12'
     implementation 'org.pytorch:pytorch_android_torchvision:1.12'
 }

@@ -352,11 +352,11 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            for (double value in widget.meal.sodium ?? [])
-                              TextWidget(
-                                text: value.toString(),
-                                style: "bodySmall",
-                              ),
+                            // for (double value in widget.meal.sodium)
+                            //   TextWidget(
+                            //     text: value.toString(),
+                            //     style: "bodySmall",
+                            //   ),
                           ],
                         ),
                       ],

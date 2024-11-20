@@ -371,6 +371,12 @@ class _CameraScreenState extends State<CameraScreen> {
                                                               print('==== meals detected ====');
                                                               print(mealsDetected);
 
+                                                              Meal accMeals = accumulateMealValues(
+                                                                  mealsDetected);
+
+                                                              print('==== meals accumulated ====');
+                                                              print(accMeals);
+
                                                               print(
                                                                   '+++++ lenght: ${allMeals.length}');
                                                             } else if (state is MealNotFound) {

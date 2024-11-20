@@ -19,11 +19,11 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   // weight
   late WeightSliderController _weightController, _heightController;
-  double _weight = 30.0;
+  double _weight = 50.0;
   double _height = 1.7;
 
   final int _nTotalCount = 110;
-  final int _nInitValue = 10;
+  final int _nInitValue = 50;
   int _nCurrentValue = 10;
 
   String? _selectedGender;
@@ -81,9 +81,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(
             height: 5,
           ),
-          const TextWidget(
-              text: "This will help us calculate your calories.",
-              style: 'bodySmall'),
+          const TextWidget(text: "This will help us calculate your calories.", style: 'bodySmall'),
           const SizedBox(
             height: 35,
           ),
@@ -110,8 +108,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     Widget page3() {
-      _weightController = WeightSliderController(
-          initialWeight: _weight, minWeight: 0, interval: 0.1);
+      _weightController =
+          WeightSliderController(initialWeight: _weight, minWeight: 0, interval: 0.1);
 
       @override
       void dispose() {
@@ -123,8 +121,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const SizedBox(
           height: 50,
         ),
-        const TextWidget(
-            text: "What is your weight in kilograms?", style: "bodyLarge"),
+        const TextWidget(text: "What is your weight in kilograms?", style: "bodyLarge"),
         const SizedBox(
           height: 5,
         ),
@@ -185,15 +182,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     Widget page4() {
-      _heightController = WeightSliderController(
-          initialWeight: _height, minWeight: 0, interval: 0.1);
+      _heightController =
+          WeightSliderController(initialWeight: _height, minWeight: 0, interval: 0.1);
       return Column(
         children: [
           const SizedBox(
             height: 50,
           ),
-          const TextWidget(
-              text: "What is your height in meters?", style: "bodyLarge"),
+          const TextWidget(text: "What is your height in meters?", style: "bodyLarge"),
           const SizedBox(
             height: 5,
           ),
@@ -293,9 +289,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 weight: _weight,
                 height: _height,
               );
-              await context
-                  .read<UserAuthProvider>()
-                  .onboarding(widget.id, appuser);
+              await context.read<UserAuthProvider>().onboarding(widget.id, appuser);
 
               if (context.mounted) {
                 Navigator.pop(context);

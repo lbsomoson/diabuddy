@@ -1,31 +1,31 @@
 class Meal {
-  final String? mealId;
-  final String? mealName;
-  final String? foodCode;
-  final double? calcium;
-  final double? carbohydrate;
-  final double? diversityScore;
-  final double? energyKcal;
-  final double? fat;
-  final double? glycemicIndex;
-  final double? iron;
-  final double? phosphorus;
-  final double? protein;
-  final double? healtyEatingIndex;
-  final double? niacin;
-  final double? cholesterol;
-  final double? phytochemicalIndex;
-  final double? potassium;
-  final double? retinol;
-  final double? riboflavin;
-  final List<double>? sodium;
-  final double? thiamin;
-  final double? totalDietaryFiber;
-  final double? totalSugar;
-  final double? vitaminC;
-  final double? zinc;
-  final double? betaCarotene;
-  final String? heiClassification;
+  String? mealId;
+  String? mealName;
+  String? foodCode;
+  double? calcium;
+  double? carbohydrate;
+  double? diversityScore;
+  double? energyKcal;
+  double? fat;
+  double? glycemicIndex;
+  double? iron;
+  double? phosphorus;
+  double? protein;
+  double? healtyEatingIndex;
+  double? niacin;
+  double? cholesterol;
+  double? phytochemicalIndex;
+  double? potassium;
+  double? retinol;
+  double? riboflavin;
+  List<double?>? sodium;
+  double? thiamin;
+  double? totalDietaryFiber;
+  double? totalSugar;
+  double? vitaminC;
+  double? zinc;
+  double? betaCarotene;
+  String? heiClassification;
 
   Meal({
     this.mealId,
@@ -68,7 +68,7 @@ class Meal {
       protein: json['Protein']?.toDouble(),
       fat: json['Fat']?.toDouble(),
       energyKcal: json['Energy (Kcal)']?.toDouble(),
-      sodium: json['Sodium']?.cast<double>(),
+      sodium: json['sodium'] != null ? List<double?>.from(json['sodium']) : null,
       cholesterol: json['Cholesterol']?.toDouble(),
       calcium: json['Calcium']?.toDouble(),
       phosphorus: json['Phosphorus']?.toDouble(),

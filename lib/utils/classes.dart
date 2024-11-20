@@ -1,3 +1,7 @@
+import 'dart:ffi';
+
+import 'package:diabuddy/models/meal_model.dart';
+
 var classNames = {
   'ADOBO': 'Adobo (Pork & Chicken)',
   'ADOBONG_KANGKONG': 'Adobong Kangkong',
@@ -98,3 +102,97 @@ var classNames = {
   'SHAWARMA': 'Shawarma',
   'LECHE FLAN': 'Leche Flan'
 };
+
+Meal accumulateMealValues(List<Meal> meals) {
+  Meal accMeal = Meal(
+      mealId: "",
+      mealName: "",
+      foodCode: "",
+      calcium: 0.0,
+      carbohydrate: 0.0,
+      diversityScore: 0.0,
+      energyKcal: 0.0,
+      fat: 0.0,
+      glycemicIndex: 0.0,
+      iron: 0.0,
+      phosphorus: 0.0,
+      protein: 0.0,
+      healtyEatingIndex: 0.0,
+      niacin: 0.0,
+      cholesterol: 0.0,
+      phytochemicalIndex: 0.0,
+      potassium: 0.0,
+      retinol: 0.0,
+      riboflavin: 0.0,
+      sodium: [0.0, 0.0],
+      thiamin: 0.0,
+      totalDietaryFiber: 0.0,
+      totalSugar: 0.0,
+      vitaminC: 0.0,
+      zinc: 0.0,
+      betaCarotene: 0.0,
+      heiClassification: "");
+  // initialize a string accumulator
+  StringBuffer mealNamesBuffer = StringBuffer();
+  StringBuffer mealIdsBuffer = StringBuffer();
+  StringBuffer mealFoodCodesBuffer = StringBuffer();
+  StringBuffer mealHEIClassificationsBuffer = StringBuffer();
+
+  for (var m in meals) {
+    // accumulate string values, appending ", " where necessary
+    if (m.mealName != null && m.mealName!.isNotEmpty) {
+      if (mealNamesBuffer.isNotEmpty) {
+        mealNamesBuffer.write(", ");
+      }
+      mealNamesBuffer.write(m.mealName);
+    }
+    if (m.mealId != null && m.mealId!.isNotEmpty) {
+      if (mealIdsBuffer.isNotEmpty) {
+        mealIdsBuffer.write(", ");
+      }
+      mealIdsBuffer.write(m.mealId);
+    }
+    if (m.foodCode != null && m.foodCode!.isNotEmpty) {
+      if (mealFoodCodesBuffer.isNotEmpty) {
+        mealFoodCodesBuffer.write(", ");
+      }
+      mealFoodCodesBuffer.write(m.foodCode);
+    }
+    if (m.heiClassification != null && m.heiClassification!.isNotEmpty) {
+      if (mealHEIClassificationsBuffer.isNotEmpty) {
+        mealHEIClassificationsBuffer.write(", ");
+      }
+      mealHEIClassificationsBuffer.write(m.heiClassification);
+    }
+    accMeal.calcium = ((accMeal.calcium ?? 0.0) + (m.calcium ?? 0.0)).toDouble();
+    accMeal.carbohydrate = ((accMeal.carbohydrate ?? 0.0) + (m.carbohydrate ?? 0.0)).toDouble();
+    accMeal.diversityScore = ((accMeal.diversityScore ?? 0.0) + (m.diversityScore ?? 0.0)).toDouble();
+    accMeal.energyKcal = ((accMeal.energyKcal ?? 0.0) + (m.energyKcal ?? 0.0)).toDouble();
+    accMeal.fat = ((accMeal.fat ?? 0.0) + (m.fat ?? 0.0)).toDouble();
+    accMeal.glycemicIndex = ((accMeal.glycemicIndex ?? 0.0) + (m.glycemicIndex ?? 0.0)).toDouble();
+    accMeal.iron = ((accMeal.iron ?? 0.0) + (m.iron ?? 0.0)).toDouble();
+    accMeal.phosphorus = ((accMeal.phosphorus ?? 0.0) + (m.phosphorus ?? 0.0)).toDouble();
+    accMeal.healtyEatingIndex = ((accMeal.healtyEatingIndex ?? 0.0) + (m.healtyEatingIndex ?? 0.0)).toDouble();
+    accMeal.niacin = ((accMeal.niacin ?? 0.0) + (m.niacin ?? 0.0)).toDouble();
+    accMeal.cholesterol = ((accMeal.cholesterol ?? 0.0) + (m.cholesterol ?? 0.0)).toDouble();
+    accMeal.phytochemicalIndex = ((accMeal.phytochemicalIndex ?? 0.0) + (m.phytochemicalIndex ?? 0.0)).toDouble();
+    accMeal.potassium = ((accMeal.potassium ?? 0.0) + (m.potassium ?? 0.0)).toDouble();
+    accMeal.retinol = ((accMeal.retinol ?? 0.0) + (m.retinol ?? 0.0)).toDouble();
+    accMeal.riboflavin = ((accMeal.riboflavin ?? 0.0) + (m.riboflavin ?? 0.0)).toDouble();
+    accMeal.thiamin = ((accMeal.thiamin ?? 0.0) + (m.thiamin ?? 0.0)).toDouble();
+    accMeal.totalDietaryFiber = ((accMeal.totalDietaryFiber ?? 0.0) + (m.totalDietaryFiber ?? 0.0)).toDouble();
+    accMeal.totalSugar = ((accMeal.totalSugar ?? 0.0) + (m.totalSugar ?? 0.0)).toDouble();
+    accMeal.vitaminC = ((accMeal.vitaminC ?? 0.0) + (m.vitaminC ?? 0.0)).toDouble();
+    accMeal.zinc = ((accMeal.zinc ?? 0.0) + (m.zinc ?? 0.0)).toDouble();
+    accMeal.betaCarotene = ((accMeal.betaCarotene ?? 0.0) + (m.betaCarotene ?? 0.0)).toDouble();
+    accMeal.sodium![0] = (accMeal.sodium?[0] ?? 0.0) + (m.sodium?[0] ?? 0.0);
+    accMeal.sodium![1] = (accMeal.sodium?[1] ?? 0.0) + (m.sodium?[1] ?? 0.0);
+  }
+
+  accMeal.mealName = mealNamesBuffer.toString();
+  accMeal.mealId = mealIdsBuffer.toString();
+  accMeal.foodCode = mealFoodCodesBuffer.toString();
+  accMeal.heiClassification = mealHEIClassificationsBuffer.toString();
+
+  return accMeal;
+}
