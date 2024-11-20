@@ -4,33 +4,24 @@ import 'package:diabuddy/models/meal_intake_model.dart';
 class MealIntakeRepository {
   final FirebaseFirestore firestore;
 
-  MealIntakeRepository({FirebaseFirestore? firestore})
-      : firestore = firestore ?? FirebaseFirestore.instance;
+  MealIntakeRepository({FirebaseFirestore? firestore}) : firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<void> addMealIntake(MealIntake mealIntake) {
-    return firestore
-        .collection('meal_intakes')
-        .add(mealIntake.toJson(mealIntake));
+    return firestore.collection('meal_intakes').add(mealIntake.toJson(mealIntake));
   }
 
-  Future<void> updateMealIntake(
-      MealIntake mealIntake, String mealIntakeId) async {
+  Future<void> updateMealIntake(MealIntake mealIntake, String mealIntakeId) async {
     try {
-      DocumentSnapshot documentSnapshot =
-          await firestore.collection('meal_intakes').doc(mealIntakeId).get();
+      DocumentSnapshot documentSnapshot = await firestore.collection('meal_intakes').doc(mealIntakeId).get();
 
       if (documentSnapshot.exists) {
-        Map<String, dynamic> existingData =
-            documentSnapshot.data() as Map<String, dynamic>;
+        Map<String, dynamic> existingData = documentSnapshot.data() as Map<String, dynamic>;
         existingData.remove('name');
 
         Map<String, dynamic> updatedData = mealIntake.toJson(mealIntake);
         Map<String, dynamic> mergedData = {...existingData, ...updatedData};
 
-        await firestore
-            .collection('meal_intakes')
-            .doc(mealIntakeId)
-            .set(mergedData);
+        await firestore.collection('meal_intakes').doc(mealIntakeId).set(mergedData);
       }
     } on FirebaseException catch (e) {
       print("Error in ${e.code}: ${e.message}");

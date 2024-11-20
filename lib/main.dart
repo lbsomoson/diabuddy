@@ -1,4 +1,4 @@
-import 'package:diabuddy/models/meal_model.dart';
+import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/provider/appointments/appointments_repository.dart';
@@ -39,8 +39,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:gtext/gtext.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,12 +48,10 @@ void main() async {
   );
 
   // TODO: COMMENT/UNCOMMENT THIS BLOCK OF CODE
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   await flutterLocalNotificationsPlugin.cancelAll();
 
-  FirebaseFirestore.instance.settings =
-      const Settings(persistenceEnabled: true);
+  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
   GText.init(to: 'fi', enableCaching: false);
   // Initialize time zones
@@ -65,12 +62,10 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => UserAuthProvider()),
         ChangeNotifierProvider(create: (context) => MedicationProvider()),
-        ChangeNotifierProvider(
-            create: (context) => DailyHealthRecordProvider()),
+        ChangeNotifierProvider(create: (context) => DailyHealthRecordProvider()),
         ChangeNotifierProvider(create: (context) => AppointmentProvider()),
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
-        ChangeNotifierProvider(
-            create: (context) => DailyHealthRecordProvider()),
+        ChangeNotifierProvider(create: (context) => DailyHealthRecordProvider()),
         ChangeNotifierProvider(create: (context) => MealProvider())
       ],
       child: const MyApp(),
@@ -94,13 +89,10 @@ class _MyAppState extends State<MyApp> {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (context) => MedicationBloc(MedicationRepository())),
-        BlocProvider(
-            create: (context) => AppointmentBloc(AppointmentRepository())),
+        BlocProvider(create: (context) => MedicationBloc(MedicationRepository())),
+        BlocProvider(create: (context) => AppointmentBloc(AppointmentRepository())),
         BlocProvider(create: (context) => MealBloc(MealRepository())),
-        BlocProvider(
-            create: (context) => MealIntakeBloc(MealIntakeRepository())),
+        BlocProvider(create: (context) => MealIntakeBloc(MealIntakeRepository())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -170,42 +162,33 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(builder: (context) => const LoginScreen());
           }
           if (settings.name == "/signupScreen") {
-            return MaterialPageRoute(
-                builder: (context) => const SignUpScreen());
+            return MaterialPageRoute(builder: (context) => const SignUpScreen());
           }
           if (settings.name == "/") {
-            return MaterialPageRoute(
-                builder: (context) => const BottomNavBar());
+            return MaterialPageRoute(builder: (context) => const BottomNavBar());
           }
           if (settings.name == "/onboarding") {
             final args = settings.arguments as String;
-            return MaterialPageRoute(
-                builder: (context) => OnboardingScreen(id: args));
+            return MaterialPageRoute(builder: (context) => OnboardingScreen(id: args));
           }
           if (settings.name == "/dashboardScreen") {
-            return MaterialPageRoute(
-                builder: (context) => const DashboardScreen());
+            return MaterialPageRoute(builder: (context) => const DashboardScreen());
           }
           if (settings.name == "/cameraScreen") {
-            return MaterialPageRoute(
-                builder: (context) => const CameraScreen());
+            return MaterialPageRoute(builder: (context) => const CameraScreen());
           }
           if (settings.name == "/profileScreen") {
-            return MaterialPageRoute(
-                builder: (context) => const ProfileScreen());
+            return MaterialPageRoute(builder: (context) => const ProfileScreen());
           }
           if (settings.name == "/addMedicationScreen") {
             final args = settings.arguments as String;
-            return MaterialPageRoute(
-                builder: (context) => AddMedicationScreen(id: args));
+            return MaterialPageRoute(builder: (context) => AddMedicationScreen(id: args));
           }
           if (settings.name == "/notificationScreen") {
-            return MaterialPageRoute(
-                builder: (context) => const NotificationScreen());
+            return MaterialPageRoute(builder: (context) => const NotificationScreen());
           }
           if (settings.name == "/notificationSettingsScreen") {
-            return MaterialPageRoute(
-                builder: (context) => const NotificationSettingsScreen());
+            return MaterialPageRoute(builder: (context) => const NotificationSettingsScreen());
           }
           if (settings.name == "/verifySumbitScreen") {
             final args = settings.arguments as Map<String, dynamic>;
@@ -216,21 +199,17 @@ class _MyAppState extends State<MyApp> {
                     ));
           }
           if (settings.name == "/history") {
-            return MaterialPageRoute(
-                builder: (context) => const HistoryScreen());
+            return MaterialPageRoute(builder: (context) => const HistoryScreen());
           }
           if (settings.name == "/mealTrackerScreen") {
-            return MaterialPageRoute(
-                builder: (context) => const MealTrackerScreen());
+            return MaterialPageRoute(builder: (context) => const MealTrackerScreen());
           }
           if (settings.name == "/mealDetailsScreen") {
-            final args = settings.arguments as Meal;
-            return MaterialPageRoute(
-                builder: (context) => MealDetailsScreen(meal: args));
+            final args = settings.arguments as MealIntake;
+            return MaterialPageRoute(builder: (context) => MealDetailsScreen(mealIntake: args));
           }
           if (settings.name == "/medicationHistory") {
-            return MaterialPageRoute(
-                builder: (context) => const MedicationHistory());
+            return MaterialPageRoute(builder: (context) => const MedicationHistory());
           }
           // final name = settings.arguments as String;
           // final carbs = settings.arguments as String;

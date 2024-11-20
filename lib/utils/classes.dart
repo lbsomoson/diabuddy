@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:diabuddy/models/meal_model.dart';
 
 var classNames = {
@@ -136,7 +134,27 @@ Meal accumulateMealValues(List<Meal> meals) {
   StringBuffer mealNamesBuffer = StringBuffer();
   StringBuffer mealIdsBuffer = StringBuffer();
   StringBuffer mealFoodCodesBuffer = StringBuffer();
-  StringBuffer mealHEIClassificationsBuffer = StringBuffer();
+  String? heiClassificationBuffer;
+
+  List<String> heiClassificationBufferList = [];
+
+  for (var m in meals) {
+    if (!heiClassificationBufferList.contains(m.heiClassification) && m.heiClassification != "") {
+      heiClassificationBufferList.add(m.heiClassification!);
+    }
+  }
+
+  print(heiClassificationBufferList.length);
+  for (var c in heiClassificationBufferList) {
+    print(c);
+  }
+  if (heiClassificationBufferList.length == 1) {
+    heiClassificationBuffer = heiClassificationBufferList.join("");
+  } else if (heiClassificationBufferList.length > 1) {
+    heiClassificationBuffer = heiClassificationBufferList.join(", ");
+  } else if (heiClassificationBufferList.isEmpty) {
+    heiClassificationBuffer = "Unknown";
+  }
 
   for (var m in meals) {
     // accumulate string values, appending ", " where necessary
@@ -157,12 +175,6 @@ Meal accumulateMealValues(List<Meal> meals) {
         mealFoodCodesBuffer.write(", ");
       }
       mealFoodCodesBuffer.write(m.foodCode);
-    }
-    if (m.heiClassification != null && m.heiClassification!.isNotEmpty) {
-      if (mealHEIClassificationsBuffer.isNotEmpty) {
-        mealHEIClassificationsBuffer.write(", ");
-      }
-      mealHEIClassificationsBuffer.write(m.heiClassification);
     }
     accMeal.calcium = ((accMeal.calcium ?? 0.0) + (m.calcium ?? 0.0)).toDouble();
     accMeal.carbohydrate = ((accMeal.carbohydrate ?? 0.0) + (m.carbohydrate ?? 0.0)).toDouble();
@@ -192,7 +204,7 @@ Meal accumulateMealValues(List<Meal> meals) {
   accMeal.mealName = mealNamesBuffer.toString();
   accMeal.mealId = mealIdsBuffer.toString();
   accMeal.foodCode = mealFoodCodesBuffer.toString();
-  accMeal.heiClassification = mealHEIClassificationsBuffer.toString();
+  accMeal.heiClassification = heiClassificationBuffer;
 
   return accMeal;
 }

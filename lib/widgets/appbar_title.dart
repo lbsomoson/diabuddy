@@ -8,6 +8,8 @@ class AppBarTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
+      overflow: TextOverflow.fade,
+      maxLines: 1,
       style: TextStyle(
           color: Theme.of(context).colorScheme.secondary,
           fontFamily: 'Inter',

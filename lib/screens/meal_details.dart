@@ -1,25 +1,53 @@
-import 'package:diabuddy/models/meal_model.dart';
+import 'package:diabuddy/models/meal_intake_model.dart';
+import 'package:diabuddy/widgets/nutrition.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class MealDetailsScreen extends StatefulWidget {
-  final Meal meal;
-  const MealDetailsScreen({required this.meal, super.key});
+  final MealIntake mealIntake;
+  const MealDetailsScreen({required this.mealIntake, super.key});
 
   @override
   State<MealDetailsScreen> createState() => _MealDetailsScreenState();
 }
 
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
+  String getMonthAndDay(DateTime dateTime) {
+    List<String> monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+
+    // Get the month as a string (1-based index, so subtract 1)
+    String monthString = monthNames[dateTime.month - 1];
+
+    // Get the day of the month
+    int day = dateTime.day;
+
+    // Return the result formatted as a string
+    return "$monthString $day";
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Meal? meal = context.watch<MealProvider>().mealInfo;
-    // if (meal == null) {
-    //   context.read<MealProvider>().getMealInfo(widget.mealName);
-    // }
-
     return Scaffold(
-      appBar: AppBar(title: TextWidget(text: widget.meal.mealName, style: 'bodyLarge')),
+      appBar: AppBar(
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(context, '/cameraScreen', (Route<dynamic> route) => false);
+            },
+          ),
+          title: TextWidget(text: widget.mealIntake.accMeals!.mealName, style: 'bodyLarge')),
       body: SafeArea(
           child: SingleChildScrollView(
         child: Container(
@@ -32,17 +60,35 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Food Group",
-                      style: TextStyle(
+                  Expanded(
+                    flex: 7,
+                    child: Text(
+                      widget.mealIntake.accMeals!.heiClassification == ''
+                          ? "Food Group"
+                          : widget.mealIntake.accMeals!.heiClassification!,
+                      overflow: TextOverflow.fade,
+                      maxLines: 3,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
-                      )),
-                  TextWidget(text: "Dec 22", style: "bodySmall")
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextWidget(
+                        text: getMonthAndDay(widget.mealIntake.timestamp!),
+                        style: "bodySmall",
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(
@@ -53,317 +99,8 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                 height: 5,
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Carbohydrates",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(
-                            text: "${widget.meal.carbohydrate.toString()} g", style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Calories",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(
-                            text: "${widget.meal.energyKcal.toString()} kCal", style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Glycemic Index",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.glycemicIndex.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Diversity Score",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.diversityScore.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Calcium",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.calcium.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Fat",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.fat.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Iron",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.iron.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Phosphorus",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.phosphorus.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Protein",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.protein.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Niacin",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.niacin.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Cholesterol",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.cholesterol.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Phytochemical Index",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(
-                            text: widget.meal.phytochemicalIndex.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Potassium",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.potassium.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Retinol",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.retinol.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Riboflavin",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.riboflavin.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Thiamin",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.thiamin.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Total Dietary Fiber",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(
-                            text: widget.meal.totalDietaryFiber.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Total Sugar",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.totalSugar.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Vitamin C",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.vitaminC.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Zinc",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.zinc.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("beta-carotene",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            )),
-                        TextWidget(text: widget.meal.betaCarotene.toString(), style: "bodySmall")
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Column(children: [
-                          Text(
-                            "Sodium",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromRGBO(4, 54, 74, 1),
-                              fontFamily: 'Roboto',
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
-                          Text("")
-                        ]),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // for (double value in widget.meal.sodium)
-                            //   TextWidget(
-                            //     text: value.toString(),
-                            //     style: "bodySmall",
-                            //   ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: NutritionWidget(accMeal: widget.mealIntake.accMeals!)),
               const SizedBox(
                 height: 20,
               )

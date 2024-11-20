@@ -4,6 +4,7 @@ import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
+import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/utils/classes.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -111,33 +112,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   final dinnerStart = const TimeOfDay(hour: 18, minute: 0); // 6:00 PM
   final dinnerEnd = const TimeOfDay(hour: 21, minute: 0); // 9:00 PM
-
-  String getMonthAndDay(DateTime dateTime) {
-    // List of month names
-    List<String> monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ];
-
-    // Get the month as a string (1-based index, so subtract 1)
-    String monthString = monthNames[dateTime.month - 1];
-
-    // Get the day of the month
-    int day = dateTime.day;
-
-    // Return the result formatted as a string
-    return "$monthString $day";
-  }
 
   String getCurrentMealTime() {
     // get the current time of day
@@ -331,537 +305,167 @@ class _CameraScreenState extends State<CameraScreen> {
                             child: Column(
                               children: [
                                 foodList.isEmpty
-                                    ? Container()
+                                    ? const CircularProgressIndicator()
                                     : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                         const SizedBox(
                                           height: 5,
                                         ),
-                                        allMeals.isEmpty
-                                            ? Column(
-                                                children: [
-                                                  const TextWidget(text: "Food", style: 'bodyMedium'),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  ListView.builder(
-                                                      physics: const NeverScrollableScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      itemCount: foodList.length,
-                                                      itemBuilder: (BuildContext context, int index) {
-                                                        return Container(
-                                                          decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.circular(8.0),
+                                        Column(
+                                          children: [
+                                            const TextWidget(text: "Food", style: 'bodyMedium'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ListView.builder(
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: foodList.length,
+                                                itemBuilder: (BuildContext context, int index) {
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    child: ListTile(
+                                                      dense: true,
+                                                      title: TextField(
+                                                        controller: controllers[index],
+                                                        onChanged: (val) {
+                                                          setState(() {
+                                                            foodList[index] = val;
+                                                          });
+                                                        },
+                                                        style: Theme.of(context).textTheme.labelSmall,
+                                                        decoration: InputDecoration(
+                                                          focusedBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Theme.of(context).colorScheme.primary,
+                                                                width: 2.0),
+                                                            borderRadius: BorderRadius.circular(10.0),
                                                           ),
-                                                          child: ListTile(
-                                                            dense: true,
-                                                            title: TextField(
-                                                              controller: controllers[index],
-                                                              onChanged: (val) {
-                                                                setState(() {
-                                                                  foodList[index] = val;
-                                                                });
-                                                              },
-                                                              style: Theme.of(context).textTheme.labelSmall,
-                                                              decoration: InputDecoration(
-                                                                focusedBorder: OutlineInputBorder(
-                                                                  borderSide: BorderSide(
-                                                                      color: Theme.of(context).colorScheme.primary,
-                                                                      width: 2.0),
-                                                                  borderRadius: BorderRadius.circular(10.0),
-                                                                ),
-                                                                border: OutlineInputBorder(
-                                                                  borderSide: BorderSide(color: Colors.grey[200]!),
-                                                                  borderRadius: BorderRadius.circular(10.0),
-                                                                ),
-                                                                labelStyle: Theme.of(context).textTheme.bodyMedium,
-                                                                hintStyle: Theme.of(context).textTheme.labelMedium,
-                                                                contentPadding: const EdgeInsets.symmetric(
-                                                                    vertical: 10, horizontal: 16),
-                                                              ),
-                                                            ),
-                                                            trailing: Row(
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              children: [
-                                                                IconButton(
-                                                                  icon: Icon(Icons.delete,
-                                                                      color: Theme.of(context).primaryColor),
-                                                                  onPressed: () => _removeTextField(index),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                          border: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.grey[200]!),
+                                                            borderRadius: BorderRadius.circular(10.0),
                                                           ),
-                                                        );
-                                                      }),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Align(
-                                                    alignment: Alignment.centerLeft,
-                                                    child: InkWell(
-                                                      onTap: () => _addNewTextField(),
-                                                      child: Ink(
-                                                        decoration: const BoxDecoration(
-                                                          shape: BoxShape.circle,
-                                                          color: Colors.transparent,
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.add_circle_outline,
-                                                              size: 22,
-                                                              color: Theme.of(context).colorScheme.primary,
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            const Text2Widget(text: "Add food", style: "body2"),
-                                                          ],
+                                                          labelStyle: Theme.of(context).textTheme.bodyMedium,
+                                                          hintStyle: Theme.of(context).textTheme.labelMedium,
+                                                          contentPadding:
+                                                              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                                                         ),
                                                       ),
+                                                      trailing: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          IconButton(
+                                                            icon: Icon(Icons.delete,
+                                                                color: Theme.of(context).primaryColor),
+                                                            onPressed: () => _removeTextField(index),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
+                                                  );
+                                                }),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: InkWell(
+                                                onTap: () => _addNewTextField(),
+                                                child: Ink(
+                                                  decoration: const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.transparent,
                                                   ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  ButtonWidget(
-                                                      callback: () {
-                                                        if (_formKey.currentState!.validate()) {
-                                                          print("Button Clicked");
-                                                          context.read<MealBloc>().add(const LoadMeals());
-
-                                                          for (var item in foodList) {
-                                                            print(item);
-                                                          }
-                                                        }
-                                                      },
-                                                      label: "Submit",
-                                                      style: 'filled'),
-                                                  BlocListener<MealBloc, MealState>(
-                                                      listener: (context, state) {
-                                                        if (state is MealLoaded) {
-                                                          // update the allMeals list when meals are loaded
-                                                          setState(() {
-                                                            allMeals = state.meals;
-                                                          });
-                                                          for (var f in foodList) {
-                                                            classNames.forEach((k, v) {
-                                                              if (f == k) {
-                                                                var idx =
-                                                                    allMeals.indexWhere((meal) => meal.mealName == v);
-                                                                if (idx != -1) {
-                                                                  // if it exists in the list of all meals, add
-                                                                  mealsDetected.add(allMeals[idx]);
-                                                                  mealIntake.foodIds.add(allMeals[idx].mealId!);
-                                                                }
-                                                              }
-                                                            });
-                                                          }
-                                                          accMeal = accumulateMealValues(mealsDetected);
-                                                          setState(() {});
-                                                          // TODO: ADD PHOTO
-                                                          mealIntake.mealTime = getCurrentMealTime();
-                                                          mealIntake.timestamp = _currentDate;
-                                                          mealIntake.accMeals = accMeal;
-                                                          context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
-                                                        } else if (state is MealNotFound) {
-                                                          // show an error message if the medication was not found
-                                                          final snackBar = SnackBar(
-                                                            backgroundColor: Colors.red,
-                                                            content: const Text('Meal not found!'),
-                                                            action: SnackBarAction(
-                                                              label: 'Close',
-                                                              onPressed: () {},
-                                                            ),
-                                                          );
-                                                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                        } else if (state is MealError) {
-                                                          // handle any errors here
-                                                          final snackBar = SnackBar(
-                                                            backgroundColor: Colors.red,
-                                                            content: Text(state.message),
-                                                            action: SnackBarAction(
-                                                              label: 'Close',
-                                                              onPressed: () {},
-                                                            ),
-                                                          );
-                                                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                        }
-                                                      },
-                                                      child: const SizedBox()),
-                                                ],
-                                              )
-                                            : Column(
-                                                children: [
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  child: Row(
                                                     children: [
-                                                      Text(
-                                                          accMeal.heiClassification == ''
-                                                              ? "Food Group"
-                                                              : accMeal.heiClassification!,
-                                                          style: const TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight: FontWeight.w700,
-                                                            color: Color.fromRGBO(4, 54, 74, 1),
-                                                            fontFamily: 'Roboto',
-                                                          )),
-                                                      TextWidget(text: getMonthAndDay(_currentDate), style: "bodySmall")
+                                                      Icon(
+                                                        Icons.add_circle_outline,
+                                                        size: 22,
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      const Text2Widget(text: "Add food", style: "body2"),
                                                     ],
                                                   ),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Divider(color: Colors.grey[400]),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Carbohydrates",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: "${accMeal.carbohydrate.toString()} g",
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Calories",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: "${accMeal.energyKcal.toString()} kCal",
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Glycemic Index",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.glycemicIndex.toString(),
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Diversity Score",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.diversityScore.toString(),
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Calcium",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.calcium.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Fat",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(text: accMeal.fat.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Iron",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.iron.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Phosphorus",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.phosphorus.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Protein",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.protein.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Niacin",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.niacin.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Cholesterol",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.cholesterol.toString(),
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Phytochemical Index",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.phytochemicalIndex.toString(),
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Potassium",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.potassium.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Retinol",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.retinol.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Riboflavin",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.riboflavin.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Thiamin",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.thiamin.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Total Dietary Fiber",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.totalDietaryFiber.toString(),
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Total Sugar",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.totalSugar.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Vitamin C",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.vitaminC.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("Zinc",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.zinc.toString(), style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text("beta-carotene",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                )),
-                                                            TextWidget(
-                                                                text: accMeal.betaCarotene.toString(),
-                                                                style: "bodySmall")
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Column(children: [
-                                                              Text(
-                                                                "Sodium",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: Color.fromRGBO(4, 54, 74, 1),
-                                                                  fontFamily: 'Roboto',
-                                                                ),
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                              Text("")
-                                                            ]),
-                                                            Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                                              children: [
-                                                                for (double? value in accMeal.sodium ?? [])
-                                                                  TextWidget(
-                                                                    text: value?.toString() ?? "0.0",
-                                                                    style: "bodySmall",
-                                                                  ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 20,
-                                                  )
-                                                ],
+                                                ),
                                               ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            ButtonWidget(
+                                                callback: () {
+                                                  if (_formKey.currentState!.validate()) {
+                                                    context.read<MealBloc>().add(const LoadMeals());
+                                                  }
+                                                },
+                                                label: "Submit",
+                                                style: 'filled'),
+                                            BlocListener<MealBloc, MealState>(
+                                                listener: (context, state) {
+                                                  if (state is MealLoaded) {
+                                                    // update the allMeals list when meals are loaded
+                                                    setState(() {
+                                                      allMeals = state.meals;
+                                                    });
+                                                    for (var f in foodList) {
+                                                      classNames.forEach((k, v) {
+                                                        if (f == k) {
+                                                          var idx = allMeals.indexWhere((meal) => meal.mealName == v);
+                                                          if (idx != -1) {
+                                                            // if it exists in the list of all meals, add
+                                                            mealsDetected.add(allMeals[idx]);
+                                                            mealIntake.foodIds.add(allMeals[idx].mealId!);
+                                                          }
+                                                        }
+                                                      });
+                                                    }
+                                                    accMeal = accumulateMealValues(mealsDetected);
+                                                    setState(() {});
+                                                    // TODO: ADD PHOTO
+                                                    mealIntake.mealTime = getCurrentMealTime();
+                                                    mealIntake.timestamp = _currentDate;
+                                                    mealIntake.accMeals = accMeal;
+
+                                                    context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
+
+                                                    // TODO: JUMP TO MEAL DETAILS SCREEN
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                      return MealDetailsScreen(mealIntake: mealIntake);
+                                                    }));
+                                                  } else if (state is MealNotFound) {
+                                                    // show an error message if the medication was not found
+                                                    final snackBar = SnackBar(
+                                                      backgroundColor: Colors.red,
+                                                      content: const Text('Meal not found!'),
+                                                      action: SnackBarAction(
+                                                        label: 'Close',
+                                                        onPressed: () {},
+                                                      ),
+                                                    );
+                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                  } else if (state is MealError) {
+                                                    // handle any errors here
+                                                    final snackBar = SnackBar(
+                                                      backgroundColor: Colors.red,
+                                                      content: Text(state.message),
+                                                      action: SnackBarAction(
+                                                        label: 'Close',
+                                                        onPressed: () {},
+                                                      ),
+                                                    );
+                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                  }
+                                                },
+                                                child: const SizedBox()),
+                                          ],
+                                        ),
                                       ]),
                               ],
                             ),
