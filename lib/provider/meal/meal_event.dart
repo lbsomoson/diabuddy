@@ -17,12 +17,10 @@ class GetMeal extends MealEvent {
 }
 
 class LoadMeals extends MealEvent {
-  final String userId;
-
-  const LoadMeals(this.userId);
+  const LoadMeals();
 
   @override
-  List<Object> get props => [userId];
+  List<Object> get props => [];
 }
 
 class MealsUpdated extends MealEvent {

@@ -1,3 +1,4 @@
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/meal_info.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
             ),
             const SizedBox(height: 10),
             const MealInfo(
-                mealName: "Bacon, Egg, and Rice",
+                mealName: "Sunny Sideup and Rice",
                 carbs: "130g",
                 cal: "0.89 kCal",
                 gi: "2.5"),
@@ -105,16 +106,11 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
             ),
             const SizedBox(height: 10),
             const MealInfo(
-                mealName: "Sinigang Rice",
+                mealName: "Sinigang and Rice",
                 carbs: "130g",
                 cal: "0.89 kCal",
                 gi: "2.5"),
             const SizedBox(height: 10),
-            const MealInfo(
-                mealName: "Sinigang Rice",
-                carbs: "130g",
-                cal: "0.89 kCal",
-                gi: "2.5"),
             const SizedBox(height: 10),
           ]),
         ),

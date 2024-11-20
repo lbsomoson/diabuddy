@@ -1,5 +1,7 @@
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/camera.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
+import 'package:diabuddy/screens/history.dart';
 import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/meal_tracker.dart';
 import 'package:diabuddy/screens/profile_screen.dart';
@@ -42,6 +44,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
         ),
         PersistentTabConfig(
+          screen: const HistoryScreen(),
+          item: ItemConfig(
+            icon: const Icon(Icons.insert_chart_rounded),
+            // title: "Notifications",
+            inactiveForegroundColor: Colors.grey[400]!,
+            activeForegroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        PersistentTabConfig(
+          screen: const CameraScreen(),
+          item: ItemConfig(
+            icon: const Icon(FontAwesomeIcons.camera, color: Colors.white),
+            // title: "Record",
+            inactiveForegroundColor: Theme.of(context).primaryColor,
+            activeForegroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        PersistentTabConfig(
           screen: const MealTrackerScreen(),
           item: ItemConfig(
             icon: const Icon(FontAwesomeIcons.bowlFood),
@@ -50,24 +70,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
         ),
-        // PersistentTabConfig(
-        //   screen: const CameraScreen(),
-        //   item: ItemConfig(
-        //     icon: const Icon(FontAwesomeIcons.camera, color: Colors.white),
-        //     // title: "Record",
-        //     inactiveForegroundColor: Colors.grey[400]!,
-        //     activeForegroundColor: Theme.of(context).colorScheme.primary,
-        //   ),
-        // ),
-        // PersistentTabConfig(
-        //   screen: const NotificationScreen(),
-        //   item: ItemConfig(
-        //     icon: const Icon(Icons.notifications),
-        //     // title: "Notifications",
-        //     inactiveForegroundColor: Colors.grey[400]!,
-        //     activeForegroundColor: Theme.of(context).colorScheme.primary,
-        //   ),
-        // ),
         PersistentTabConfig(
           screen: const ProfileScreen(),
           item: ItemConfig(
@@ -90,7 +92,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return PersistentTabView(
       controller: controller,
       tabs: _tabs(),
-      navBarBuilder: (navBarConfig) => Style4BottomNavBar(
+      navBarBuilder: (navBarConfig) => Style13BottomNavBar(
         navBarConfig: navBarConfig,
       ),
     );

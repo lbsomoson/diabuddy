@@ -92,7 +92,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
   @override
   void initState() {
     user = context.read<UserAuthProvider>().user;
-    context.read<MealBloc>().add(LoadMeals(user!.uid));
+    context.read<MealBloc>().add(const LoadMeals());
     foundMeals = allMeals;
     super.initState();
   }

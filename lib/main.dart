@@ -17,7 +17,6 @@ import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/camera.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/history.dart';
-import 'package:diabuddy/screens/history_all.dart';
 import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/screens/meal_tracker.dart';
@@ -219,10 +218,6 @@ class _MyAppState extends State<MyApp> {
           if (settings.name == "/history") {
             return MaterialPageRoute(
                 builder: (context) => const HistoryScreen());
-          }
-          if (settings.name == "/historyAll") {
-            return MaterialPageRoute(
-                builder: (context) => const HistoryAllScreen());
           }
           if (settings.name == "/mealTrackerScreen") {
             return MaterialPageRoute(

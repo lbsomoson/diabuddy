@@ -12,8 +12,7 @@ class FirebaseMealAPI {
 
   Future<void> uploadJsonDataToFirestore() async {
     // check if the data has already been loaded
-    var snapshot =
-        await firestore.collection('metadata').doc('dataLoaded').get();
+    var snapshot = await firestore.collection('metadata').doc('dataLoaded').get();
     if (snapshot.exists) {
       print('Data has already been loaded.');
       return;
@@ -57,28 +56,22 @@ class FirebaseMealAPI {
     }
 
     // mark that the data has been loaded
-    await firestore
-        .collection('metadata')
-        .doc('dataLoaded')
-        .set({'loaded': true});
+    await firestore.collection('metadata').doc('dataLoaded').set({'loaded': true});
     print('Data loaded successfully.');
   }
 
   Future<Map<String, dynamic>> loadJsonData() async {
-    String jsonString = await rootBundle.loadString('assets/meal.json');
+    String jsonString = await rootBundle.loadString('assets/meal2.json');
     return jsonDecode(jsonString);
   }
 
   Future<Map<String, dynamic>?> getMealInfo(String mealName) async {
-    QuerySnapshot querySnapshot = await firestore
-        .collection("meals")
-        .where('Meal Name', isEqualTo: mealName)
-        .get();
+    QuerySnapshot querySnapshot =
+        await firestore.collection("meals").where('Meal Name', isEqualTo: mealName).get();
 
     if (querySnapshot.docs.isNotEmpty) {
       DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
-      Map<String, dynamic> data =
-          documentSnapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
 
       return data;
     }
