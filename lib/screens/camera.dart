@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/meal/meal_bloc.dart';
+import 'package:diabuddy/utils/classes.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +33,9 @@ class _CameraScreenState extends State<CameraScreen> {
 
   List<String?> foodList = [];
   List<TextEditingController> controllers = [];
+
+  List<Meal> mealsDetected = [];
+  List<Meal> allMeals = [];
 
   @override
   void initState() {
@@ -79,14 +86,16 @@ class _CameraScreenState extends State<CameraScreen> {
       final item = element?.className;
       // only add unique items
       if (!foodList.contains(item)) {
-        foodList.add(element?.className);
-        controllers.add(TextEditingController(text: element?.className));
+        foodList.add(element?.className?.trim());
+        controllers.add(TextEditingController(text: element?.className?.trim()));
       }
+    }
 
+    for (var element in objDetect) {
       print({
         "score": element?.score,
         "className": element?.className,
-        "class": element?.classIndex,
+        // "class": element?.classIndex,
         "rect": {
           "left": element?.rect.left,
           "top": element?.rect.top,
@@ -115,8 +124,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Future _pickImageFromGallery(String id) async {
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (returnedImage == null) return;
 
@@ -137,8 +145,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Future _pickImageFromCamera(String id) async {
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera);
     if (returnedImage == null) return;
     setState(() {
       selectedImage = File(returnedImage.path);
@@ -192,8 +199,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       children: [
                         AspectRatio(
                           aspectRatio: 0.8,
-                          child: _objectModel!
-                              .renderBoxesOnImage(selectedImage!, objDetect),
+                          child: _objectModel!.renderBoxesOnImage(selectedImage!, objDetect),
                         ),
                         Form(
                           key: _formKey,
@@ -204,153 +210,640 @@ class _CameraScreenState extends State<CameraScreen> {
                                 foodList.isEmpty
                                     ? Container()
                                     : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          const TextWidget(
-                                              text: "Food",
-                                              style: 'bodyMedium'),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          ListView.builder(
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: foodList.length,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                  ),
-                                                  child: ListTile(
-                                                    dense: true,
-                                                    title: TextField(
-                                                      controller:
-                                                          controllers[index],
-                                                      onChanged: (val) {
-                                                        setState(() {
-                                                          foodList[index] = val;
-                                                        });
-                                                      },
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                              width: 2.0),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10.0),
-                                                        ),
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      200]!),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10.0),
-                                                        ),
-                                                        labelStyle:
-                                                            Theme.of(context)
-                                                                .textTheme
-                                                                .bodyMedium,
-                                                        hintStyle:
-                                                            Theme.of(context)
-                                                                .textTheme
-                                                                .labelMedium,
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 10,
-                                                                horizontal: 16),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            allMeals.isEmpty
+                                                ? Column(
+                                                    children: [
+                                                      const TextWidget(
+                                                          text: "Food", style: 'bodyMedium'),
+                                                      const SizedBox(
+                                                        height: 10,
                                                       ),
-                                                    ),
-                                                    trailing: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        IconButton(
-                                                          icon: Icon(
-                                                              Icons.delete,
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .primaryColor),
-                                                          onPressed: () =>
-                                                              _removeTextField(
-                                                                  index),
+                                                      ListView.builder(
+                                                          physics:
+                                                              const NeverScrollableScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount: foodList.length,
+                                                          itemBuilder:
+                                                              (BuildContext context, int index) {
+                                                            return Container(
+                                                              decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(8.0),
+                                                              ),
+                                                              child: ListTile(
+                                                                dense: true,
+                                                                title: TextField(
+                                                                  controller: controllers[index],
+                                                                  onChanged: (val) {
+                                                                    setState(() {
+                                                                      foodList[index] = val;
+                                                                    });
+                                                                  },
+                                                                  style: Theme.of(context)
+                                                                      .textTheme
+                                                                      .labelSmall,
+                                                                  decoration: InputDecoration(
+                                                                    focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                      borderSide: BorderSide(
+                                                                          color: Theme.of(context)
+                                                                              .colorScheme
+                                                                              .primary,
+                                                                          width: 2.0),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                    ),
+                                                                    border: OutlineInputBorder(
+                                                                      borderSide: BorderSide(
+                                                                          color: Colors.grey[200]!),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                    ),
+                                                                    labelStyle: Theme.of(context)
+                                                                        .textTheme
+                                                                        .bodyMedium,
+                                                                    hintStyle: Theme.of(context)
+                                                                        .textTheme
+                                                                        .labelMedium,
+                                                                    contentPadding:
+                                                                        const EdgeInsets.symmetric(
+                                                                            vertical: 10,
+                                                                            horizontal: 16),
+                                                                  ),
+                                                                ),
+                                                                trailing: Row(
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    IconButton(
+                                                                      icon: Icon(Icons.delete,
+                                                                          color: Theme.of(context)
+                                                                              .primaryColor),
+                                                                      onPressed: () =>
+                                                                          _removeTextField(index),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: InkWell(
+                                                          onTap: () => _addNewTextField(),
+                                                          child: Ink(
+                                                            decoration: const BoxDecoration(
+                                                              shape: BoxShape.circle,
+                                                              color: Colors.transparent,
+                                                            ),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.add_circle_outline,
+                                                                  size: 22,
+                                                                  color: Theme.of(context)
+                                                                      .colorScheme
+                                                                      .primary,
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                const Text2Widget(
+                                                                    text: "Add food",
+                                                                    style: "body2"),
+                                                              ],
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      ButtonWidget(
+                                                          callback: () {
+                                                            if (_formKey.currentState!.validate()) {
+                                                              print("Button Clicked");
+                                                              context
+                                                                  .read<MealBloc>()
+                                                                  .add(const LoadMeals());
+
+                                                              for (var item in foodList) {
+                                                                print(item);
+                                                              }
+                                                            }
+                                                          },
+                                                          label: "Submit",
+                                                          style: 'filled'),
+                                                      BlocListener<MealBloc, MealState>(
+                                                          listener: (context, state) {
+                                                            if (state is MealLoaded) {
+                                                              // update the allMeals list when meals are loaded
+                                                              setState(() {
+                                                                allMeals = state.meals;
+                                                              });
+                                                              for (var f in foodList) {
+                                                                classNames.forEach((k, v) {
+                                                                  if (f == k) {
+                                                                    var idx = allMeals.indexWhere(
+                                                                        (meal) =>
+                                                                            meal.mealName == v);
+                                                                    print('idx: $idx');
+                                                                    if (idx != -1) {
+                                                                      mealsDetected
+                                                                          .add(allMeals[idx]);
+                                                                    }
+                                                                    print('$k: $v');
+                                                                  }
+                                                                });
+                                                              }
+                                                              print('==== meals detected ====');
+                                                              print(mealsDetected);
+
+                                                              print(
+                                                                  '+++++ lenght: ${allMeals.length}');
+                                                            } else if (state is MealNotFound) {
+                                                              // show an error message if the medication was not found
+                                                              final snackBar = SnackBar(
+                                                                backgroundColor: Colors.red,
+                                                                content:
+                                                                    const Text('Meal not found!'),
+                                                                action: SnackBarAction(
+                                                                  label: 'Close',
+                                                                  onPressed: () {},
+                                                                ),
+                                                              );
+                                                              ScaffoldMessenger.of(context)
+                                                                  .showSnackBar(snackBar);
+                                                            } else if (state is MealError) {
+                                                              // handle any errors here
+                                                              final snackBar = SnackBar(
+                                                                backgroundColor: Colors.red,
+                                                                content: Text(state.message),
+                                                                action: SnackBarAction(
+                                                                  label: 'Close',
+                                                                  onPressed: () {},
+                                                                ),
+                                                              );
+                                                              ScaffoldMessenger.of(context)
+                                                                  .showSnackBar(snackBar);
+                                                            }
+                                                          },
+                                                          child: const SizedBox()),
+                                                    ],
+                                                  )
+                                                : Column(
+                                                    children: [
+                                                      // const SizedBox(
+                                                      //   height: 10,
+                                                      // ),
+                                                      // const Row(
+                                                      //   mainAxisAlignment:
+                                                      //       MainAxisAlignment.spaceBetween,
+                                                      //   children: [
+                                                      //     Text("Food Group",
+                                                      //         style: TextStyle(
+                                                      //           fontSize: 18,
+                                                      //           fontWeight: FontWeight.w700,
+                                                      //           color: Color.fromRGBO(4, 54, 74, 1),
+                                                      //           fontFamily: 'Roboto',
+                                                      //         )),
+                                                      //     TextWidget(
+                                                      //         text: "Dec 22", style: "bodySmall")
+                                                      //   ],
+                                                      // ),
+                                                      // const SizedBox(
+                                                      //   height: 5,
+                                                      // ),
+                                                      // Divider(color: Colors.grey[400]),
+                                                      // const SizedBox(
+                                                      //   height: 5,
+                                                      // ),
+                                                      // Container(
+                                                      //   padding: const EdgeInsets.symmetric(
+                                                      //       horizontal: 15),
+                                                      //   child: Column(
+                                                      //     children: [
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Carbohydrates",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text:
+                                                      //                   "${widget.meal.carbohydrate.toString()} g",
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Calories",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text:
+                                                      //                   "${widget.meal.energyKcal.toString()} kCal",
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Glycemic Index",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.glycemicIndex
+                                                      //                   .toString(),
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Diversity Score",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.diversityScore
+                                                      //                   .toString(),
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Calcium",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.calcium
+                                                      //                   .toString(),
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Fat",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text:
+                                                      //                   widget.meal.fat.toString(),
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Iron",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text:
+                                                      //                   widget.meal.iron.toString(),
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Phosphorus",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.phosphorus
+                                                      //                   .toString(),
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Protein",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.protein
+                                                      //                   .toString(),
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Niacin",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.niacin,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Cholesterol",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.cholesterol,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Phytochemical Index",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget
+                                                      //                   .meal.phytochemicalIndex,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Potassium",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.potassium,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Retinol",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.retinol,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Riboflavin",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.riboflavin,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Thiamin",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.thiamin,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Total Dietary Fiber",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget
+                                                      //                   .meal.totalDietaryFiber,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Total Sugar",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.totalSugar,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Vitamin C",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.vitaminC,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("Zinc",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.zinc,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Text("beta-carotene",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               )),
+                                                      //           TextWidget(
+                                                      //               text: widget.meal.betaCarotene,
+                                                      //               style: "bodySmall")
+                                                      //         ],
+                                                      //       ),
+                                                      //       Row(
+                                                      //         mainAxisAlignment:
+                                                      //             MainAxisAlignment.spaceBetween,
+                                                      //         children: [
+                                                      //           const Column(children: [
+                                                      //             Text(
+                                                      //               "Sodium",
+                                                      //               style: TextStyle(
+                                                      //                 fontSize: 16,
+                                                      //                 fontWeight: FontWeight.w700,
+                                                      //                 color: Color.fromRGBO(
+                                                      //                     4, 54, 74, 1),
+                                                      //                 fontFamily: 'Roboto',
+                                                      //               ),
+                                                      //               textAlign: TextAlign.start,
+                                                      //             ),
+                                                      //             Text("")
+                                                      //           ]),
+                                                      //           Column(
+                                                      //             crossAxisAlignment:
+                                                      //                 CrossAxisAlignment.end,
+                                                      //             children: [
+                                                      //               for (String value
+                                                      //                   in widget.meal.sodium ?? [])
+                                                      //                 TextWidget(
+                                                      //                   text: value,
+                                                      //                   style: "bodySmall",
+                                                      //                 ),
+                                                      //             ],
+                                                      //           ),
+                                                      //         ],
+                                                      //       ),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
+                                                      // const SizedBox(
+                                                      //   height: 20,
+                                                      // )
+                                                    ],
                                                   ),
-                                                );
-                                              })
-                                        ],
-                                      ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: InkWell(
-                                    onTap: () => _addNewTextField(),
-                                    child: Ink(
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.transparent,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.add_circle_outline,
-                                            size: 22,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          const Text2Widget(
-                                              text: "Add food", style: "body2"),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                ButtonWidget(
-                                    callback: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        print(foodList);
-                                      }
-                                    },
-                                    label: "Submit",
-                                    style: 'filled')
+                                          ]),
                               ],
                             ),
                           ),
@@ -370,15 +863,13 @@ class _CameraScreenState extends State<CameraScreen> {
                                   width: 2.0,
                                 ),
                               ),
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 40),
+                              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                               width: double.infinity,
                               child: Material(
                                 borderRadius: BorderRadius.circular(15.0),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(15.0),
-                                  splashColor:
-                                      Theme.of(context).colorScheme.secondary,
+                                  splashColor: Theme.of(context).colorScheme.secondary,
                                   onTap: () async {
                                     await _pickImageFromCamera(userId!);
                                   },
@@ -396,8 +887,7 @@ class _CameraScreenState extends State<CameraScreen> {
                                       Text("Open Camera",
                                           style: TextStyle(
                                             fontSize: 18,
-                                            color: Color.fromRGBO(
-                                                100, 204, 197, 1),
+                                            color: Color.fromRGBO(100, 204, 197, 1),
                                           )),
                                       SizedBox(
                                         height: 40,
@@ -415,15 +905,13 @@ class _CameraScreenState extends State<CameraScreen> {
                                   width: 2.0,
                                 ),
                               ),
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 40),
+                              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                               width: double.infinity,
                               child: Material(
                                 borderRadius: BorderRadius.circular(15.0),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(15.0),
-                                  splashColor:
-                                      Theme.of(context).colorScheme.secondary,
+                                  splashColor: Theme.of(context).colorScheme.secondary,
                                   onTap: () async {
                                     await _pickImageFromGallery(userId!);
                                   },
@@ -441,8 +929,7 @@ class _CameraScreenState extends State<CameraScreen> {
                                       Text("Open Gallery",
                                           style: TextStyle(
                                             fontSize: 18,
-                                            color: Color.fromRGBO(
-                                                100, 204, 197, 1),
+                                            color: Color.fromRGBO(100, 204, 197, 1),
                                           )),
                                       SizedBox(
                                         height: 40,
