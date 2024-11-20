@@ -49,6 +49,8 @@ class FirebaseMealAPI {
         'Glycemic Index': meal['Glycemic Index'],
         'Diversity Score': meal['Diversity Score'],
         'Phytochemical Index': meal['Phytochemical Index'],
+        'HEI Classification': meal['HEI Classification'],
+        'Healthy Eating Index': meal['Healthy Eating Index'],
       });
 
       // retrieve the document ID and update the document to include 'mealId'

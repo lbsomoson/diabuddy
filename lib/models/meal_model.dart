@@ -11,6 +11,7 @@ class Meal {
   final double? iron;
   final double? phosphorus;
   final double? protein;
+  final double? healtyEatingIndex;
 
   final String? niacin;
   final String? cholesterol;
@@ -25,6 +26,7 @@ class Meal {
   final String? vitaminC;
   final String? zinc;
   final String? betaCarotene;
+  final String? heiClassification;
 
   Meal({
     this.mealId,
@@ -52,6 +54,8 @@ class Meal {
     this.glycemicIndex,
     this.diversityScore,
     this.phytochemicalIndex,
+    this.healtyEatingIndex,
+    this.heiClassification,
   });
 
   factory Meal.fromJson(Map<String, dynamic> json, String id) {
@@ -81,6 +85,8 @@ class Meal {
       glycemicIndex: json['Glycemic Index']?.toDouble(),
       diversityScore: json['Diversity Score']?.toDouble(),
       phytochemicalIndex: json['Phytochemical Index'],
+      healtyEatingIndex: json['Healthy Eating Index']?.toDouble(),
+      heiClassification: json['HEI Classification'],
     );
   }
 
@@ -121,6 +127,8 @@ class Meal {
       'glycemicIndex': glycemicIndex,
       'diversityScore': diversityScore,
       'phytochemicalIndex': phytochemicalIndex,
+      'healtyEatingIndex': healtyEatingIndex,
+      'heiClassification': heiClassification,
     };
   }
 }
