@@ -25,16 +25,40 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
   List<Meal> allMeals = [];
   List<Meal> foundMeals = [];
   MealIntake mealIntake = MealIntake(
-      foodIds: [],
-      photoUrl: "",
-      proofPath: "",
-      timestamp: null,
-      mealTime: "",
-      totalCarbohydrates: 0,
-      totalCalories: 0,
-      totalHealthIndexScore: 0,
-      totalGlycemicIndex: 0,
-      totalDietDiversityScore: 0);
+    foodIds: [],
+    photoUrl: "",
+    proofPath: "",
+    timestamp: null,
+    mealTime: "",
+    accMeals: Meal(
+        mealId: "",
+        mealName: "",
+        foodCode: "",
+        calcium: 0.0,
+        carbohydrate: 0.0,
+        diversityScore: 0.0,
+        energyKcal: 0.0,
+        fat: 0.0,
+        glycemicIndex: 0.0,
+        iron: 0.0,
+        phosphorus: 0.0,
+        protein: 0.0,
+        healtyEatingIndex: 0.0,
+        niacin: 0.0,
+        cholesterol: 0.0,
+        phytochemicalIndex: 0.0,
+        potassium: 0.0,
+        retinol: 0.0,
+        riboflavin: 0.0,
+        sodium: [0.0, 0.0],
+        thiamin: 0.0,
+        totalDietaryFiber: 0.0,
+        totalSugar: 0.0,
+        vitaminC: 0.0,
+        zinc: 0.0,
+        betaCarotene: 0.0,
+        heiClassification: ""),
+  );
   num totalCarbohydrates = 0,
       totalCalories = 0,
       totalHealthIndexScore = 0,
@@ -151,8 +175,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                                 onPressed: () {},
                               ),
                             );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           } else if (state is MealError) {
                             // handle any errors here
                             final snackBar = SnackBar(
@@ -163,8 +186,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                                 onPressed: () {},
                               ),
                             );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           }
                         },
                         child: ButtonWidget(
@@ -178,9 +200,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      meals.isEmpty
-                          ? const SizedBox()
-                          : Divider(color: Colors.grey[400]),
+                      meals.isEmpty ? const SizedBox() : Divider(color: Colors.grey[400]),
                       const SizedBox(height: 10),
                       meals.isEmpty
                           ? const SizedBox(height: 5)
@@ -191,24 +211,17 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
                                   itemCount: meals.length,
-                                  separatorBuilder:
-                                      (BuildContext context, int index) =>
-                                          const SizedBox(height: 8.0),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 8.0),
+                                  itemBuilder: (BuildContext context, int index) {
                                     return Container(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 0, 5, 0),
+                                      padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[100],
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
+                                        borderRadius: BorderRadius.circular(8.0),
                                       ),
                                       child: ListTile(
                                         dense: true,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 0.0),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
                                         horizontalTitleGap: 0,
                                         title: Text(
                                           meals[index].mealName!,
@@ -224,17 +237,14 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                                             IconButton(
                                               icon: Icon(
                                                 Icons.delete,
-                                                color: Theme.of(context)
-                                                    .primaryColor,
+                                                color: Theme.of(context).primaryColor,
                                               ),
                                               onPressed: () {
                                                 meals.removeAt(index);
-                                                mealIntake.foodIds
-                                                    .removeAt(index);
+                                                mealIntake.foodIds.removeAt(index);
                                                 setState(() {
                                                   meals = meals;
-                                                  mealIntake.foodIds =
-                                                      mealIntake.foodIds;
+                                                  mealIntake.foodIds = mealIntake.foodIds;
                                                 });
                                               },
                                             ),
@@ -275,9 +285,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                           //     'mealIntake.proofPath: ${mealIntake.proofPath}');
                           // print('mealIntake.mealTime: ${mealIntake.mealTime}');
                           // print('mealIntake.mealTime: ${mealIntake.timestamp}');
-                          context
-                              .read<MealIntakeBloc>()
-                              .add(AddMealIntake(mealIntake));
+                          context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
                           // TODO: DISPLAY MEAL DETAILS SCREEN
                           if (!context.mounted) return;
                           Navigator.pop(context);
