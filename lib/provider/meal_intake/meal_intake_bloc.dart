@@ -36,31 +36,6 @@ class MealIntakeBloc extends Bloc<MealIntakeEvent, MealIntakeState> {
     }
   }
 
-  // get meal inakes by date
-  // Future<void> _onLoadMealIntakeByDate(LoadMealIntakeByDate event, Emitter<MealIntakeState> emit) async {
-  //   mealIntakeRepository.getMealIntakesByDate(event.mealIntakeId, event.date).listen((mealIntakes) {
-  //     emit(MealIntakeByDateLoaded(mealIntakes));
-  //   });
-  // }
-
-  // Future<void> _onLoadMealIntakeByDate(LoadMealIntakeByDate event, Emitter<MealIntakeState> emit) async {
-  //   try {
-  //     emit(MealIntakeLoading());
-
-  //     await emit.forEach(
-  //       mealIntakeRepository.getMealIntakesByDate(event.mealIntakeId, event.date),
-  //       onData: (List<Map<String, dynamic>> mealIntakes) {
-  //         return MealIntakeByDateLoaded(mealIntakes);
-  //       },
-  //       onError: (error, stackTrace) {
-  //         return MealIntakeError(error.toString());
-  //       },
-  //     );
-  //   } catch (error) {
-  //     emit(MealIntakeError(error.toString()));
-  //   }
-  // }
-
   Future<void> _onLoadMealIntakeByDate(LoadMealIntakeByDate event, Emitter<MealIntakeState> emit) async {
     try {
       emit(MealIntakeLoading());
@@ -68,7 +43,6 @@ class MealIntakeBloc extends Bloc<MealIntakeEvent, MealIntakeState> {
       await emit.forEach(
         mealIntakeRepository.getMealIntakesByDate(event.mealIntakeId, event.date),
         onData: (List<Map<String, dynamic>> mealIntakeMaps) {
-          // final mealIntakes = mealIntakeMaps.map((data) => MealIntake.fromJson(data, event.mealIntakeId)).toList();
           return MealIntakeByDateLoaded(mealIntakeMaps);
         },
         onError: (error, stackTrace) {
