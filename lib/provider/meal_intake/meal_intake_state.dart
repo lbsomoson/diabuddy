@@ -9,6 +9,24 @@ abstract class MealIntakeState extends Equatable {
 
 class MealIntakeLoading extends MealIntakeState {}
 
+class SingleMealIntakeLoaded extends MealIntakeState {
+  final MealIntake mealIntake;
+
+  const SingleMealIntakeLoaded(this.mealIntake);
+
+  @override
+  List<Object> get props => [mealIntake];
+}
+
+class MealIntakeByDateLoaded extends MealIntakeState {
+  final List<Map<String, dynamic>> mealIntakes;
+
+  const MealIntakeByDateLoaded(this.mealIntakes);
+
+  @override
+  List<Object> get props => [mealIntakes];
+}
+
 class MealIntakeLoaded extends MealIntakeState {
   final List<MealIntake> mealIntake;
 

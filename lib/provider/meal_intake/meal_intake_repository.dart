@@ -43,4 +43,30 @@ class MealIntakeRepository {
       }).toList();
     });
   }
+
+  // get one meal intake
+  Future<MealIntake> getMealIntakeById(String id) async {
+    DocumentSnapshot donation = await firestore.collection("meal_intakes").doc(id).get();
+    MealIntake mealIntake = donation.data() as MealIntake;
+
+    return mealIntake;
+  }
+
+  // get meal intakes for s specific date
+  Stream<List<Map<String, dynamic>>> getMealIntakesByDate(String userId, DateTime date) {
+    DateTime startOfDay = DateTime.utc(date.year, date.month, date.day);
+    DateTime endOfDay = startOfDay.add(const Duration(days: 1));
+
+    return FirebaseFirestore.instance
+        .collection('meal_intakes')
+        .where("userId", isEqualTo: userId)
+        .where("timestamp", isGreaterThanOrEqualTo: startOfDay)
+        .where("timestamp", isLessThan: endOfDay)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return doc.data();
+      }).toList();
+    });
+  }
 }

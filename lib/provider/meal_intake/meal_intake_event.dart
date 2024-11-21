@@ -16,6 +16,26 @@ class LoadMealIntakes extends MealIntakeEvent {
   List<Object> get props => [userId];
 }
 
+class LoadMealIntakeById extends MealIntakeEvent {
+  final String mealIntakeId;
+  final DateTime date;
+
+  const LoadMealIntakeById(this.mealIntakeId, this.date);
+
+  @override
+  List<Object> get props => [mealIntakeId, date];
+}
+
+class LoadMealIntakeByDate extends MealIntakeEvent {
+  final String mealIntakeId;
+  final DateTime date;
+
+  const LoadMealIntakeByDate(this.mealIntakeId, this.date);
+
+  @override
+  List<Object> get props => [mealIntakeId, date];
+}
+
 class AddMealIntake extends MealIntakeEvent {
   final MealIntake mealIntake;
 

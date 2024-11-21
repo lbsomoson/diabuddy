@@ -35,8 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context: context,
         builder: (BuildContext context) {
           return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
             child: Container(
               constraints: const BoxConstraints(maxHeight: 380),
               child: Padding(
@@ -160,39 +159,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextWidget(
-                              text: "Personal Information",
-                              style: 'labelMedium'),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () {
-                              _editPersonalInformation(context);
-                            },
-                            child: Ink(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.transparent,
-                              ),
-                              child: Icon(
-                                Icons.edit,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, textBaseline: TextBaseline.alphabetic, children: [
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextWidget(text: "Personal Information", style: 'labelMedium'),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                        onTap: () {
+                          _editPersonalInformation(context);
+                        },
+                        child: Ink(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.transparent,
                           ),
-                        )
-                      ]),
+                          child: Icon(
+                            Icons.edit,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    )
+                  ]),
                   const SizedBox(
                     height: 10,
                   ),
@@ -200,38 +194,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
                       children: [
-                        PersonalInformation(
-                            title: "Gender", value: appuser?.gender ?? "N/A"),
+                        PersonalInformation(title: "Gender", value: appuser?.gender ?? "N/A"),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        PersonalInformation(title: "Age", value: appuser?.age?.toString() ?? "N/A"),
                         const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
-                            title: "Age",
-                            value: appuser?.age?.toString() ?? "N/A"),
+                            title: "Height", value: "${appuser?.height?.toStringAsFixed(2) ?? "N/A"} m", icon: null),
                         const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
-                            title: "Height",
-                            value:
-                                "${appuser?.height?.toStringAsFixed(2) ?? "N/A"} m",
-                            icon: null),
+                            title: "Weight", value: "${appuser?.weight?.toStringAsFixed(2) ?? "N/A"} kg", icon: null),
                         const SizedBox(
                           height: 8,
                         ),
                         PersonalInformation(
-                            title: "Weight",
-                            value:
-                                "${appuser?.weight?.toStringAsFixed(2) ?? "N/A"} kg",
-                            icon: null),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        PersonalInformation(
-                            title: "BMI",
-                            value:
-                                "${computeBmi().toStringAsFixed(2)} kg/m\u00B2",
-                            icon: Icons.verified),
+                            title: "BMI", value: "${computeBmi().toStringAsFixed(2)} kg/m\u00B2", icon: Icons.verified),
                       ],
                     ),
                   ),
@@ -251,8 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             const Align(
                               alignment: Alignment.centerLeft,
-                              child: TextWidget(
-                                  text: "Medicine", style: 'labelMedium'),
+                              child: TextWidget(text: "Medicine", style: 'labelMedium'),
                             ),
                             const SizedBox(
                               width: 8,
@@ -260,8 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: InkWell(
-                                onTap: () => Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) {
                                   return AddMedicationScreen(id: user!.uid);
                                 })),
                                 child: Ink(
@@ -272,8 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: Icon(
                                     Icons.add_circle_outline,
                                     size: 22,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -281,13 +260,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         InkWell(
-                          onTap: () => {
-                            Navigator.pushNamed(context, '/medicationHistory')
-                          },
-                          child: Text("History",
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.primary)),
+                          onTap: () => {Navigator.pushNamed(context, '/medicationHistory')},
+                          child: Text("History", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                         )
                       ]),
                   const SizedBox(
@@ -307,8 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       const Align(
                         alignment: Alignment.centerLeft,
-                        child: TextWidget(
-                            text: "Medical Appointments", style: 'labelMedium'),
+                        child: TextWidget(text: "Medical Appointments", style: 'labelMedium'),
                       ),
                       const SizedBox(
                         width: 8,
@@ -317,8 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         alignment: Alignment.centerLeft,
                         child: InkWell(
                           onTap: () => {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
                               return AddAppointmentScreen(id: user!.uid);
                             }))
                           },
@@ -352,8 +324,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     child: TextButton.icon(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.resolveWith<Color?>(
+                          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                             (Set<MaterialState> states) {
                               if (states.contains(MaterialState.disabled)) {
                                 return Colors.grey;
@@ -364,8 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         onPressed: () {
                           context.read<UserAuthProvider>().signOut();
-                          Navigator.pushNamedAndRemoveUntil(context,
-                              '/loginScreen', (Route<dynamic> route) => false);
+                          Navigator.pushNamedAndRemoveUntil(context, '/loginScreen', (Route<dynamic> route) => false);
                         },
                         icon: const Icon(
                           Icons.logout,
@@ -400,11 +370,7 @@ Widget _displayMedicines(BuildContext context, String id) {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                      child:
-                          Text2Widget(text: "No medicines yet", style: 'body2'))
-                ]),
+                children: [Center(child: Text2Widget(text: "No medicines yet", style: 'body2'))]),
           );
         }
         return ListView.builder(
@@ -446,8 +412,7 @@ Widget _displayAppointments(BuildContext context, String id) {
     return "${date.month}/${date.day}/${date.year}";
   }
 
-  return BlocBuilder<AppointmentBloc, AppointmentState>(
-      builder: (context, state) {
+  return BlocBuilder<AppointmentBloc, AppointmentState>(builder: (context, state) {
     if (state is AppointmentLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -458,11 +423,7 @@ Widget _displayAppointments(BuildContext context, String id) {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                    child: Text2Widget(
-                        text: "No medical appointments yet", style: 'body2'))
-              ]),
+              children: [Center(child: Text2Widget(text: "No medical appointments yet", style: 'body2'))]),
         );
       }
       return ListView.builder(

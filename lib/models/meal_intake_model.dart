@@ -25,10 +25,10 @@ class MealIntake {
     return MealIntake(
       mealIntakeId: id,
       userId: json['userId'],
-      foodIds: json['foodIds'],
+      foodIds: List<String>.from(json['foodIds']),
       photoUrl: json['photoUrl'],
       proofPath: json['proofPath'],
-      timestamp: (json['date'] as Timestamp).toDate(),
+      timestamp: json['date'] != null ? (json['date'] as Timestamp).toDate() : null,
       mealTime: json['mealTime'],
       accMeals: json['accMeals'] != null ? Meal.fromJson(json['accMeals'], id) : null,
     );
