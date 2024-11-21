@@ -1,5 +1,4 @@
 import 'package:diabuddy/models/meal_intake_model.dart';
-import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
@@ -18,6 +17,9 @@ class MealTrackerScreen extends StatefulWidget {
 class _MealTrackerScreenState extends State<MealTrackerScreen> {
   String? userId;
   List<MealIntake> mealsToday = [];
+  double accDietDiversityScore = 0;
+  double accCalories = 0;
+  double accCarbohydrates = 0;
 
   final goodText = const Color.fromARGB(255, 19, 98, 93);
   final fairText = const Color.fromRGBO(249, 166, 32, 1);
@@ -42,49 +44,6 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Diet Diversity Score",
-                  style: TextStyle(color: fairText),
-                ),
-              ],
-            ),
-            Text("7.5", style: TextStyle(color: fairText, fontSize: 35)),
-            Container(
-              padding: const EdgeInsets.all(15),
-              width: double.infinity,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
-              child: IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Column(
-                      children: [
-                        Text("3.45"),
-                        Text("Calories", style: TextStyle(fontWeight: FontWeight.normal)),
-                      ],
-                    ),
-                    VerticalDivider(
-                      thickness: 1,
-                      width: 20,
-                      color: Colors.grey[400],
-                    ),
-                    const Column(
-                      children: [
-                        Text("360"),
-                        Text(
-                          "Carbohydrates",
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
             BlocBuilder<MealIntakeBloc, MealIntakeState>(
               builder: (context, state) {
                 if (state is MealIntakeLoading) {
@@ -100,17 +59,80 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                           children: [Center(child: Text2Widget(text: "No meals taken yet", style: 'body2'))]),
                     );
                   }
+                  // count meals for each mealTime
+                  final Map<String, int> mealGroups = {
+                    "Breakfast": 0,
+                    "Lunch": 0,
+                    "Dinner": 0,
+                    "Snack": 0,
+                  };
+
+                  for (var meal in state.mealIntakes) {
+                    final mealTime = meal['mealTime'];
+                    if (mealGroups.containsKey(mealTime)) {
+                      mealGroups[mealTime] = mealGroups[mealTime]! + 1;
+                    }
+                  }
+
+                  for (var m in state.mealIntakes) {
+                    accDietDiversityScore = accDietDiversityScore + m['accMeals']['diversityScore'];
+                    accCalories = accCalories + m['accMeals']['energyKcal'];
+                    accCarbohydrates = accCarbohydrates + m['accMeals']['carbohydrate'];
+                  }
+
                   return Column(
                     children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: state.mealIntakes.isNotEmpty
-                            ? Text(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Diet Diversity Score",
+                            style: TextStyle(color: fairText),
+                          ),
+                        ],
+                      ),
+                      Text(accDietDiversityScore.toStringAsFixed(0), style: TextStyle(color: fairText, fontSize: 35)),
+                      Container(
+                        padding: const EdgeInsets.all(15),
+                        width: double.infinity,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(accCalories.toStringAsFixed(2)),
+                                  const Text("Calories", style: TextStyle(fontWeight: FontWeight.normal)),
+                                ],
+                              ),
+                              VerticalDivider(
+                                thickness: 1,
+                                width: 20,
+                                color: Colors.grey[400],
+                              ),
+                              Column(
+                                children: [
+                                  Text(accCarbohydrates.toStringAsFixed(2)),
+                                  const Text(
+                                    "Carbohydrates",
+                                    style: TextStyle(fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      mealGroups["Breakfast"] != 0
+                          ? Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
                                 "Breakfast",
                                 style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              )
-                            : const SizedBox(),
-                      ),
+                              ))
+                          : Container(),
                       ListView.separated(
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(height: 5.0);
@@ -136,15 +158,14 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                           return null;
                         },
                       ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: state.mealIntakes.isNotEmpty
-                            ? Text(
+                      mealGroups["Lunch"] != 0
+                          ? Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
                                 "Lunch",
                                 style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              )
-                            : const SizedBox(),
-                      ),
+                              ))
+                          : Container(),
                       ListView.separated(
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(height: 5.0);
@@ -170,15 +191,14 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                           return null;
                         },
                       ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: state.mealIntakes.isNotEmpty
-                            ? Text(
+                      mealGroups["Dinner"] != 0
+                          ? Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
                                 "Dinner",
                                 style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              )
-                            : const SizedBox(),
-                      ),
+                              ))
+                          : Container(),
                       ListView.separated(
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(height: 5.0);
@@ -204,15 +224,14 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                           return null;
                         },
                       ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: state.mealIntakes.isNotEmpty
-                            ? Text(
+                      mealGroups["Snack"] != 0
+                          ? Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
                                 "Snack",
                                 style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              )
-                            : const SizedBox(),
-                      ),
+                              ))
+                          : Container(),
                       ListView.separated(
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(height: 5.0);
@@ -247,34 +266,6 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                 }
               },
             ),
-
-            // Row(
-            //   children: [
-            //     Text(
-            //       "Breakfast",
-            //       textAlign: TextAlign.left,
-            //       style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 10),
-            // const MealInfo(mealName: "Sunny Sideup and Rice", carbs: "130g", cal: "0.89 kCal", gi: "2.5"),
-            // const SizedBox(height: 10),
-            // const MealInfo(mealName: "Adobo", carbs: "130g", cal: "0.89 kCal", gi: "2.5"),
-            // const SizedBox(height: 10),
-            // Row(
-            //   children: [
-            //     Text(
-            //       "Lunch",
-            //       textAlign: TextAlign.left,
-            //       style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 10),
-            // const MealInfo(mealName: "Sinigang and Rice", carbs: "130g", cal: "0.89 kCal", gi: "2.5"),
-            // const SizedBox(height: 10),
-            // const SizedBox(height: 10),
           ]),
         ),
       )),
