@@ -18,7 +18,7 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   User? user;
-  static int count = 0;
+  // static int count = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +87,7 @@ String getTimePassed(String dateString) {
 
 Widget _displayNotifications(BuildContext context, String id) {
   var timePassed;
-  bool result;
+  // bool result;
 
   return StreamBuilder(
       stream: context.watch<NotificationProvider>().getNotifications(id),
@@ -110,19 +110,15 @@ Widget _displayNotifications(BuildContext context, String id) {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                      child: Text2Widget(
-                          text: "No notifications yet", style: 'body2'))
-                ]),
+                children: [Center(child: Text2Widget(text: "No notifications yet", style: 'body2'))]),
           ));
         }
         return ListView.builder(
             shrinkWrap: true,
             itemCount: snapshot.data?.docs.length,
             itemBuilder: (context, index) {
-              NotificationModel notification = NotificationModel.fromJson(
-                  snapshot.data?.docs[index].data() as Map<String, dynamic>);
+              NotificationModel notification =
+                  NotificationModel.fromJson(snapshot.data?.docs[index].data() as Map<String, dynamic>);
               notification.notificationId = snapshot.data?.docs[index].id;
               timePassed = getTimePassed(notification.time.toString());
               // result = checkTimeString(timePassed);

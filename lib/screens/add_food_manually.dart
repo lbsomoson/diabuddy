@@ -6,7 +6,6 @@ import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/textfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,13 +17,14 @@ class AddFoodManually extends StatefulWidget {
 }
 
 class _AddFoodManuallyState extends State<AddFoodManually> {
-  User? user;
+  String? userId;
   final _formKey = GlobalKey<FormState>();
   String mealName = "";
   List<Meal> meals = [];
   List<Meal> allMeals = [];
   List<Meal> foundMeals = [];
   MealIntake mealIntake = MealIntake(
+    userId: "",
     foodIds: [],
     photoUrl: "",
     proofPath: "",
@@ -115,7 +115,8 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
 
   @override
   void initState() {
-    user = context.read<UserAuthProvider>().user;
+    userId = context.read<UserAuthProvider>().user?.uid;
+
     context.read<MealBloc>().add(const LoadMeals());
     foundMeals = allMeals;
     super.initState();
@@ -274,6 +275,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                           for (Meal m in meals) {
                             print('${m.mealId}: ${m.mealName}');
                           }
+                          mealIntake.userId = userId!;
                           mealIntake.mealTime = getCurrentMealTime();
                           mealIntake.timestamp = DateTime.now();
                           computeTotal();

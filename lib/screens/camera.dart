@@ -6,7 +6,6 @@ import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/utils/classes.dart';
-import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/text2.dart';
@@ -29,6 +28,7 @@ class _CameraScreenState extends State<CameraScreen> {
   String? userId;
   File? selectedImage;
   String? path;
+  var decodedImage;
   bool imageSelected = false;
   ModelObjectDetection? _objectModel;
   List<ResultObjectDetection?> objDetect = [];
@@ -67,6 +67,7 @@ class _CameraScreenState extends State<CameraScreen> {
       betaCarotene: 0.0,
       heiClassification: "");
   MealIntake mealIntake = MealIntake(
+      userId: '',
       foodIds: [],
       photoUrl: "",
       proofPath: "",
@@ -192,7 +193,6 @@ class _CameraScreenState extends State<CameraScreen> {
       print({
         "score": element?.score,
         "className": element?.className,
-        // "class": element?.classIndex,
         "rect": {
           "left": element?.rect.left,
           "top": element?.rect.top,
@@ -259,6 +259,7 @@ class _CameraScreenState extends State<CameraScreen> {
       path = '/$id/uploads/$fileName';
     });
     print(path);
+    decodedImage = await decodeImageFromList(selectedImage!.readAsBytesSync());
     detectObjects();
   }
 
@@ -282,289 +283,292 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: AppBarTitle(title: accMeal.mealName == "" ? "Add Meal" : accMeal.mealName!),
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _objectModel != null
-                  ? Column(
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 0.8,
-                          child: _objectModel!.renderBoxesOnImage(selectedImage!, objDetect),
-                        ),
-                        Form(
-                          key: _formKey,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
-                            child: Column(
-                              children: [
-                                foodList.isEmpty
-                                    ? const CircularProgressIndicator()
-                                    : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Column(
-                                          children: [
-                                            const TextWidget(text: "Food", style: 'bodyMedium'),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            ListView.builder(
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: foodList.length,
-                                                itemBuilder: (BuildContext context, int index) {
-                                                  return Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                    ),
-                                                    child: ListTile(
-                                                      dense: true,
-                                                      title: TextField(
-                                                        controller: controllers[index],
-                                                        onChanged: (val) {
-                                                          setState(() {
-                                                            foodList[index] = val;
-                                                          });
-                                                        },
-                                                        style: Theme.of(context).textTheme.labelSmall,
-                                                        decoration: InputDecoration(
-                                                          focusedBorder: OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                color: Theme.of(context).colorScheme.primary,
-                                                                width: 2.0),
-                                                            borderRadius: BorderRadius.circular(10.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height - 100),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _objectModel != null
+                    ? Column(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 0.8,
+                            child: _objectModel!.renderBoxesOnImage(selectedImage!, objDetect),
+                          ),
+                          Form(
+                            key: _formKey,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
+                              child: Column(
+                                children: [
+                                  foodList.isEmpty
+                                      ? const CircularProgressIndicator()
+                                      : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Column(
+                                            children: [
+                                              const Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: TextWidget(text: "Food", style: 'bodyMedium')),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              ListView.builder(
+                                                  physics: const NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: foodList.length,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(8.0),
+                                                      ),
+                                                      child: ListTile(
+                                                        dense: true,
+                                                        title: TextField(
+                                                          controller: controllers[index],
+                                                          onChanged: (val) {
+                                                            setState(() {
+                                                              foodList[index] = val;
+                                                            });
+                                                          },
+                                                          style: Theme.of(context).textTheme.labelSmall,
+                                                          decoration: InputDecoration(
+                                                            focusedBorder: OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                  color: Theme.of(context).colorScheme.primary,
+                                                                  width: 2.0),
+                                                              borderRadius: BorderRadius.circular(10.0),
+                                                            ),
+                                                            border: OutlineInputBorder(
+                                                              borderSide: BorderSide(color: Colors.grey[200]!),
+                                                              borderRadius: BorderRadius.circular(10.0),
+                                                            ),
+                                                            labelStyle: Theme.of(context).textTheme.bodyMedium,
+                                                            hintStyle: Theme.of(context).textTheme.labelMedium,
+                                                            contentPadding: const EdgeInsets.symmetric(
+                                                                vertical: 10, horizontal: 16),
                                                           ),
-                                                          border: OutlineInputBorder(
-                                                            borderSide: BorderSide(color: Colors.grey[200]!),
-                                                            borderRadius: BorderRadius.circular(10.0),
-                                                          ),
-                                                          labelStyle: Theme.of(context).textTheme.bodyMedium,
-                                                          hintStyle: Theme.of(context).textTheme.labelMedium,
-                                                          contentPadding:
-                                                              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                                        ),
+                                                        trailing: Row(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            IconButton(
+                                                              icon: Icon(Icons.delete,
+                                                                  color: Theme.of(context).primaryColor),
+                                                              onPressed: () => _removeTextField(index),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                      trailing: Row(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          IconButton(
-                                                            icon: Icon(Icons.delete,
-                                                                color: Theme.of(context).primaryColor),
-                                                            onPressed: () => _removeTextField(index),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                    );
+                                                  }),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: InkWell(
+                                                  onTap: () => _addNewTextField(),
+                                                  child: Ink(
+                                                    decoration: const BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.transparent,
                                                     ),
-                                                  );
-                                                }),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: InkWell(
-                                                onTap: () => _addNewTextField(),
-                                                child: Ink(
-                                                  decoration: const BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.transparent,
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.add_circle_outline,
-                                                        size: 22,
-                                                        color: Theme.of(context).colorScheme.primary,
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      const Text2Widget(text: "Add food", style: "body2"),
-                                                    ],
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.add_circle_outline,
+                                                          size: 22,
+                                                          color: Theme.of(context).colorScheme.primary,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        const Text2Widget(text: "Add food", style: "body2"),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            ButtonWidget(
-                                                callback: () {
-                                                  if (_formKey.currentState!.validate()) {
-                                                    context.read<MealBloc>().add(const LoadMeals());
-                                                  }
-                                                },
-                                                label: "Submit",
-                                                style: 'filled'),
-                                            BlocListener<MealBloc, MealState>(
-                                                listener: (context, state) {
-                                                  if (state is MealLoaded) {
-                                                    // update the allMeals list when meals are loaded
-                                                    setState(() {
-                                                      allMeals = state.meals;
-                                                    });
-                                                    for (var f in foodList) {
-                                                      classNames.forEach((k, v) {
-                                                        if (f == k) {
-                                                          var idx = allMeals.indexWhere((meal) => meal.mealName == v);
-                                                          if (idx != -1) {
-                                                            // if it exists in the list of all meals, add
-                                                            mealsDetected.add(allMeals[idx]);
-                                                            mealIntake.foodIds.add(allMeals[idx].mealId!);
-                                                          }
-                                                        }
-                                                      });
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              ButtonWidget(
+                                                  callback: () {
+                                                    if (_formKey.currentState!.validate()) {
+                                                      context.read<MealBloc>().add(const LoadMeals());
                                                     }
-                                                    accMeal = accumulateMealValues(mealsDetected);
-                                                    setState(() {});
-                                                    // TODO: ADD PHOTO
-                                                    mealIntake.mealTime = getCurrentMealTime();
-                                                    mealIntake.timestamp = _currentDate;
-                                                    mealIntake.accMeals = accMeal;
+                                                  },
+                                                  label: "Submit",
+                                                  style: 'filled'),
+                                              BlocListener<MealBloc, MealState>(
+                                                  listener: (context, state) {
+                                                    if (state is MealLoaded) {
+                                                      // update the allMeals list when meals are loaded
+                                                      setState(() {
+                                                        allMeals = state.meals;
+                                                      });
+                                                      for (var f in foodList) {
+                                                        classNames.forEach((k, v) {
+                                                          if (f == k) {
+                                                            var idx = allMeals.indexWhere((meal) => meal.mealName == v);
+                                                            if (idx != -1) {
+                                                              // if it exists in the list of all meals, add
+                                                              mealsDetected.add(allMeals[idx]);
+                                                              mealIntake.foodIds.add(allMeals[idx].mealId!);
+                                                            }
+                                                          }
+                                                        });
+                                                      }
+                                                      accMeal = accumulateMealValues(mealsDetected);
+                                                      setState(() {});
+                                                      // TODO: ADD PHOTO
+                                                      mealIntake.userId = userId!;
+                                                      mealIntake.mealTime = getCurrentMealTime();
+                                                      mealIntake.timestamp = _currentDate;
+                                                      mealIntake.accMeals = accMeal;
 
-                                                    context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
+                                                      context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
 
-                                                    // TODO: JUMP TO MEAL DETAILS SCREEN
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                      return MealDetailsScreen(mealIntake: mealIntake);
-                                                    }));
-                                                  } else if (state is MealNotFound) {
-                                                    // show an error message if the medication was not found
-                                                    final snackBar = SnackBar(
-                                                      backgroundColor: Colors.red,
-                                                      content: const Text('Meal not found!'),
-                                                      action: SnackBarAction(
-                                                        label: 'Close',
-                                                        onPressed: () {},
-                                                      ),
-                                                    );
-                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                  } else if (state is MealError) {
-                                                    // handle any errors here
-                                                    final snackBar = SnackBar(
-                                                      backgroundColor: Colors.red,
-                                                      content: Text(state.message),
-                                                      action: SnackBarAction(
-                                                        label: 'Close',
-                                                        onPressed: () {},
-                                                      ),
-                                                    );
-                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                  }
-                                                },
-                                                child: const SizedBox()),
-                                          ],
-                                        ),
-                                      ]),
-                              ],
+                                                      // TODO: JUMP TO MEAL DETAILS SCREEN
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                        return MealDetailsScreen(mealIntake: mealIntake);
+                                                      }));
+                                                    } else if (state is MealNotFound) {
+                                                      // show an error message if the medication was not found
+                                                      final snackBar = SnackBar(
+                                                        backgroundColor: Colors.red,
+                                                        content: const Text('Meal not found!'),
+                                                        action: SnackBarAction(
+                                                          label: 'Close',
+                                                          onPressed: () {},
+                                                        ),
+                                                      );
+                                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                    } else if (state is MealError) {
+                                                      // handle any errors here
+                                                      final snackBar = SnackBar(
+                                                        backgroundColor: Colors.red,
+                                                        content: Text(state.message),
+                                                        action: SnackBarAction(
+                                                          label: 'Close',
+                                                          onPressed: () {},
+                                                        ),
+                                                      );
+                                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                    }
+                                                  },
+                                                  child: const SizedBox()),
+                                            ],
+                                          ),
+                                        ]),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  : Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2.0,
-                                ),
-                              ),
-                              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                              width: double.infinity,
-                              child: Material(
-                                borderRadius: BorderRadius.circular(15.0),
-                                child: InkWell(
+                        ],
+                      )
+                    : Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
-                                  splashColor: Theme.of(context).colorScheme.secondary,
-                                  onTap: () async {
-                                    await _pickImageFromCamera(userId!);
-                                  },
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 30,
-                                      ),
-                                      Icon(
-                                        Icons.camera_alt_rounded,
-                                        color: Color.fromRGBO(100, 204, 197, 1),
-                                        size: 100,
-                                      ),
-                                      Text("Open Camera",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Color.fromRGBO(100, 204, 197, 1),
-                                          )),
-                                      SizedBox(
-                                        height: 40,
-                                      ),
-                                    ],
+                                  border: Border.all(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                                width: double.infinity,
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    splashColor: Theme.of(context).colorScheme.secondary,
+                                    onTap: () async {
+                                      await _pickImageFromCamera(userId!);
+                                    },
+                                    child: const Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 30,
+                                        ),
+                                        Icon(
+                                          Icons.camera_alt_rounded,
+                                          color: Color.fromRGBO(100, 204, 197, 1),
+                                          size: 100,
+                                        ),
+                                        Text("Open Camera",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Color.fromRGBO(100, 204, 197, 1),
+                                            )),
+                                        SizedBox(
+                                          height: 40,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2.0,
-                                ),
-                              ),
-                              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                              width: double.infinity,
-                              child: Material(
-                                borderRadius: BorderRadius.circular(15.0),
-                                child: InkWell(
+                              Container(
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
-                                  splashColor: Theme.of(context).colorScheme.secondary,
-                                  onTap: () async {
-                                    await _pickImageFromGallery(userId!);
-                                  },
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 30,
-                                      ),
-                                      Icon(
-                                        Icons.photo_size_select_actual_rounded,
-                                        color: Color.fromRGBO(100, 204, 197, 1),
-                                        size: 100,
-                                      ),
-                                      Text("Open Gallery",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Color.fromRGBO(100, 204, 197, 1),
-                                          )),
-                                      SizedBox(
-                                        height: 40,
-                                      ),
-                                    ],
+                                  border: Border.all(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                                width: double.infinity,
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    splashColor: Theme.of(context).colorScheme.secondary,
+                                    onTap: () async {
+                                      await _pickImageFromGallery(userId!);
+                                    },
+                                    child: const Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 30,
+                                        ),
+                                        Icon(
+                                          Icons.photo_size_select_actual_rounded,
+                                          color: Color.fromRGBO(100, 204, 197, 1),
+                                          size: 100,
+                                        ),
+                                        Text("Open Gallery",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Color.fromRGBO(100, 204, 197, 1),
+                                            )),
+                                        SizedBox(
+                                          height: 40,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ]),
-                    )
-            ],
+                            ]),
+                      )
+              ],
+            ),
           ),
         ),
       ),

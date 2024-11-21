@@ -1,4 +1,3 @@
-import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/meal_info.dart';
 import 'package:flutter/material.dart';
@@ -39,9 +38,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
             Container(
               padding: const EdgeInsets.all(15),
               width: double.infinity,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey[100]),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
               child: IntrinsicHeight(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -49,8 +46,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                     const Column(
                       children: [
                         Text("3.45"),
-                        Text("Calories",
-                            style: TextStyle(fontWeight: FontWeight.normal)),
+                        Text("Calories", style: TextStyle(fontWeight: FontWeight.normal)),
                       ],
                     ),
                     VerticalDivider(
@@ -77,39 +73,26 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                 Text(
                   "Breakfast",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 18),
+                  style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-            const MealInfo(
-                mealName: "Sunny Sideup and Rice",
-                carbs: "130g",
-                cal: "0.89 kCal",
-                gi: "2.5"),
+            const MealInfo(mealName: "Sunny Sideup and Rice", carbs: "130g", cal: "0.89 kCal", gi: "2.5"),
             const SizedBox(height: 10),
-            const MealInfo(
-                mealName: "Adobo", carbs: "130g", cal: "0.89 kCal", gi: "2.5"),
+            const MealInfo(mealName: "Adobo", carbs: "130g", cal: "0.89 kCal", gi: "2.5"),
             const SizedBox(height: 10),
             Row(
               children: [
                 Text(
                   "Lunch",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 18),
+                  style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-            const MealInfo(
-                mealName: "Sinigang and Rice",
-                carbs: "130g",
-                cal: "0.89 kCal",
-                gi: "2.5"),
+            const MealInfo(mealName: "Sinigang and Rice", carbs: "130g", cal: "0.89 kCal", gi: "2.5"),
             const SizedBox(height: 10),
             const SizedBox(height: 10),
           ]),

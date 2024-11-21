@@ -3,6 +3,7 @@ import 'package:diabuddy/models/meal_model.dart';
 
 class MealIntake {
   String? mealIntakeId;
+  String userId;
   String photoUrl;
   String proofPath;
   DateTime? timestamp;
@@ -12,6 +13,7 @@ class MealIntake {
 
   MealIntake(
       {this.mealIntakeId,
+      required this.userId,
       required this.foodIds,
       required this.photoUrl,
       required this.proofPath,
@@ -22,6 +24,7 @@ class MealIntake {
   factory MealIntake.fromJson(Map<String, dynamic> json, String id) {
     return MealIntake(
       mealIntakeId: id,
+      userId: json['userId'],
       foodIds: json['foodIds'],
       photoUrl: json['photoUrl'],
       proofPath: json['proofPath'],
@@ -41,6 +44,7 @@ class MealIntake {
   Map<String, dynamic> toJson(MealIntake mealIntake) {
     return {
       'mealIntakeId': mealIntake.mealIntakeId,
+      'userId': mealIntake.userId,
       'foodIds': mealIntake.foodIds,
       'photoUrl': mealIntake.photoUrl,
       'proofPath': mealIntake.proofPath,

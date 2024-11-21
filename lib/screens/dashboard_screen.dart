@@ -166,8 +166,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     const Expanded(child: DashboardWidget(header: "Glycemic Index", value: 99.0)),
                     SizedBox(width: sizedBoxHeight),
-                    const Expanded(
-                        child: DashboardWidget(header: "Diet Diversity Score", value: 7.5)),
+                    const Expanded(child: DashboardWidget(header: "Diet Diversity Score", value: 7.5)),
                   ],
                 ),
                 SizedBox(height: sizedBoxHeight),
@@ -175,9 +174,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Expanded(child: DashboardWidget(header: "Calories", value: 2000)),
                     SizedBox(width: 10),
-                    Expanded(
-                        child: DashboardWidget(
-                            header: "Carbohydrates", value: 1099, caloriesValue: 2000)),
+                    Expanded(child: DashboardWidget(header: "Carbohydrates", value: 1099, caloriesValue: 2000)),
                   ],
                 ),
                 SizedBox(height: sizedBoxHeight),
