@@ -1,29 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:semicircle_indicator/semicircle_indicator.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
-class SemiCircleProgressBar extends StatefulWidget {
+class CircleProgressIndicator extends StatefulWidget {
   final String title;
-  const SemiCircleProgressBar({required this.title, super.key});
+  const CircleProgressIndicator({required this.title, super.key});
 
   @override
-  State<SemiCircleProgressBar> createState() => _SemiCircleProgressBarState();
+  State<CircleProgressIndicator> createState() => _CircleProgressIndicatorState();
 }
 
-class _SemiCircleProgressBarState extends State<SemiCircleProgressBar> {
+class _CircleProgressIndicatorState extends State<CircleProgressIndicator> {
+  late ValueNotifier<double> valueNotifier;
+
+  int keyForRepaint = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    valueNotifier = ValueNotifier(0.0);
+  }
+
+  @override
+  void dispose() {
+    valueNotifier.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SemicircularIndicator(
-      radius: 100,
-      color: Colors.orange,
-      backgroundColor: Colors.grey[300]!,
-      strokeWidth: 13,
-      bottomPadding: 0,
-      contain: true,
-      progress: 0.75,
-      child: const Text(
-        '75%',
-        style: TextStyle(
-            fontSize: 32, fontWeight: FontWeight.w600, color: Colors.orange),
+    return RepaintBoundary(
+      child: GestureDetector(
+        key: ValueKey(keyForRepaint),
+        onTap: () {
+          valueNotifier.value = 100.0;
+          keyForRepaint++;
+          setState(() {});
+        },
+        child: Column(
+          children: [
+            Text(
+              'SELECT THE THICKNESS OF THE LINES',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white.withOpacity(0.5),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SimpleCircularProgressBar(
+                  onGetText: (double value) {
+                    return Text(
+                      '${value.toInt()}%',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orangeAccent.withOpacity(value * 0.01),
+                      ),
+                    );
+                  },
+                  progressColors: const [Color.fromRGBO(241, 207, 85, 1), Color.fromRGBO(247, 139, 8, 1)],
+                  valueNotifier: valueNotifier,
+                  size: 200,
+                  progressStrokeWidth: 30,
+                  backStrokeWidth: 20,
+                  backColor: const Color.fromARGB(126, 253, 229, 143),
+                  animationDuration: 2,
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

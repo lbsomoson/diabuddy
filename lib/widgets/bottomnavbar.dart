@@ -15,7 +15,7 @@ class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
 
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
@@ -44,10 +44,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
         ),
         PersistentTabConfig(
-          screen: const HistoryScreen(),
+          screen: const MealTrackerScreen(),
           item: ItemConfig(
-            icon: const Icon(Icons.insert_chart_rounded),
-            // title: "Notifications",
+            icon: const Icon(
+              FontAwesomeIcons.bowlFood,
+              size: 22,
+            ),
+            // title: "Daily Meal",
             inactiveForegroundColor: Colors.grey[400]!,
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),
@@ -62,10 +65,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
         ),
         PersistentTabConfig(
-          screen: const MealTrackerScreen(),
+          screen: const HistoryScreen(),
           item: ItemConfig(
-            icon: const Icon(FontAwesomeIcons.bowlFood),
-            // title: "Daily Meal",
+            icon: const Icon(
+              Icons.insert_chart_rounded,
+              size: 24,
+            ),
+            // title: "Notifications",
             inactiveForegroundColor: Colors.grey[400]!,
             activeForegroundColor: Theme.of(context).colorScheme.primary,
           ),

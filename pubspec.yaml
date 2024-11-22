@@ -18,7 +18,7 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   vertical_weight_slider: ^2.6.0
   wheel_slider: ^1.2.1
-  semicircle_indicator: ^1.1.1
+  simple_circular_progress_bar: ^1.0.2
   fl_chart: ^0.67.0
   firebase_core: ^2.27.0
   cloud_firestore: ^4.15.8
