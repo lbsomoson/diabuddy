@@ -1,12 +1,12 @@
-// import 'package:diabuddy/models/meal_model.dart';
-// import 'package:diabuddy/screens/meal_details.dart';
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:flutter/material.dart';
 
 class MealInfo extends StatefulWidget {
-  // final Meal meal;
+  final Meal meal;
   final String mealName, carbs, cal, gi;
   const MealInfo(
-      {required this.mealName,
+      {required this.meal,
+      required this.mealName,
       required this.carbs,
       required this.cal,
       required this.gi,
@@ -25,20 +25,17 @@ class _MealInfoState extends State<MealInfo> {
       onTap: () {
         // Navigator.pushNamed(context, '/mealDetailsScreen');
         // Navigator.push(context, MaterialPageRoute(builder: (context) {
-        //   return MealDetailsScreen(meal: widget.mealName);
+        //   return MealDetailsScreen(mealIntakeMap: widget.meal);
         // }));
       },
       child: Container(
         padding: const EdgeInsets.all(15),
         width: double.infinity,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey[100]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(widget.mealName,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700)),
+              style:
+                  TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.w700)),
           Padding(
             padding: const EdgeInsets.only(left: 20),
             child: Row(
@@ -51,13 +48,11 @@ class _MealInfoState extends State<MealInfo> {
                       children: [
                         Text(
                           widget.carbs,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary),
                         ),
                         const Text(
                           " of carbohydrates",
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w400),
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -65,13 +60,11 @@ class _MealInfoState extends State<MealInfo> {
                       children: [
                         Text(
                           widget.cal,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary),
                         ),
                         const Text(
                           " of calories",
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w400),
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -79,13 +72,11 @@ class _MealInfoState extends State<MealInfo> {
                       children: [
                         Text(
                           widget.gi,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary),
                         ),
                         const Text(
                           " glycemic index",
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w400),
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),

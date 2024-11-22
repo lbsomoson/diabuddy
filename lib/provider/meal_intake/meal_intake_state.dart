@@ -19,7 +19,7 @@ class SingleMealIntakeLoaded extends MealIntakeState {
 }
 
 class MealIntakeByDateLoaded extends MealIntakeState {
-  final List<Map<String, dynamic>> mealIntakes;
+  final List<MealIntake> mealIntakes;
 
   const MealIntakeByDateLoaded(this.mealIntakes);
 

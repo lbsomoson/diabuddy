@@ -3,12 +3,45 @@ import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class NutritionWidget extends StatelessWidget {
-  final Meal accMeal;
+  final Meal? accMeal;
+  final Map<String, dynamic>? accMealMap;
 
-  const NutritionWidget({required this.accMeal, super.key});
+  const NutritionWidget({this.accMeal, this.accMealMap, super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Use accMeal if it's not null, otherwise use accMealMap
+    var acc = Meal(
+      // Provide a fallback Meal object from accMealMap
+      mealName: accMealMap?['mealName'] ?? "Unknown Meal",
+      carbohydrate: accMealMap?['carbohydrate'] ?? 0.0,
+      energyKcal: accMealMap?['energyKcal'] ?? 0.0,
+      glycemicIndex: accMealMap?['glycemicIndex'] ?? 0.0,
+      heiClassification: accMealMap?['heiClassification'] ?? "Unknown Classification",
+      diversityScore: accMealMap?['diversityScore'] ?? 0.0,
+      healtyEatingIndex: accMealMap?['healtyEatingIndex'] ?? 0.0,
+      calcium: accMealMap?['calcium'] ?? 0.0,
+      fat: accMealMap?['fat'] ?? 0.0,
+      iron: accMealMap?['iron'] ?? 0.0,
+      phosphorus: accMealMap?['phosphorus'] ?? 0.0,
+      protein: accMealMap?['protein'] ?? 0.0,
+      niacin: accMealMap?['niacin'] ?? 0.0,
+      cholesterol: accMealMap?['cholesterol'] ?? 0.0,
+      phytochemicalIndex: accMealMap?['phytochemicalIndex'] ?? 0.0,
+      potassium: accMealMap?['potassium'] ?? 0.0,
+      retinol: accMealMap?['retinol'] ?? 0.0,
+      riboflavin: accMealMap?['riboflavin'] ?? 0.0,
+      thiamin: accMealMap?['thiamin'] ?? 0.0,
+      totalDietaryFiber: accMealMap?['totalDietaryFiber'] ?? 0.0,
+      totalSugar: accMealMap?['totalSugar'] ?? 0.0,
+      vitaminC: accMealMap?['vitaminC'] ?? 0.0,
+      zinc: accMealMap?['zinc'] ?? 0.0,
+      betaCarotene: accMealMap?['betaCarotene'] ?? 0.0,
+      sodium: accMealMap?['sodium'] ?? [],
+    );
+
+    final Meal meal = accMeal ?? acc;
+
     return Column(
       children: [
         Container(
@@ -25,7 +58,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: "${accMeal.carbohydrate!.toStringAsFixed(2)} g", style: "bodySmall")
+                  TextWidget(text: "${meal.carbohydrate!.toStringAsFixed(2)} g", style: "bodySmall")
                 ],
               ),
               Row(
@@ -38,7 +71,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: "${accMeal.energyKcal!.toStringAsFixed(2)} kCal", style: "bodySmall")
+                  TextWidget(text: "${meal.energyKcal!.toStringAsFixed(2)} kCal", style: "bodySmall")
                 ],
               ),
               Row(
@@ -51,7 +84,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.glycemicIndex!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.glycemicIndex!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -64,7 +97,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.diversityScore!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.diversityScore!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -77,7 +110,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.healtyEatingIndex!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.healtyEatingIndex!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -90,7 +123,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.calcium!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.calcium!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -103,7 +136,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.fat!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.fat!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -116,7 +149,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.iron!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.iron!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -129,7 +162,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.phosphorus!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.phosphorus!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -142,7 +175,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.protein!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.protein!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -155,7 +188,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.niacin!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.niacin!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -168,7 +201,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.cholesterol!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.cholesterol!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -181,7 +214,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.phytochemicalIndex!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.phytochemicalIndex!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -194,7 +227,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.potassium!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.potassium!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -207,7 +240,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.retinol!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.retinol!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -220,7 +253,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.riboflavin!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.riboflavin!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -233,33 +266,33 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.thiamin!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.thiamin!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Total Dietary Fiber",
+                  const Text("Dietary Fiber",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.totalDietaryFiber!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.totalDietaryFiber!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Total Sugar",
+                  const Text("Sugar",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.totalSugar!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.totalSugar!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -272,7 +305,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.vitaminC!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.vitaminC!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
               Row(
@@ -285,48 +318,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: accMeal.zinc!.toStringAsFixed(2), style: "bodySmall")
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("beta-carotene",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(4, 54, 74, 1),
-                        fontFamily: 'Roboto',
-                      )),
-                  TextWidget(text: accMeal.betaCarotene!.toStringAsFixed(2), style: "bodySmall")
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(children: [
-                    Text(
-                      "Sodium",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(4, 54, 74, 1),
-                        fontFamily: 'Roboto',
-                      ),
-                      textAlign: TextAlign.start,
-                    ),
-                    Text("")
-                  ]),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      for (double? value in accMeal.sodium ?? [])
-                        TextWidget(
-                          text: value!.toStringAsFixed(2),
-                          style: "bodySmall",
-                        ),
-                    ],
-                  ),
+                  TextWidget(text: meal.zinc!.toStringAsFixed(2), style: "bodySmall")
                 ],
               ),
             ],

@@ -58,35 +58,36 @@ class Meal {
   });
 
   factory Meal.fromJson(Map<String, dynamic> json, String id) {
-    return Meal(
+    Meal m = Meal(
       mealId: id,
-      mealName: json['Meal Name'],
-      foodCode: json['Food Code'],
-      carbohydrate: json['Carbohydrate']?.toDouble(),
-      totalDietaryFiber: json['Total Dietary Fiber']?.toDouble(),
-      totalSugar: json['Total Sugar']?.toDouble(),
-      protein: json['Protein']?.toDouble(),
-      fat: json['Fat']?.toDouble(),
-      energyKcal: json['Energy (Kcal)']?.toDouble(),
+      mealName: json['mealName'] ?? json['Meal Name'],
+      foodCode: json['foodCode'] ?? json['Food Code'],
+      carbohydrate: json['carbohydrate']?.toDouble() ?? json['Carbohydrate']?.toDouble(),
+      totalDietaryFiber: json['totalDietaryFiber']?.toDouble() ?? json['Total Dietary Fiber']?.toDouble(),
+      totalSugar: json['totalSugar']?.toDouble() ?? json['Total Sugar']?.toDouble(),
+      protein: json['protein']?.toDouble() ?? json['Protein']?.toDouble(),
+      fat: json['fat']?.toDouble() ?? json['Fat']?.toDouble(),
+      energyKcal: json['energyKcal']?.toDouble() ?? json['Energy (Kcal)']?.toDouble(),
       sodium: json['sodium'] != null ? List<double?>.from(json['sodium']) : null,
-      cholesterol: json['Cholesterol']?.toDouble(),
-      calcium: json['Calcium']?.toDouble(),
-      phosphorus: json['Phosphorus']?.toDouble(),
-      iron: json['Iron']?.toDouble(),
-      potassium: json['Potassium']?.toDouble(),
-      zinc: json['Zinc']?.toDouble(),
-      retinol: json['Retinol']?.toDouble(),
-      betaCarotene: json['beta-carotene']?.toDouble(),
-      thiamin: json['Thiamin']?.toDouble(),
-      riboflavin: json['Riboflavin']?.toDouble(),
-      niacin: json['Niacin']?.toDouble(),
-      vitaminC: json['Vitamin C']?.toDouble(),
-      glycemicIndex: json['Glycemic Index']?.toDouble(),
-      diversityScore: json['Diversity Score']?.toDouble(),
-      phytochemicalIndex: json['Phytochemical Index']?.toDouble(),
-      healtyEatingIndex: json['Healthy Eating Index']?.toDouble(),
-      heiClassification: json['HEI Classification'],
+      cholesterol: json['cholesterol']?.toDouble() ?? json['Cholesterol']?.toDouble(),
+      calcium: json['calcium']?.toDouble() ?? json['Calcium']?.toDouble(),
+      phosphorus: json['phosphorus']?.toDouble() ?? json['Phosphorus']?.toDouble(),
+      iron: json['iron']?.toDouble() ?? json['Iron']?.toDouble(),
+      potassium: json['potassium']?.toDouble() ?? json['Potassium']?.toDouble(),
+      zinc: json['zinc']?.toDouble() ?? json['Zinc']?.toDouble(),
+      retinol: json['retinol']?.toDouble() ?? json['Retinol']?.toDouble(),
+      betaCarotene: json['betaCarotene']?.toDouble() ?? json['beta-carotene']?.toDouble(),
+      thiamin: json['thiamin']?.toDouble() ?? json['Thiamin']?.toDouble(),
+      riboflavin: json['riboflavin']?.toDouble() ?? json['Riboflavin']?.toDouble(),
+      niacin: json['niacin']?.toDouble() ?? json['Niacin']?.toDouble(),
+      vitaminC: json['vitaminC']?.toDouble() ?? json['Vitamin C']?.toDouble(),
+      glycemicIndex: json['glycemicIndex']?.toDouble() ?? json['Glycemic Index']?.toDouble(),
+      diversityScore: json['diversityScore']?.toDouble() ?? json['Diversity Score']?.toDouble(),
+      phytochemicalIndex: json['phytochemicalIndex']?.toDouble() ?? json['Phytochemical Index']?.toDouble(),
+      healtyEatingIndex: json['healthyEatingIndex']?.toDouble() ?? json['Healthy Eating Index']?.toDouble(),
+      heiClassification: json['heiClassification'] ?? json['HEI Classification'],
     );
+    return m;
   }
 
   static List<Meal> fromJsonArray(List<Map<String, dynamic>> jsonData) {
@@ -94,9 +95,6 @@ class Meal {
       String id = data['mealId'];
       return Meal.fromJson(data, id);
     }).toList();
-    // final Iterable<dynamic> data = jsonDecode(jsonData);
-    // String id = data['mealId'];
-    // return data.map<Meal>((dynamic d) => Meal.fromJson(d, id)).toList();
   }
 
   Map<String, dynamic> toJson() {

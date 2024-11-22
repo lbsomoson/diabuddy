@@ -28,7 +28,6 @@ class _CameraScreenState extends State<CameraScreen> {
   String? userId;
   File? selectedImage;
   String? path;
-  var decodedImage;
   bool imageSelected = false;
   ModelObjectDetection? _objectModel;
   List<ResultObjectDetection?> objDetect = [];
@@ -259,7 +258,6 @@ class _CameraScreenState extends State<CameraScreen> {
       path = '/$id/uploads/$fileName';
     });
     print(path);
-    decodedImage = await decodeImageFromList(selectedImage!.readAsBytesSync());
     detectObjects();
   }
 
@@ -302,172 +300,168 @@ class _CameraScreenState extends State<CameraScreen> {
                             padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
                             child: Column(
                               children: [
-                                foodList.isEmpty
-                                    ? const CircularProgressIndicator()
-                                    : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Column(
-                                          children: [
-                                            const Align(
-                                                alignment: Alignment.topLeft,
-                                                child: TextWidget(text: "Food", style: 'bodyMedium')),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            ListView.builder(
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: foodList.length,
-                                                itemBuilder: (BuildContext context, int index) {
-                                                  return Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Column(
+                                    children: [
+                                      const Align(
+                                          alignment: Alignment.topLeft,
+                                          child: TextWidget(text: "Food", style: 'bodyMedium')),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ListView.builder(
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: foodList.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                              child: ListTile(
+                                                dense: true,
+                                                title: TextField(
+                                                  controller: controllers[index],
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      foodList[index] = val;
+                                                    });
+                                                  },
+                                                  style: Theme.of(context).textTheme.labelSmall,
+                                                  decoration: InputDecoration(
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: Theme.of(context).colorScheme.primary, width: 2.0),
+                                                      borderRadius: BorderRadius.circular(10.0),
                                                     ),
-                                                    child: ListTile(
-                                                      dense: true,
-                                                      title: TextField(
-                                                        controller: controllers[index],
-                                                        onChanged: (val) {
-                                                          setState(() {
-                                                            foodList[index] = val;
-                                                          });
-                                                        },
-                                                        style: Theme.of(context).textTheme.labelSmall,
-                                                        decoration: InputDecoration(
-                                                          focusedBorder: OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                color: Theme.of(context).colorScheme.primary,
-                                                                width: 2.0),
-                                                            borderRadius: BorderRadius.circular(10.0),
-                                                          ),
-                                                          border: OutlineInputBorder(
-                                                            borderSide: BorderSide(color: Colors.grey[200]!),
-                                                            borderRadius: BorderRadius.circular(10.0),
-                                                          ),
-                                                          labelStyle: Theme.of(context).textTheme.bodyMedium,
-                                                          hintStyle: Theme.of(context).textTheme.labelMedium,
-                                                          contentPadding:
-                                                              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                                                        ),
-                                                      ),
-                                                      trailing: Row(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          IconButton(
-                                                            icon: Icon(Icons.delete,
-                                                                color: Theme.of(context).primaryColor),
-                                                            onPressed: () => _removeTextField(index),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                    border: OutlineInputBorder(
+                                                      borderSide: BorderSide(color: Colors.grey[200]!),
+                                                      borderRadius: BorderRadius.circular(10.0),
                                                     ),
-                                                  );
-                                                }),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: InkWell(
-                                                onTap: () => _addNewTextField(),
-                                                child: Ink(
-                                                  decoration: const BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.transparent,
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.add_circle_outline,
-                                                        size: 22,
-                                                        color: Theme.of(context).colorScheme.primary,
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      const Text2Widget(text: "Add food", style: "body2"),
-                                                    ],
+                                                    labelStyle: Theme.of(context).textTheme.bodyMedium,
+                                                    hintStyle: Theme.of(context).textTheme.labelMedium,
+                                                    contentPadding:
+                                                        const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                                                   ),
                                                 ),
+                                                trailing: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: Icon(Icons.delete, color: Theme.of(context).primaryColor),
+                                                      onPressed: () => _removeTextField(index),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
+                                            );
+                                          }),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: InkWell(
+                                          onTap: () => _addNewTextField(),
+                                          child: Ink(
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.transparent,
                                             ),
-                                            const SizedBox(
-                                              height: 10,
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.add_circle_outline,
+                                                  size: 22,
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                const Text2Widget(text: "Add food", style: "body2"),
+                                              ],
                                             ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            ButtonWidget(
-                                                callback: () {
-                                                  if (_formKey.currentState!.validate()) {
-                                                    context.read<MealBloc>().add(const LoadMeals());
-                                                  }
-                                                },
-                                                label: "Submit",
-                                                style: 'filled'),
-                                            BlocListener<MealBloc, MealState>(
-                                                listener: (context, state) {
-                                                  if (state is MealLoaded) {
-                                                    // update the allMeals list when meals are loaded
-                                                    setState(() {
-                                                      allMeals = state.meals;
-                                                    });
-                                                    for (var f in foodList) {
-                                                      classNames.forEach((k, v) {
-                                                        if (f == k) {
-                                                          var idx = allMeals.indexWhere((meal) => meal.mealName == v);
-                                                          if (idx != -1) {
-                                                            // if it exists in the list of all meals, add
-                                                            mealsDetected.add(allMeals[idx]);
-                                                            mealIntake.foodIds.add(allMeals[idx].mealId!);
-                                                          }
-                                                        }
-                                                      });
-                                                    }
-                                                    accMeal = accumulateMealValues(mealsDetected);
-                                                    setState(() {});
-                                                    // TODO: ADD PHOTO
-                                                    mealIntake.userId = userId!;
-                                                    mealIntake.mealTime = getCurrentMealTime();
-                                                    mealIntake.timestamp = _currentDate;
-                                                    mealIntake.accMeals = accMeal;
-
-                                                    context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
-
-                                                    // TODO: JUMP TO MEAL DETAILS SCREEN
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                      return MealDetailsScreen(mealIntake: mealIntake);
-                                                    }));
-                                                  } else if (state is MealNotFound) {
-                                                    // show an error message if the medication was not found
-                                                    final snackBar = SnackBar(
-                                                      backgroundColor: Colors.red,
-                                                      content: const Text('Meal not found!'),
-                                                      action: SnackBarAction(
-                                                        label: 'Close',
-                                                        onPressed: () {},
-                                                      ),
-                                                    );
-                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                  } else if (state is MealError) {
-                                                    // handle any errors here
-                                                    final snackBar = SnackBar(
-                                                      backgroundColor: Colors.red,
-                                                      content: Text(state.message),
-                                                      action: SnackBarAction(
-                                                        label: 'Close',
-                                                        onPressed: () {},
-                                                      ),
-                                                    );
-                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                  }
-                                                },
-                                                child: const SizedBox()),
-                                          ],
+                                          ),
                                         ),
-                                      ]),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      ButtonWidget(
+                                          callback: () {
+                                            if (_formKey.currentState!.validate()) {
+                                              context.read<MealBloc>().add(const LoadMeals());
+                                            }
+                                          },
+                                          label: "Submit",
+                                          style: 'filled'),
+                                      BlocListener<MealBloc, MealState>(
+                                          listener: (context, state) {
+                                            if (state is MealLoaded) {
+                                              // update the allMeals list when meals are loaded
+                                              setState(() {
+                                                allMeals = state.meals;
+                                              });
+                                              for (var f in foodList) {
+                                                classNames.forEach((k, v) {
+                                                  if (f == k) {
+                                                    var idx = allMeals.indexWhere((meal) => meal.mealName == v);
+                                                    if (idx != -1) {
+                                                      // if it exists in the list of all meals, add
+                                                      mealsDetected.add(allMeals[idx]);
+                                                      mealIntake.foodIds.add(allMeals[idx].mealId!);
+                                                    }
+                                                  }
+                                                });
+                                              }
+                                              accMeal = accumulateMealValues(mealsDetected);
+                                              setState(() {});
+                                              // TODO: ADD PHOTO
+                                              mealIntake.userId = userId!;
+                                              mealIntake.mealTime = getCurrentMealTime();
+                                              mealIntake.timestamp = _currentDate;
+                                              mealIntake.accMeals = accMeal;
+
+                                              context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
+
+                                              // TODO: JUMP TO MEAL DETAILS SCREEN
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                return MealDetailsScreen(mealIntake: mealIntake);
+                                              }));
+                                            } else if (state is MealNotFound) {
+                                              // show an error message if the medication was not found
+                                              final snackBar = SnackBar(
+                                                backgroundColor: Colors.red,
+                                                content: const Text('Meal not found!'),
+                                                action: SnackBarAction(
+                                                  label: 'Close',
+                                                  onPressed: () {},
+                                                ),
+                                              );
+                                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                            } else if (state is MealError) {
+                                              // handle any errors here
+                                              final snackBar = SnackBar(
+                                                backgroundColor: Colors.red,
+                                                content: Text(state.message),
+                                                action: SnackBarAction(
+                                                  label: 'Close',
+                                                  onPressed: () {},
+                                                ),
+                                              );
+                                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                            }
+                                          },
+                                          child: const SizedBox()),
+                                    ],
+                                  ),
+                                ]),
                               ],
                             ),
                           ),

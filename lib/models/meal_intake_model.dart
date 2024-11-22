@@ -22,6 +22,8 @@ class MealIntake {
       this.accMeals});
 
   factory MealIntake.fromJson(Map<String, dynamic> json, String id) {
+    print(json['accMeals']);
+
     return MealIntake(
       mealIntakeId: id,
       userId: json['userId'],
@@ -30,7 +32,7 @@ class MealIntake {
       proofPath: json['proofPath'],
       timestamp: json['date'] != null ? (json['date'] as Timestamp).toDate() : null,
       mealTime: json['mealTime'],
-      accMeals: json['accMeals'] != null ? Meal.fromJson(json['accMeals'], id) : null,
+      accMeals: json['accMeals'] != null ? Meal.fromJson(json['accMeals'] as Map<String, dynamic>, id) : null,
     );
   }
 

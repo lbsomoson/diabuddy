@@ -1,4 +1,5 @@
 import 'package:diabuddy/models/meal_intake_model.dart';
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
@@ -24,6 +25,9 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
   final goodText = const Color.fromARGB(255, 19, 98, 93);
   final fairText = const Color.fromRGBO(249, 166, 32, 1);
   final badText = const Color.fromRGBO(249, 32, 32, 1);
+
+  // TODO: CREATE FUNCTION THAT UPLOADS DAILY HEALTH RECORD AT MIDNIGHT
+  // TODO: FIX LAYOUT
 
   @override
   void initState() {
@@ -68,17 +72,17 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                   };
 
                   for (var meal in state.mealIntakes) {
-                    final mealTime = meal['mealTime'];
+                    final mealTime = meal.mealTime;
                     if (mealGroups.containsKey(mealTime)) {
                       mealGroups[mealTime] = mealGroups[mealTime]! + 1;
                     }
                   }
 
-                  for (var m in state.mealIntakes) {
-                    accDietDiversityScore = accDietDiversityScore + m['accMeals']['diversityScore'];
-                    accCalories = accCalories + m['accMeals']['energyKcal'];
-                    accCarbohydrates = accCarbohydrates + m['accMeals']['carbohydrate'];
-                  }
+                  // for (var m in state.mealIntakes) {
+                  //   accDietDiversityScore = accDietDiversityScore + m.accMeals!.diversityScore!;
+                  //   accCalories = accCalories + m.accMeals!.energyKcal!;
+                  //   accCarbohydrates = accCarbohydrates + m.accMeals!.carbohydrate!;
+                  // }
 
                   return Column(
                     children: [
@@ -126,137 +130,156 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                       ),
                       const SizedBox(height: 10),
                       mealGroups["Breakfast"] != 0
-                          ? Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Breakfast",
-                                style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              ))
-                          : Container(),
-                      ListView.separated(
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 5.0);
-                        },
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: state.mealIntakes.length,
-                        itemBuilder: (context, index) {
-                          Map<String, dynamic> mealIntake = state.mealIntakes[index];
-                          mealIntake['mealIntakeId'] = state.mealIntakes[index]['mealIntakeId'];
+                          ? Column(
+                              children: [
+                                Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      "Breakfast",
+                                      style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
+                                    )),
+                                ListView.separated(
+                                  separatorBuilder: (BuildContext context, int index) {
+                                    return const SizedBox(height: 5.0);
+                                  },
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: state.mealIntakes.length,
+                                  itemBuilder: (context, index) {
+                                    MealIntake mealIntake = state.mealIntakes[index];
+                                    mealIntake.mealIntakeId = state.mealIntakes[index].mealIntakeId;
 
-                          if (mealIntake['mealTime'] == "Breakfast") {
-                            if (mealIntake['accMeals'] != null) {
-                              return MealInfo(
-                                  mealName: mealIntake['accMeals']['mealName'],
-                                  carbs: mealIntake['accMeals']['carbohydrate'].toStringAsFixed(2),
-                                  cal: "${mealIntake['accMeals']['energyKcal'].toStringAsFixed(2)} kCal",
-                                  gi: mealIntake['accMeals']['glycemicIndex'].toStringAsFixed(2));
-                            }
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                          return null;
-                        },
-                      ),
+                                    if (mealIntake.mealTime == "Breakfast") {
+                                      if (mealIntake.accMeals != null) {
+                                        return MealInfo(
+                                            meal: mealIntake.accMeals!,
+                                            mealName: mealIntake.accMeals!.mealName!,
+                                            carbs: mealIntake.accMeals!.carbohydrate!.toStringAsFixed(2),
+                                            cal: "${mealIntake.accMeals!.energyKcal!.toStringAsFixed(2)} kCal",
+                                            gi: mealIntake.accMeals!.glycemicIndex!.toStringAsFixed(2));
+                                      }
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            )
+                          : Container(),
                       mealGroups["Lunch"] != 0
-                          ? Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Lunch",
-                                style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              ))
-                          : Container(),
-                      ListView.separated(
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 5.0);
-                        },
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: state.mealIntakes.length,
-                        itemBuilder: (context, index) {
-                          Map<String, dynamic> mealIntake = state.mealIntakes[index];
-                          mealIntake['mealIntakeId'] = state.mealIntakes[index]['mealIntakeId'];
+                          ? Column(
+                              children: [
+                                Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      "Lunch",
+                                      style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
+                                    )),
+                                ListView.separated(
+                                  separatorBuilder: (BuildContext context, int index) {
+                                    return const SizedBox(height: 5.0);
+                                  },
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: state.mealIntakes.length,
+                                  itemBuilder: (context, index) {
+                                    MealIntake mealIntake = state.mealIntakes[index];
+                                    mealIntake.mealIntakeId = state.mealIntakes[index].mealIntakeId;
 
-                          if (mealIntake['mealTime'] == "Lunch") {
-                            if (mealIntake['accMeals'] != null) {
-                              return MealInfo(
-                                  mealName: mealIntake['accMeals']['mealName'],
-                                  carbs: mealIntake['accMeals']['carbohydrate'].toStringAsFixed(2),
-                                  cal: "${mealIntake['accMeals']['energyKcal'].toStringAsFixed(2)} kCal",
-                                  gi: mealIntake['accMeals']['glycemicIndex'].toStringAsFixed(2));
-                            }
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                          return null;
-                        },
-                      ),
+                                    if (mealIntake.mealTime == "Lunch") {
+                                      if (mealIntake.accMeals != null) {
+                                        return MealInfo(
+                                            meal: mealIntake.accMeals!,
+                                            mealName: mealIntake.accMeals!.mealName!,
+                                            carbs: mealIntake.accMeals!.carbohydrate!.toStringAsFixed(2),
+                                            cal: "${mealIntake.accMeals!.energyKcal!.toStringAsFixed(2)} kCal",
+                                            gi: mealIntake.accMeals!.glycemicIndex!.toStringAsFixed(2));
+                                      }
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            )
+                          : Container(),
                       mealGroups["Dinner"] != 0
-                          ? Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Dinner",
-                                style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              ))
-                          : Container(),
-                      ListView.separated(
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 5.0);
-                        },
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: state.mealIntakes.length,
-                        itemBuilder: (context, index) {
-                          Map<String, dynamic> mealIntake = state.mealIntakes[index];
-                          mealIntake['mealIntakeId'] = state.mealIntakes[index]['mealIntakeId'];
+                          ? Column(
+                              children: [
+                                Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      "Dinner",
+                                      style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
+                                    )),
+                                ListView.separated(
+                                  separatorBuilder: (BuildContext context, int index) {
+                                    return const SizedBox(height: 5.0);
+                                  },
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: state.mealIntakes.length,
+                                  itemBuilder: (context, index) {
+                                    MealIntake mealIntake = state.mealIntakes[index];
+                                    mealIntake.mealIntakeId = state.mealIntakes[index].mealIntakeId;
 
-                          if (mealIntake['mealTime'] == "Dinner") {
-                            if (mealIntake['accMeals'] != null) {
-                              return MealInfo(
-                                  mealName: mealIntake['accMeals']['mealName'],
-                                  carbs: mealIntake['accMeals']['carbohydrate'].toStringAsFixed(2),
-                                  cal: "${mealIntake['accMeals']['energyKcal'].toStringAsFixed(2)} kCal",
-                                  gi: mealIntake['accMeals']['glycemicIndex'].toStringAsFixed(2));
-                            }
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                          return null;
-                        },
-                      ),
+                                    if (mealIntake.mealTime == "Dinner") {
+                                      if (mealIntake.accMeals != null) {
+                                        return MealInfo(
+                                            meal: mealIntake.accMeals!,
+                                            mealName: mealIntake.accMeals!.mealName!,
+                                            carbs: mealIntake.accMeals!.carbohydrate!.toStringAsFixed(2),
+                                            cal: "${mealIntake.accMeals!.energyKcal!.toStringAsFixed(2)} kCal",
+                                            gi: mealIntake.accMeals!.glycemicIndex!.toStringAsFixed(2));
+                                      }
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            )
+                          : Container(),
                       mealGroups["Snack"] != 0
-                          ? Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Snack",
-                                style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
-                              ))
+                          ? Column(
+                              children: [
+                                Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      "Snack",
+                                      style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
+                                    )),
+                                ListView.separated(
+                                  separatorBuilder: (BuildContext context, int index) {
+                                    return const SizedBox(height: 5.0);
+                                  },
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: state.mealIntakes.length,
+                                  itemBuilder: (context, index) {
+                                    MealIntake mealIntake = state.mealIntakes[index];
+                                    mealIntake.mealIntakeId = state.mealIntakes[index].mealIntakeId;
+                                    if (mealIntake.mealTime == "Snack") {
+                                      if (mealIntake.accMeals != null) {
+                                        return MealInfo(
+                                            meal: mealIntake.accMeals!,
+                                            mealName: mealIntake.accMeals!.mealName ?? "",
+                                            carbs: mealIntake.accMeals!.carbohydrate?.toStringAsFixed(2) ?? "",
+                                            cal: "${mealIntake.accMeals!.energyKcal?.toStringAsFixed(2)} kCal",
+                                            gi: mealIntake.accMeals!.glycemicIndex?.toStringAsFixed(2) ?? "");
+                                      }
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            )
                           : Container(),
-                      ListView.separated(
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 5.0);
-                        },
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: state.mealIntakes.length,
-                        itemBuilder: (context, index) {
-                          Map<String, dynamic> mealIntake = state.mealIntakes[index];
-                          mealIntake['mealIntakeId'] = state.mealIntakes[index]['mealIntakeId'];
-
-                          if (mealIntake['mealTime'] == "Snack") {
-                            if (mealIntake['accMeals'] != null) {
-                              return MealInfo(
-                                  mealName: mealIntake['accMeals']['mealName'],
-                                  carbs: mealIntake['accMeals']['carbohydrate'].toStringAsFixed(2),
-                                  cal: "${mealIntake['accMeals']['energyKcal'].toStringAsFixed(2)} kCal",
-                                  gi: mealIntake['accMeals']['glycemicIndex'].toStringAsFixed(2));
-                            }
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                          return null;
-                        },
-                      ),
                     ],
                   );
                 } else {
