@@ -2,11 +2,14 @@ import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import 'package:diabuddy/models/user_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final String id;
@@ -27,6 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _nCurrentValue = 10;
 
   String? _selectedGender;
+  String? _selectedLevel;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(
             height: 5,
           ),
-          const TextWidget(text: "This will help us calculate your calories.", style: 'bodySmall'),
+          const TextWidget(text: "This will help us calculate your daily calorie intake.", style: 'bodySmall'),
           const SizedBox(
             height: 35,
           ),
@@ -108,14 +112,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     Widget page3() {
-      _weightController =
-          WeightSliderController(initialWeight: _weight, minWeight: 0, interval: 0.1);
-
-      @override
-      void dispose() {
-        _weightController.dispose();
-        super.dispose();
-      }
+      _weightController = WeightSliderController(initialWeight: _weight, minWeight: 0, interval: 0.1);
 
       return Column(children: [
         const SizedBox(
@@ -149,10 +146,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           alignment: Alignment.center,
           child: Text(
             "${_weight.toStringAsFixed(1)} kg",
-            style: TextStyle(
-                fontSize: 40.0,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.secondary),
+            style:
+                TextStyle(fontSize: 40.0, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.secondary),
           ),
         ),
         VerticalWeightSlider(
@@ -182,8 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     Widget page4() {
-      _heightController =
-          WeightSliderController(initialWeight: _height, minWeight: 0, interval: 0.1);
+      _heightController = WeightSliderController(initialWeight: _height, minWeight: 0, interval: 0.1);
       return Column(
         children: [
           const SizedBox(
@@ -218,9 +212,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Text(
               "${_height.toStringAsFixed(1)} m",
               style: TextStyle(
-                  fontSize: 40.0,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.secondary),
+                  fontSize: 40.0, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.secondary),
             ),
           ),
           VerticalWeightSlider(
@@ -244,6 +236,74 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               alignment: Alignment.centerLeft,
               color: Theme.of(context).colorScheme.primary,
             ),
+          ),
+        ],
+      );
+    }
+
+    Widget page5() {
+      return Column(
+        children: [
+          const SizedBox(
+            height: 50,
+          ),
+          const TextWidget(text: "What is your level of physical activity?", style: "bodyLarge"),
+          const SizedBox(
+            height: 5,
+          ),
+          const TextWidget(text: "This will help us calculate your ideal body weight.", style: 'bodySmall'),
+          const SizedBox(
+            height: 35,
+          ),
+          PhysicalActivityContainer(
+            level: "Sedentary",
+            activityIcon: FontAwesomeIcons.chair,
+            description: 'Mostly resting with little or no activity. Less than 5,000 steps daily',
+            selectedLevel: _selectedLevel,
+            onTap: () {
+              setState(() {
+                _selectedLevel = "Sedentary";
+              });
+            },
+          ),
+          PhysicalActivityContainer(
+            level: "Light",
+            activityIcon: FontAwesomeIcons.personWalking,
+            description:
+                'Occupations that require minimal movement, mostly sitting/desk work or standing for long hours and/or with occasional walking (professional, clerical, technical workers, administrative and managerial staff, driving light vehicles (cars, jeepney). Housewives with light housework (dishwashing, preparing food). About 5,000 to 7,499 steps daily',
+            selectedLevel: _selectedLevel,
+            onTap: () {
+              setState(() {
+                _selectedLevel = "Sedentary";
+              });
+            },
+          ),
+          PhysicalActivityContainer(
+            level: "Moderate",
+            activityIcon: FontAwesomeIcons.personRunning,
+            description:
+                'Occupations that require extended periods of walking, pushing or pulling or lifting or carrying heavy objects (cleaning/domestic services, waiting table, homebuilding task, farming, patient care). About 7,500 to 9,999 steps daily',
+            selectedLevel: _selectedLevel,
+            onTap: () {
+              setState(() {
+                _selectedLevel = "Moderate";
+              });
+            },
+          ),
+          PhysicalActivityContainer(
+            level: "Very Active or Vigorous",
+            activityIcon: FontAwesomeIcons.personSkating,
+            description:
+                'Occupations that require extensive periods of running, rapid movement, pushing or pulling heavy objects or tasks frequently requiring strenuous effort and extensive total body movements (teaching a class or skill requiring active and strenuous participation, such as aerobics or physical education instructor; firefighting; masonry and heavy construction work; coal mining; manually shoveling, using heavy non-powered tools). More than 10,000 steps daily',
+            selectedLevel: _selectedLevel,
+            onTap: () {
+              setState(() {
+                _selectedLevel = "Very Active or Vigorous";
+              });
+            },
+          ),
+          const SizedBox(
+            height: 100,
           ),
         ],
       );
@@ -273,14 +333,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Container(),
               Container(),
               Container(),
+              Container(),
             ],
-            totalPage: 4,
+            totalPage: 5,
             speed: 1.5,
             pageBodies: [
               page1(),
               page2(),
               page3(),
               page4(),
+              SingleChildScrollView(child: page5()),
             ],
             onFinish: () async {
               AppUser appuser = AppUser(
@@ -357,6 +419,91 @@ class GenderSelectionContainer extends StatelessWidget {
                 height: 40,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PhysicalActivityContainer extends StatelessWidget {
+  final String level;
+  final IconData activityIcon;
+  final String description;
+  final String? selectedLevel;
+  final VoidCallback onTap;
+
+  const PhysicalActivityContainer({
+    Key? key,
+    required this.level,
+    required this.activityIcon,
+    required this.description,
+    required this.selectedLevel,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isSelected = level == selectedLevel;
+    final Color selectedColor = Theme.of(context).colorScheme.primary;
+    const Color unselectedColor = Color.fromRGBO(100, 204, 197, 1);
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        border: Border.all(
+          color: isSelected ? selectedColor : unselectedColor,
+          width: 2.0,
+        ),
+        color: isSelected ? selectedColor : Colors.white,
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+      width: double.infinity,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(15.0),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(15.0),
+          splashColor: Theme.of(context).colorScheme.secondary,
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  activityIcon,
+                  color: isSelected ? Colors.white : unselectedColor,
+                  size: 100,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(level,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: isSelected ? Colors.white : unselectedColor,
+                            )),
+                      ),
+                      Text(description,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 15,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w100,
+                            color: isSelected ? Colors.white : unselectedColor,
+                          )),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
