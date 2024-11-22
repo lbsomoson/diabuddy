@@ -1,5 +1,4 @@
 import 'package:diabuddy/models/meal_intake_model.dart';
-import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
@@ -78,11 +77,11 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                     }
                   }
 
-                  // for (var m in state.mealIntakes) {
-                  //   accDietDiversityScore = accDietDiversityScore + m.accMeals!.diversityScore!;
-                  //   accCalories = accCalories + m.accMeals!.energyKcal!;
-                  //   accCarbohydrates = accCarbohydrates + m.accMeals!.carbohydrate!;
-                  // }
+                  for (var m in state.mealIntakes) {
+                    accDietDiversityScore = accDietDiversityScore + m.accMeals!.diversityScore!;
+                    accCalories = accCalories + m.accMeals!.energyKcal!;
+                    accCarbohydrates = accCarbohydrates + m.accMeals!.carbohydrate!;
+                  }
 
                   return Column(
                     children: [
@@ -152,7 +151,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                                     if (mealIntake.mealTime == "Breakfast") {
                                       if (mealIntake.accMeals != null) {
                                         return MealInfo(
-                                            meal: mealIntake.accMeals!,
+                                            mealIntake: mealIntake,
                                             mealName: mealIntake.accMeals!.mealName!,
                                             carbs: mealIntake.accMeals!.carbohydrate!.toStringAsFixed(2),
                                             cal: "${mealIntake.accMeals!.energyKcal!.toStringAsFixed(2)} kCal",
@@ -190,7 +189,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                                     if (mealIntake.mealTime == "Lunch") {
                                       if (mealIntake.accMeals != null) {
                                         return MealInfo(
-                                            meal: mealIntake.accMeals!,
+                                            mealIntake: mealIntake,
                                             mealName: mealIntake.accMeals!.mealName!,
                                             carbs: mealIntake.accMeals!.carbohydrate!.toStringAsFixed(2),
                                             cal: "${mealIntake.accMeals!.energyKcal!.toStringAsFixed(2)} kCal",
@@ -228,7 +227,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                                     if (mealIntake.mealTime == "Dinner") {
                                       if (mealIntake.accMeals != null) {
                                         return MealInfo(
-                                            meal: mealIntake.accMeals!,
+                                            mealIntake: mealIntake,
                                             mealName: mealIntake.accMeals!.mealName!,
                                             carbs: mealIntake.accMeals!.carbohydrate!.toStringAsFixed(2),
                                             cal: "${mealIntake.accMeals!.energyKcal!.toStringAsFixed(2)} kCal",
@@ -265,7 +264,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                                     if (mealIntake.mealTime == "Snack") {
                                       if (mealIntake.accMeals != null) {
                                         return MealInfo(
-                                            meal: mealIntake.accMeals!,
+                                            mealIntake: mealIntake,
                                             mealName: mealIntake.accMeals!.mealName ?? "",
                                             carbs: mealIntake.accMeals!.carbohydrate?.toStringAsFixed(2) ?? "",
                                             cal: "${mealIntake.accMeals!.energyKcal?.toStringAsFixed(2)} kCal",

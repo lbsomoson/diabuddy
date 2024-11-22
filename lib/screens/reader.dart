@@ -13,13 +13,10 @@ import 'package:provider/provider.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/utils/local_notifications.dart';
 
-import 'package:diabuddy/utils/text_to_speech.dart';
-
 class VerifySubmit extends StatefulWidget {
   final MedicationIntake medicationIntake;
   final bool? showWarningSnackBar;
-  const VerifySubmit(
-      {required this.medicationIntake, this.showWarningSnackBar, super.key});
+  const VerifySubmit({required this.medicationIntake, this.showWarningSnackBar, super.key});
 
   @override
   State<VerifySubmit> createState() => _VerifySubmitState();
@@ -66,8 +63,7 @@ class _VerifySubmitState extends State<VerifySubmit> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const TextWidget(
-              style: 'bodyLarge', text: "Verify Medication Details"),
+          title: const TextWidget(style: 'bodyLarge', text: "Verify Medication Details"),
         ),
         body: SafeArea(
             child: SingleChildScrollView(
@@ -115,8 +111,7 @@ class _VerifySubmitState extends State<VerifySubmit> {
                             height: 5,
                           ),
                           ListView.separated(
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
+                              separatorBuilder: (BuildContext context, int index) {
                                 return const SizedBox(height: 5.0);
                               },
                               physics: const NeverScrollableScrollPhysics(),
@@ -124,12 +119,10 @@ class _VerifySubmitState extends State<VerifySubmit> {
                               itemCount: widget.medicationIntake.time.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return TimePickerWidget(
-                                  initialValue:
-                                      widget.medicationIntake.time[index],
+                                  initialValue: widget.medicationIntake.time[index],
                                   callback: (String value) {
                                     setState(() {
-                                      widget.medicationIntake.time[index] =
-                                          value;
+                                      widget.medicationIntake.time[index] = value;
                                     });
                                   },
                                   hintText: "Time",
@@ -154,8 +147,7 @@ class _VerifySubmitState extends State<VerifySubmit> {
                     value: widget.medicationIntake.frequency,
                     isExpanded: true,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                       border: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.transparent),
                         borderRadius: BorderRadius.circular(10.0),
@@ -165,8 +157,7 @@ class _VerifySubmitState extends State<VerifySubmit> {
                         borderSide: const BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.black)),
+                          borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.black)),
                     ),
                     style: const TextStyle(color: Colors.black, fontSize: 16),
                     icon: const Icon(Icons.keyboard_arrow_down),
@@ -187,8 +178,7 @@ class _VerifySubmitState extends State<VerifySubmit> {
                   height: 10,
                 ),
                 TextFieldWidget(
-                  initialValue:
-                      widget.medicationIntake.verifiedBy?['licenseNo'] ?? '',
+                  initialValue: widget.medicationIntake.verifiedBy?['licenseNo'] ?? '',
                   callback: (String val) {
                     setState(() {
                       widget.medicationIntake.verifiedBy?['licenseNo'] = val;
@@ -202,8 +192,7 @@ class _VerifySubmitState extends State<VerifySubmit> {
                   height: 10,
                 ),
                 TextFieldWidget(
-                  initialValue:
-                      widget.medicationIntake.verifiedBy?['ptrNo'] ?? '',
+                  initialValue: widget.medicationIntake.verifiedBy?['ptrNo'] ?? '',
                   callback: (String val) {
                     setState(() {
                       widget.medicationIntake.verifiedBy?['ptrNo'] = val;
@@ -219,42 +208,29 @@ class _VerifySubmitState extends State<VerifySubmit> {
                 ButtonWidget(
                     callback: () async {
                       await Permission.storage.request();
-                      TextToSpeechService().dispose();
-                      TextToSpeechService().speak(
-                          "Oras na para inumin ang ${widget.medicationIntake.name}!",
-                          widget.medicationIntake.channelId.toString());
-                      TextToSpeechService().dispose();
-
-                      context
-                          .read<MedicationBloc>()
-                          .add(AddMedication(widget.medicationIntake));
+                      if (context.mounted) context.read<MedicationBloc>().add(AddMedication(widget.medicationIntake));
 
                       if (context.mounted) {
                         final snackBar = SnackBar(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(context).colorScheme.primary,
                           content: const Text('Added medication successfully!'),
-                          action:
-                              SnackBarAction(label: 'Close', onPressed: () {}),
+                          action: SnackBarAction(label: 'Close', onPressed: () {}),
                         );
 
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        await localNotifications.showScheduledNotification(
-                            context,
+                        await localNotifications.showScheduledNotification(context,
                             id: widget.medicationIntake.userId,
                             medicationId: widget.medicationIntake.channelId,
                             title: "Medication Reminder",
                             time: widget.medicationIntake.time,
                             frequency: widget.medicationIntake.frequency,
-                            body:
-                                "Time to take your ${widget.medicationIntake.name}!",
+                            body: "Time to take your ${widget.medicationIntake.name}!",
                             payload: "Medication Reminder");
                       }
 
                       if (!context.mounted) return;
 
-                      Navigator.pushNamedAndRemoveUntil(context,
-                          '/profileScreen', (Route<dynamic> route) => false);
+                      Navigator.pushNamedAndRemoveUntil(context, '/profileScreen', (Route<dynamic> route) => false);
                     },
                     label: 'Submit Medication',
                     style: 'filled'),

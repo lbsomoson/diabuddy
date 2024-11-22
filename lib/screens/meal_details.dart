@@ -100,7 +100,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
               ),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: NutritionWidget(accMeal: widget.mealIntake.accMeals!)),
+                  child: NutritionWidget(meal: widget.mealIntake.accMeals!)),
               const SizedBox(
                 height: 20,
               )

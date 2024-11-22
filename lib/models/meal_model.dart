@@ -84,7 +84,7 @@ class Meal {
       glycemicIndex: json['glycemicIndex']?.toDouble() ?? json['Glycemic Index']?.toDouble(),
       diversityScore: json['diversityScore']?.toDouble() ?? json['Diversity Score']?.toDouble(),
       phytochemicalIndex: json['phytochemicalIndex']?.toDouble() ?? json['Phytochemical Index']?.toDouble(),
-      healtyEatingIndex: json['healthyEatingIndex']?.toDouble() ?? json['Healthy Eating Index']?.toDouble(),
+      healtyEatingIndex: json['healtyEatingIndex']?.toDouble() ?? json['Healthy Eating Index']?.toDouble(),
       heiClassification: json['heiClassification'] ?? json['HEI Classification'],
     );
     return m;

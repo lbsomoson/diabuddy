@@ -53,24 +53,6 @@ class MealIntakeRepository {
   }
 
   // get meal intakes for s specific date
-  // Stream<List<Map<String, dynamic>>> getMealIntakesByDate(String userId, DateTime date) {
-  //   DateTime startOfDay = DateTime.utc(date.year, date.month, date.day);
-  //   DateTime endOfDay = startOfDay.add(const Duration(days: 1));
-
-  //   return firestore
-  //       .collection('meal_intakes')
-  //       .where("userId", isEqualTo: userId)
-  //       .where("timestamp", isGreaterThanOrEqualTo: startOfDay)
-  //       .where("timestamp", isLessThan: endOfDay)
-  //       .snapshots()
-  //       .map((snapshot) {
-  //     return snapshot.docs.map((doc) {
-  //       return MealIntake.fromJson(doc.data(), doc.id);
-  //     }).toList();
-  //   });
-  // }
-
-  // get meal intakes for s specific date
   Stream<List<MealIntake>> getMealIntakesByDate(String userId, DateTime date) {
     // calculate the start and end of the specified date.
     DateTime startOfDay = DateTime(date.year, date.month, date.day);
@@ -84,10 +66,6 @@ class MealIntakeRepository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        // print(doc.data());
-        print('----');
-        print(MealIntake.fromJson(doc.data(), doc.id).accMeals!.mealName);
-        print('----');
         return MealIntake.fromJson(doc.data(), doc.id);
       }).toList();
     });

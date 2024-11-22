@@ -3,45 +3,11 @@ import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 
 class NutritionWidget extends StatelessWidget {
-  final Meal? accMeal;
-  final Map<String, dynamic>? accMealMap;
-
-  const NutritionWidget({this.accMeal, this.accMealMap, super.key});
+  final Meal meal;
+  const NutritionWidget({required this.meal, super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Use accMeal if it's not null, otherwise use accMealMap
-    var acc = Meal(
-      // Provide a fallback Meal object from accMealMap
-      mealName: accMealMap?['mealName'] ?? "Unknown Meal",
-      carbohydrate: accMealMap?['carbohydrate'] ?? 0.0,
-      energyKcal: accMealMap?['energyKcal'] ?? 0.0,
-      glycemicIndex: accMealMap?['glycemicIndex'] ?? 0.0,
-      heiClassification: accMealMap?['heiClassification'] ?? "Unknown Classification",
-      diversityScore: accMealMap?['diversityScore'] ?? 0.0,
-      healtyEatingIndex: accMealMap?['healtyEatingIndex'] ?? 0.0,
-      calcium: accMealMap?['calcium'] ?? 0.0,
-      fat: accMealMap?['fat'] ?? 0.0,
-      iron: accMealMap?['iron'] ?? 0.0,
-      phosphorus: accMealMap?['phosphorus'] ?? 0.0,
-      protein: accMealMap?['protein'] ?? 0.0,
-      niacin: accMealMap?['niacin'] ?? 0.0,
-      cholesterol: accMealMap?['cholesterol'] ?? 0.0,
-      phytochemicalIndex: accMealMap?['phytochemicalIndex'] ?? 0.0,
-      potassium: accMealMap?['potassium'] ?? 0.0,
-      retinol: accMealMap?['retinol'] ?? 0.0,
-      riboflavin: accMealMap?['riboflavin'] ?? 0.0,
-      thiamin: accMealMap?['thiamin'] ?? 0.0,
-      totalDietaryFiber: accMealMap?['totalDietaryFiber'] ?? 0.0,
-      totalSugar: accMealMap?['totalSugar'] ?? 0.0,
-      vitaminC: accMealMap?['vitaminC'] ?? 0.0,
-      zinc: accMealMap?['zinc'] ?? 0.0,
-      betaCarotene: accMealMap?['betaCarotene'] ?? 0.0,
-      sodium: accMealMap?['sodium'] ?? [],
-    );
-
-    final Meal meal = accMeal ?? acc;
-
     return Column(
       children: [
         Container(
