@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
@@ -11,6 +12,7 @@ import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -31,7 +33,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // initPlatformState();
+    initPlatformState();
     // firestore.uploadJsonDataToFirestore();
     loadDailySteps();
     startMidnightResetTimer();
@@ -108,25 +110,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return granted;
   }
 
-  // Future<void> initPlatformState() async {
-  //   bool granted = await _checkActivityRecognitionPermission();
-  //   if (!granted) {}
+  Future<void> initPlatformState() async {
+    bool granted = await _checkActivityRecognitionPermission();
+    if (!granted) {}
 
-  //   _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
-  //   (await _pedestrianStatusStream.listen(onPedestrianStatusChanged))
-  //       .onError(onPedestrianStatusError);
+    _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
+    (await _pedestrianStatusStream.listen(onPedestrianStatusChanged)).onError(onPedestrianStatusError);
 
-  //   _stepCountStream = Pedometer.stepCountStream;
-  //   _stepCountStream.listen(onStepCount).onError(onStepCountError);
+    _stepCountStream = Pedometer.stepCountStream;
+    _stepCountStream.listen(onStepCount).onError(onStepCountError);
 
-  //   if (!mounted) return;
-  // }
+    if (!mounted) return;
+  }
 
   @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
     List<String> nameParts = user!.displayName!.split(' ');
     String firstName = nameParts.isNotEmpty ? nameParts.first : '';
+
+    // change the status bar color
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Color.fromRGBO(100, 204, 197, 0.3),
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -140,14 +149,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // ),
       body: SingleChildScrollView(
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                Row(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(100, 204, 197, 0.3),
+                  borderRadius:
+                      BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
+                ),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextWidget(text: "Hello $firstName!", style: 'bodyLarge'),
+                    TextWidget(text: "Hello, $firstName!", style: 'bodyLarge'),
                     const Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -157,122 +171,134 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     )
                   ],
                 ),
-                const SizedBox(height: 5),
-                Divider(color: Colors.grey[400]),
-                SizedBox(height: sizedBoxHeight),
-
-                const Text(
-                  "Daily Calorie Intake",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Daily Calorie Intake",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: Color.fromRGBO(4, 54, 74, 1),
+                      ),
+                    ),
+                    // const Text(
+                    //   "2000 cal",
+                    //   style: TextStyle(
+                    //     fontSize: 20,
+                    //     fontWeight: FontWeight.w900,
+                    //     color: Color.fromRGBO(247, 139, 8, 1),
+                    //   ),
+                    // ),
+                    Container(
+                      padding: const EdgeInsets.all(35),
+                      decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                      child: const CircleProgressIndicator(
+                        title: "Title",
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularStepProgressIndicator(
+                              totalSteps: 100,
+                              currentStep: 74,
+                              stepSize: 10,
+                              selectedColor: Theme.of(context).primaryColor,
+                              unselectedColor: Colors.grey[100],
+                              padding: 0,
+                              width: 80,
+                              height: 80,
+                              selectedStepSize: 5,
+                              unselectedStepSize: 5,
+                              roundedCap: (_, __) => true,
+                              child: const Icon(
+                                Icons.directions_walk_rounded,
+                              ),
+                            ),
+                            Text(_steps,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 19, 98, 93),
+                                  fontSize: 22,
+                                )),
+                            const Text(
+                              "steps",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularStepProgressIndicator(
+                              totalSteps: 100,
+                              currentStep: 74,
+                              stepSize: 10,
+                              selectedColor: Theme.of(context).primaryColor,
+                              unselectedColor: Colors.grey[100],
+                              padding: 0,
+                              width: 80,
+                              height: 80,
+                              selectedStepSize: 5,
+                              unselectedStepSize: 5,
+                              roundedCap: (_, __) => true,
+                              child: const Icon(
+                                FontAwesomeIcons.fire,
+                              ),
+                            ),
+                            Text(
+                              (int.parse(_steps) / 25).toString(),
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 19, 98, 93),
+                                fontSize: 22,
+                              ),
+                            ),
+                            const Text(
+                              "kCal burned",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 50),
+                    Row(
+                      children: [
+                        const Expanded(child: DashboardWidget(header: "Glycemic Index", value: 99.0)),
+                        SizedBox(width: sizedBoxHeight),
+                        const Expanded(child: DashboardWidget(header: "Diet Diversity Score", value: 7.5)),
+                      ],
+                    ),
+                    SizedBox(height: sizedBoxHeight),
+                    const Row(
+                      children: [
+                        Expanded(child: DashboardWidget(header: "Calories", value: 2000)),
+                        SizedBox(width: 10),
+                        Expanded(child: DashboardWidget(header: "Carbohydrates", value: 1099, caloriesValue: 2000)),
+                      ],
+                    ),
+                    SizedBox(height: sizedBoxHeight),
+                  ],
                 ),
-                const Text(
-                  "2000 cal",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    color: Color.fromRGBO(247, 139, 8, 1),
-                  ),
-                ),
-                const CircleProgressIndicator(
-                  title: "Title",
-                ),
-                // const SizedBox(height: 20),
-                // Row(
-                //   children: [
-                //     const Expanded(child: DashboardWidget(header: "Glycemic Index", value: 99.0)),
-                //     SizedBox(width: sizedBoxHeight),
-                //     const Expanded(child: DashboardWidget(header: "Diet Diversity Score", value: 7.5)),
-                //   ],
-                // ),
-                // SizedBox(height: sizedBoxHeight),
-                // const Row(
-                //   children: [
-                //     Expanded(child: DashboardWidget(header: "Calories", value: 2000)),
-                //     SizedBox(width: 10),
-                //     Expanded(child: DashboardWidget(header: "Carbohydrates", value: 1099, caloriesValue: 2000)),
-                //   ],
-                // ),
-                // SizedBox(height: sizedBoxHeight),
-                // Container(
-                //   padding: const EdgeInsets.all(15),
-                //   width: double.infinity,
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(10),
-                //     color: Colors.grey[100],
-                //   ),
-                //   child: Column(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       const Text(
-                //         "Activity Status",
-                //         style: TextStyle(
-                //           color: Colors.black,
-                //           fontSize: 15,
-                //           fontWeight: FontWeight.w500,
-                //           fontStyle: FontStyle.italic,
-                //         ),
-                //       ),
-                //       SizedBox(height: sizedBoxHeight),
-                //       Row(
-                //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //         children: [
-                //           Column(
-                //             children: [
-                //               Icon(
-                //                 Icons.directions_walk_rounded,
-                //                 size: 50,
-                //                 color: Theme.of(context).colorScheme.primary,
-                //               ),
-                //               // Text(_steps,
-                //               //     style: const TextStyle(
-                //               //       color: Color.fromARGB(255, 19, 98, 93),
-                //               //       fontSize: 22,
-                //               //     )),
-                //               const Text(
-                //                 "steps",
-                //                 style: TextStyle(
-                //                   fontWeight: FontWeight.w500,
-                //                   fontStyle: FontStyle.italic,
-                //                   fontSize: 15,
-                //                 ),
-                //               )
-                //             ],
-                //           ),
-                //           Column(
-                //             children: [
-                //               Icon(
-                //                 FontAwesomeIcons.fire,
-                //                 size: 50,
-                //                 color: Theme.of(context).colorScheme.primary,
-                //               ),
-                //               Text(
-                //                 (int.parse(_steps) / 25).toString(),
-                //                 style: const TextStyle(
-                //                   color: Color.fromARGB(255, 19, 98, 93),
-                //                   fontSize: 22,
-                //                 ),
-                //               ),
-                //               const Text(
-                //                 "kCal burned",
-                //                 style: TextStyle(
-                //                   fontWeight: FontWeight.w500,
-                //                   fontStyle: FontStyle.italic,
-                //                   fontSize: 15,
-                //                 ),
-                //               )
-                //             ],
-                //           ),
-                //         ],
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // SizedBox(height: sizedBoxHeight),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

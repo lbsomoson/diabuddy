@@ -4,11 +4,7 @@ class DashboardWidget extends StatefulWidget {
   final String header;
   final double value;
   final double? caloriesValue;
-  const DashboardWidget(
-      {required this.header,
-      required this.value,
-      this.caloriesValue,
-      super.key});
+  const DashboardWidget({required this.header, required this.value, this.caloriesValue, super.key});
 
   @override
   State<DashboardWidget> createState() => _DashboardWidgetState();
@@ -31,9 +27,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     Color textColor;
 
     if (widget.header == "Carbohydrates") {
-      print('caloriesValue: ${widget.caloriesValue}');
-      if (widget.value >= 0.55 * widget.caloriesValue! &&
-          widget.value <= 0.7 * widget.caloriesValue!) {
+      if (widget.value >= 0.55 * widget.caloriesValue! && widget.value <= 0.7 * widget.caloriesValue!) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {
@@ -101,33 +95,32 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     }
 
     return Container(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10), color: backgroundColor),
+        borderRadius: BorderRadius.circular(10),
+        color: backgroundColor,
+        // border: Border.all(
+        //   width: 1.0,
+        //   color: backgroundColor,
+        // ),
+      ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(widget.header,
             style: const TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                fontStyle: FontStyle.italic)),
+                color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500, fontStyle: FontStyle.italic)),
         const SizedBox(
           height: 3,
         ),
         Row(
           children: [
-            Text(widget.value.toString(),
-                style: TextStyle(color: textColor, fontSize: 22)),
+            Text(widget.value.toString(), style: TextStyle(color: textColor, fontSize: 22)),
             Text(
                 widget.header == "Calories"
                     ? " kCal"
                     : widget.header == "Carbohydrates"
                         ? " grams"
                         : "",
-                style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 15)),
+                style: const TextStyle(fontWeight: FontWeight.w500, fontStyle: FontStyle.italic, fontSize: 15)),
           ],
         ),
       ]),

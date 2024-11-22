@@ -38,17 +38,6 @@ class _CircleProgressIndicatorState extends State<CircleProgressIndicator> {
         },
         child: Column(
           children: [
-            Text(
-              'SELECT THE THICKNESS OF THE LINES',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white.withOpacity(0.5),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -64,7 +53,11 @@ class _CircleProgressIndicatorState extends State<CircleProgressIndicator> {
                       ),
                     );
                   },
-                  progressColors: const [Color.fromRGBO(241, 207, 85, 1), Color.fromRGBO(247, 139, 8, 1)],
+                  progressColors: const [
+                    Color.fromRGBO(241, 207, 85, 1),
+                    Color.fromRGBO(247, 139, 8, 1),
+                    Color.fromRGBO(250, 85, 39, 1)
+                  ],
                   valueNotifier: valueNotifier,
                   size: 200,
                   progressStrokeWidth: 30,
