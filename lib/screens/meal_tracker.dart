@@ -3,7 +3,6 @@ import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/meal_info.dart';
-import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,11 +54,18 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                   );
                 } else if (state is MealIntakeByDateLoaded) {
                   if (state.mealIntakes.isEmpty) {
-                    return const Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [Center(child: Text2Widget(text: "No meals taken yet", style: 'body2'))]),
+                    return Center(
+                      child: Column(children: [
+                        Icon(
+                          Icons.no_food_rounded,
+                          size: 125,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text("No meals taken yet", style: TextStyle(fontSize: 18, color: Colors.grey[500])),
+                      ]),
                     );
                   }
                   // count meals for each mealTime

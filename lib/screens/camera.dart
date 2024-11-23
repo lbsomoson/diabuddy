@@ -468,96 +468,98 @@ class _CameraScreenState extends State<CameraScreen> {
                         ),
                       ],
                     )
-                  : Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2.0,
-                                ),
+                  : ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height / 1.2,
+                      ),
+                      child: Center(
+                        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.0),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2.0,
                               ),
-                              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                              width: double.infinity,
-                              child: Material(
+                            ),
+                            margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                            width: double.infinity,
+                            child: Material(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: InkWell(
                                 borderRadius: BorderRadius.circular(15.0),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  splashColor: Theme.of(context).colorScheme.secondary,
-                                  onTap: () async {
-                                    await _pickImageFromCamera(userId!);
-                                  },
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 30,
-                                      ),
-                                      Icon(
-                                        Icons.camera_alt_rounded,
-                                        color: Color.fromRGBO(100, 204, 197, 1),
-                                        size: 100,
-                                      ),
-                                      Text("Open Camera",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Color.fromRGBO(100, 204, 197, 1),
-                                          )),
-                                      SizedBox(
-                                        height: 40,
-                                      ),
-                                    ],
-                                  ),
+                                splashColor: Theme.of(context).colorScheme.secondary,
+                                onTap: () async {
+                                  await _pickImageFromCamera(userId!);
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    Icon(
+                                      Icons.camera_alt_rounded,
+                                      color: Color.fromRGBO(100, 204, 197, 1),
+                                      size: 100,
+                                    ),
+                                    Text("Open Camera",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Color.fromRGBO(100, 204, 197, 1),
+                                        )),
+                                    SizedBox(
+                                      height: 40,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2.0,
-                                ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.0),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2.0,
                               ),
-                              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                              width: double.infinity,
-                              child: Material(
+                            ),
+                            margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                            width: double.infinity,
+                            child: Material(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: InkWell(
                                 borderRadius: BorderRadius.circular(15.0),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  splashColor: Theme.of(context).colorScheme.secondary,
-                                  onTap: () async {
-                                    await _pickImageFromGallery(userId!);
-                                  },
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 30,
-                                      ),
-                                      Icon(
-                                        Icons.photo_size_select_actual_rounded,
-                                        color: Color.fromRGBO(100, 204, 197, 1),
-                                        size: 100,
-                                      ),
-                                      Text("Open Gallery",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Color.fromRGBO(100, 204, 197, 1),
-                                          )),
-                                      SizedBox(
-                                        height: 40,
-                                      ),
-                                    ],
-                                  ),
+                                splashColor: Theme.of(context).colorScheme.secondary,
+                                onTap: () async {
+                                  await _pickImageFromGallery(userId!);
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    Icon(
+                                      Icons.photo_size_select_actual_rounded,
+                                      color: Color.fromRGBO(100, 204, 197, 1),
+                                      size: 100,
+                                    ),
+                                    Text("Open Gallery",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Color.fromRGBO(100, 204, 197, 1),
+                                        )),
+                                    SizedBox(
+                                      height: 40,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ]),
+                          ),
+                        ]),
+                      ),
                     )
             ],
           ),

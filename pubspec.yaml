@@ -49,6 +49,7 @@ dependencies:
   pytorch_lite: ^4.3.0
   flutter_tesseract_ocr: ^0.4.27
   step_progress_indicator: ^1.0.2
+  # animated_segmented_tab_control: ^2.0.0
 
 flutter_launcher_icons:
   android: "launcher_icon"

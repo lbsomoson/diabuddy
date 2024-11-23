@@ -129,14 +129,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     List<String> nameParts = user!.displayName!.split(' ');
     String firstName = nameParts.isNotEmpty ? nameParts.first : '';
 
-    // change the status bar color
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Color.fromRGBO(100, 204, 197, 0.3),
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // floatingActionButton: FloatingActionButton(
@@ -149,16 +141,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // ),
       body: SingleChildScrollView(
         child: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(100, 204, 197, 0.3),
-                  borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
-                ),
-                child: Row(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextWidget(text: "Hello, $firstName!", style: 'bodyLarge'),
@@ -171,134 +158,128 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     )
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
+                Divider(
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "2000 kCal",
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w900,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                const Text(
+                  "Daily Calorie Intake",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    color: Color.fromRGBO(4, 54, 74, 1),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(35),
+                  decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                  child: const CircleProgressIndicator(
+                    title: "Title",
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Daily Calorie Intake",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        color: Color.fromRGBO(4, 54, 74, 1),
-                      ),
-                    ),
-                    // const Text(
-                    //   "2000 cal",
-                    //   style: TextStyle(
-                    //     fontSize: 20,
-                    //     fontWeight: FontWeight.w900,
-                    //     color: Color.fromRGBO(247, 139, 8, 1),
-                    //   ),
-                    // ),
-                    Container(
-                      padding: const EdgeInsets.all(35),
-                      decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                      child: const CircleProgressIndicator(
-                        title: "Title",
-                      ),
-                    ),
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularStepProgressIndicator(
-                              totalSteps: 100,
-                              currentStep: 74,
-                              stepSize: 10,
-                              selectedColor: Theme.of(context).primaryColor,
-                              unselectedColor: Colors.grey[100],
-                              padding: 0,
-                              width: 80,
-                              height: 80,
-                              selectedStepSize: 5,
-                              unselectedStepSize: 5,
-                              roundedCap: (_, __) => true,
-                              child: const Icon(
-                                Icons.directions_walk_rounded,
-                              ),
-                            ),
-                            Text(_steps,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 19, 98, 93),
-                                  fontSize: 22,
-                                )),
-                            const Text(
-                              "steps",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 15,
-                              ),
-                            )
-                          ],
+                        CircularStepProgressIndicator(
+                          totalSteps: 100,
+                          currentStep: 74,
+                          stepSize: 10,
+                          selectedColor: Theme.of(context).primaryColor,
+                          unselectedColor: Colors.grey[100],
+                          padding: 0,
+                          width: 80,
+                          height: 80,
+                          selectedStepSize: 5,
+                          unselectedStepSize: 5,
+                          roundedCap: (_, __) => true,
+                          child: const Icon(FontAwesomeIcons.shoePrints),
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularStepProgressIndicator(
-                              totalSteps: 100,
-                              currentStep: 74,
-                              stepSize: 10,
-                              selectedColor: Theme.of(context).primaryColor,
-                              unselectedColor: Colors.grey[100],
-                              padding: 0,
-                              width: 80,
-                              height: 80,
-                              selectedStepSize: 5,
-                              unselectedStepSize: 5,
-                              roundedCap: (_, __) => true,
-                              child: const Icon(
-                                FontAwesomeIcons.fire,
-                              ),
-                            ),
-                            Text(
-                              (int.parse(_steps) / 25).toString(),
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 19, 98, 93),
-                                fontSize: 22,
-                              ),
-                            ),
-                            const Text(
-                              "kCal burned",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 15,
-                              ),
-                            )
-                          ],
-                        ),
+                        Text(_steps,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 19, 98, 93),
+                              fontSize: 22,
+                            )),
+                        const Text(
+                          "steps",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 15,
+                          ),
+                        )
                       ],
                     ),
-                    const SizedBox(height: 50),
-                    Row(
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Expanded(child: DashboardWidget(header: "Glycemic Index", value: 99.0)),
-                        SizedBox(width: sizedBoxHeight),
-                        const Expanded(child: DashboardWidget(header: "Diet Diversity Score", value: 7.5)),
+                        CircularStepProgressIndicator(
+                          totalSteps: 100,
+                          currentStep: 74,
+                          stepSize: 10,
+                          selectedColor: Theme.of(context).primaryColor,
+                          unselectedColor: Colors.grey[100],
+                          padding: 0,
+                          width: 80,
+                          height: 80,
+                          selectedStepSize: 5,
+                          unselectedStepSize: 5,
+                          roundedCap: (_, __) => true,
+                          child: const Icon(
+                            FontAwesomeIcons.fire,
+                          ),
+                        ),
+                        Text(
+                          (int.parse(_steps) / 25).toString(),
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 19, 98, 93),
+                            fontSize: 22,
+                          ),
+                        ),
+                        const Text(
+                          "kCal burned",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 15,
+                          ),
+                        )
                       ],
                     ),
-                    SizedBox(height: sizedBoxHeight),
-                    const Row(
-                      children: [
-                        Expanded(child: DashboardWidget(header: "Calories", value: 2000)),
-                        SizedBox(width: 10),
-                        Expanded(child: DashboardWidget(header: "Carbohydrates", value: 1099, caloriesValue: 2000)),
-                      ],
-                    ),
-                    SizedBox(height: sizedBoxHeight),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 50),
+                Row(
+                  children: [
+                    const Expanded(child: DashboardWidget(header: "Glycemic Index", value: 99.0)),
+                    SizedBox(width: sizedBoxHeight),
+                    const Expanded(child: DashboardWidget(header: "Diet Diversity Score", value: 7.5)),
+                  ],
+                ),
+                SizedBox(height: sizedBoxHeight),
+                const Row(
+                  children: [
+                    Expanded(child: DashboardWidget(header: "Calories", value: 2000)),
+                    SizedBox(width: 10),
+                    Expanded(child: DashboardWidget(header: "Carbohydrates", value: 1099, caloriesValue: 2000)),
+                  ],
+                ),
+                SizedBox(height: sizedBoxHeight),
+              ],
+            ),
           ),
         ),
       ),

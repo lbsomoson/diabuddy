@@ -28,14 +28,11 @@ Widget _displayMedicationHistory(BuildContext context, String id) {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                      child: Text2Widget(
-                          text: "No previous medicine yet", style: 'body2'))
-                ]),
+                children: [Center(child: Text2Widget(text: "No previous medicine yet", style: 'body2'))]),
           );
         }
         return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: state.medications.length,
           itemBuilder: (context, index) {
@@ -73,10 +70,12 @@ class _MedicationHistoryState extends State<MedicationHistory> {
         title: const Text("Medication History"),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-          child: Column(
-            children: [_displayMedicationHistory(context, user!.uid)],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+            child: Column(
+              children: [_displayMedicationHistory(context, user!.uid)],
+            ),
           ),
         ),
       ),

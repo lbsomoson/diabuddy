@@ -17,7 +17,8 @@ class _CircleProgressIndicatorState extends State<CircleProgressIndicator> {
   @override
   void initState() {
     super.initState();
-    valueNotifier = ValueNotifier(0.0);
+    valueNotifier = ValueNotifier(35);
+    keyForRepaint++;
   }
 
   @override
@@ -31,11 +32,6 @@ class _CircleProgressIndicatorState extends State<CircleProgressIndicator> {
     return RepaintBoundary(
       child: GestureDetector(
         key: ValueKey(keyForRepaint),
-        onTap: () {
-          valueNotifier.value = 100.0;
-          keyForRepaint++;
-          setState(() {});
-        },
         child: Column(
           children: [
             Row(
