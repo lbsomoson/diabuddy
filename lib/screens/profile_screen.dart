@@ -123,6 +123,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return bmi;
     }
 
+    String classifyBmi(double bmi) {
+      if (bmi < 18.5) {
+        return "Underweight";
+      } else if (bmi >= 18.5 && bmi <= 22.9) {
+        return "Normal";
+      } else if (bmi >= 23 && bmi <= 24.9) {
+        return "Overweight";
+      } else if (bmi >= 25) {
+        return "Obese";
+      } else {
+        return "N/A"; // Handle invalid BMI cases
+      }
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const AppBarTitle(title: "Profile"),
@@ -213,7 +227,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 8,
                         ),
                         PersonalInformation(
-                            title: "BMI", value: "${computeBmi().toStringAsFixed(2)} kg/m\u00B2", icon: Icons.verified),
+                          title: "BMI",
+                          value: "${computeBmi().toStringAsFixed(2)} kg/m\u00B2, ${classifyBmi(computeBmi())}",
+                          icon: Icons.info_outline,
+                        ),
+                        // PersonalInformation(
+                        //     title: "BMI", value: "${computeBmi().toStringAsFixed(2)} kg/m\u00B2", icon: null),
                       ],
                     ),
                   ),
