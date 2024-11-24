@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DailyHealthRecord {
   final String? recordId;
@@ -24,11 +24,11 @@ class DailyHealthRecord {
   });
 
   // Factory constructor to instantiate object from json format
-  factory DailyHealthRecord.fromJson(Map<String, dynamic> json) {
+  factory DailyHealthRecord.fromJson(Map<String, dynamic> json, String id) {
     return DailyHealthRecord(
-      recordId: json['recordId'],
+      recordId: id,
       userId: json['userId'],
-      date: json['date'],
+      date: (json['date'] as Timestamp).toDate(),
       healthyIndexScore: json['healthyIndexScore'],
       totalGlycemicIndex: json['totalGlycemicIndex'],
       totalCarbohydrates: json['totalCarbohydrates'],
@@ -38,11 +38,11 @@ class DailyHealthRecord {
     );
   }
 
-  static List<DailyHealthRecord> fromJsonArray(String jsonData) {
-    final Iterable<dynamic> data = jsonDecode(jsonData);
-    return data
-        .map<DailyHealthRecord>((dynamic d) => DailyHealthRecord.fromJson(d))
-        .toList();
+  static List<DailyHealthRecord> fromJsonArray(List<Map<String, dynamic>> jsonData) {
+    return jsonData.map<DailyHealthRecord>((data) {
+      String id = data['mealIntakeId'];
+      return DailyHealthRecord.fromJson(data, id);
+    }).toList();
   }
 
   Map<String, dynamic> toJson(DailyHealthRecord medication) {
