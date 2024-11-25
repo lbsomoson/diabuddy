@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
@@ -8,11 +7,11 @@ import 'package:diabuddy/widgets/text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+// import 'package:health/health.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -21,107 +20,67 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
+// ignore: constant_identifier_names
+enum AppState { DATA_NOT_FETCHED, FETCHING_DATA, DATA_READY, NO_DATA, AUTH_NOT_GRANTED }
+
 class _DashboardScreenState extends State<DashboardScreen> {
   FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
 
-  late Stream<StepCount> _stepCountStream;
-  late Stream<PedestrianStatus> _pedestrianStatusStream;
-  String _status = '?', _steps = '0';
-  late Timer _midnightTimer;
-
   @override
   void initState() {
     super.initState();
-    initPlatformState();
     // firestore.uploadJsonDataToFirestore();
-    loadDailySteps();
-    startMidnightResetTimer();
-  }
-
-  @override
-  void dispose() {
-    _midnightTimer.cancel();
-    super.dispose();
+    // await Permission.activityRecognition.request();
+    // await Permission.location.request();
   }
 
   Future<void> loadDailySteps() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _steps = prefs.getString('daily_steps') ?? '0';
+      // _steps = prefs.getString('daily_steps') ?? '0';
     });
   }
 
   Future<void> saveDailySteps() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('daily_steps', _steps);
+    // prefs.setString('daily_steps', _steps);
   }
 
-  void startMidnightResetTimer() {
-    DateTime now = DateTime.now();
-    DateTime midnight = DateTime(now.year, now.month, now.day + 1);
-    Duration timeUntilMidnight = midnight.difference(now);
+  // Fetch steps from the health plugin and show them in the app.
+  // Future<void> fetchStepData() async {
+  //   int? steps;
 
-    _midnightTimer = Timer(timeUntilMidnight, () {
-      resetDailySteps();
-      startMidnightResetTimer(); // restart timer for the next day
-    });
-  }
+  //   // get steps for today (i.e., since midnight)
+  //   final now = DateTime.now();
+  //   final midnight = DateTime(now.year, now.month, now.day);
 
-  void resetDailySteps() {
-    setState(() {
-      _steps = '0';
-    });
-    saveDailySteps();
-  }
+  //   bool stepsPermission = await Health().hasPermissions([HealthDataType.STEPS]) ?? false;
+  //   if (!stepsPermission) {
+  //     stepsPermission = await Health().requestAuthorization([HealthDataType.STEPS]);
+  //   }
 
-  void onStepCount(StepCount event) {
-    setState(() {
-      _steps = event.steps.toString();
-    });
-    saveDailySteps();
-  }
+  //   if (stepsPermission) {
+  //     try {
+  //       steps = await Health().getTotalStepsInInterval(midnight, now,
+  //           includeManualEntry: !recordingMethodsToFilter.contains(RecordingMethod.manual));
+  //     } catch (error) {
+  //       debugPrint("Exception in getTotalStepsInInterval: $error");
+  //     }
 
-  void onPedestrianStatusChanged(PedestrianStatus event) {
-    setState(() {
-      _status = event.status;
-    });
-  }
+  //     debugPrint('Total number of steps: $steps');
 
-  void onPedestrianStatusError(error) {
-    setState(() {
-      _status = 'Pedestrian Status not available';
-    });
-  }
+  //     setState(() {
+  //       _nofSteps = (steps == null) ? 0 : steps;
+  //       _state = (steps == null) ? AppState.NO_DATA : AppState.STEPS_READY;
+  //     });
+  //   } else {
+  //     debugPrint("Authorization not granted - error in authorization");
+  //     setState(() => _state = AppState.DATA_NOT_FETCHED);
+  //   }
+  // }
 
-  void onStepCountError(error) {
-    setState(() {
-      _steps = 'Step Count not available';
-    });
-  }
-
-  Future<bool> _checkActivityRecognitionPermission() async {
-    bool granted = await Permission.activityRecognition.isGranted;
-
-    if (!granted) {
-      granted = await Permission.activityRecognition.request() == PermissionStatus.granted;
-    }
-
-    return granted;
-  }
-
-  Future<void> initPlatformState() async {
-    bool granted = await _checkActivityRecognitionPermission();
-    if (!granted) {}
-
-    _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
-    (await _pedestrianStatusStream.listen(onPedestrianStatusChanged)).onError(onPedestrianStatusError);
-
-    _stepCountStream = Pedometer.stepCountStream;
-    _stepCountStream.listen(onStepCount).onError(onStepCountError);
-
-    if (!mounted) return;
-  }
+  void .
 
   @override
   Widget build(BuildContext context) {
@@ -149,13 +108,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextWidget(text: "Hello, $firstName!", style: 'bodyLarge'),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        TextWidget(text: "Health Index Score", style: 'titleSmall'),
-                        TextWidget(text: "10.0", style: "bodyLarge")
-                      ],
-                    )
+                    IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.lightbulb,
+                          color: Theme.of(context).primaryColor,
+                        ))
+                    // const Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.end,
+                    //   children: [
+                    //     TextWidget(text: "Health Index Score", style: 'titleSmall'),
+                    //     TextWidget(text: "10.0", style: "bodyLarge")
+                    //   ],
+                    // )
                   ],
                 ),
                 Divider(
@@ -205,11 +170,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           roundedCap: (_, __) => true,
                           child: const Icon(FontAwesomeIcons.shoePrints),
                         ),
-                        Text(_steps,
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 19, 98, 93),
-                              fontSize: 22,
-                            )),
+                        // Text(_steps,
+                        //     style: const TextStyle(
+                        //       color: Color.fromARGB(255, 19, 98, 93),
+                        //       fontSize: 22,
+                        //     )),
                         const Text(
                           "steps",
                           style: TextStyle(
@@ -242,13 +207,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             FontAwesomeIcons.fire,
                           ),
                         ),
-                        Text(
-                          (int.parse(_steps) / 25).toString(),
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 19, 98, 93),
-                            fontSize: 22,
-                          ),
-                        ),
+                        // Text(
+                        //   (int.parse(_steps) / 25).toString(),
+                        //   style: const TextStyle(
+                        //     color: Color.fromARGB(255, 19, 98, 93),
+                        //     fontSize: 22,
+                        //   ),
+                        // ),
                         const Text(
                           "kCal burned",
                           style: TextStyle(
