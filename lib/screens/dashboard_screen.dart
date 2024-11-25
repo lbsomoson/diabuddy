@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/advice.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
@@ -80,8 +81,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //   }
   // }
 
-  void .
-
   @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
@@ -109,7 +108,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     TextWidget(text: "Hello, $firstName!", style: 'bodyLarge'),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return const AdviceScreen(isBmiNormal: true, isNormalPhysicalActivity: true);
+                          }));
+                        },
                         icon: Icon(
                           Icons.lightbulb,
                           color: Theme.of(context).primaryColor,

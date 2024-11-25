@@ -78,6 +78,12 @@ flutter:
     - assets/models/labels.txt
     - assets/tessdata_config.json
     - assets/tessdata/eng.traineddata
+    - assets/images/undraw_breakfast.png
+    - assets/images/undraw_diet.png
+    - assets/images/undraw_fitness_stats.png
+    - assets/images/undraw_healthy_lifestyle.png
+    - assets/images/undraw_ice_cream.png
+    - assets/images/undraw_jogging.png
 
   fonts:
     - family: Roboto
