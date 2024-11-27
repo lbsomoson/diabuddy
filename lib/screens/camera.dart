@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
 import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/screens/meal_details.dart';
@@ -427,8 +429,19 @@ class _CameraScreenState extends State<CameraScreen> {
                                               mealIntake.mealTime = getCurrentMealTime();
                                               mealIntake.timestamp = _currentDate;
                                               mealIntake.accMeals = accMeal;
+                                              DailyHealthRecord record = DailyHealthRecord(
+                                                  recordId: "",
+                                                  userId: userId,
+                                                  date: mealIntake.timestamp!,
+                                                  healthyEatingIndex: accMeal.healtyEatingIndex!,
+                                                  glycemicIndex: accMeal.glycemicIndex!,
+                                                  carbohydrates: accMeal.carbohydrate!,
+                                                  energyKcal: accMeal.energyKcal!,
+                                                  diversityScore: accMeal.diversityScore!,
+                                                  stepsCount: 0.0);
 
                                               context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
+                                              context.read<RecordBloc>().add(UpdateRecord(record));
 
                                               // TODO: JUMP TO MEAL DETAILS SCREEN
                                               Navigator.push(context, MaterialPageRoute(builder: (context) {

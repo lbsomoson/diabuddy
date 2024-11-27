@@ -46,8 +46,8 @@ class MealIntakeRepository {
 
   // get one meal intake
   Future<MealIntake> getMealIntakeById(String id) async {
-    DocumentSnapshot donation = await firestore.collection("meal_intakes").doc(id).get();
-    MealIntake mealIntake = donation.data() as MealIntake;
+    DocumentSnapshot meal = await firestore.collection("meal_intakes").doc(id).get();
+    MealIntake mealIntake = meal.data() as MealIntake;
 
     return mealIntake;
   }

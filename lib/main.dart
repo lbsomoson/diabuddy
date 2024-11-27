@@ -3,6 +3,8 @@ import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/provider/appointments/appointments_repository.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
+import 'package:diabuddy/provider/daily_health_record/record_repository.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/provider/meal/meal_repository.dart';
@@ -14,6 +16,7 @@ import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/provider/medications/medications_repository.dart';
 import 'package:diabuddy/provider/notification_provider.dart';
 import 'package:diabuddy/screens/add_medication.dart';
+import 'package:diabuddy/screens/advice.dart';
 import 'package:diabuddy/screens/camera.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
 import 'package:diabuddy/screens/history.dart';
@@ -93,6 +96,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => AppointmentBloc(AppointmentRepository())),
         BlocProvider(create: (context) => MealBloc(MealRepository())),
         BlocProvider(create: (context) => MealIntakeBloc(MealIntakeRepository())),
+        BlocProvider(create: (context) => RecordBloc(RecordRepository())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -210,6 +214,16 @@ class _MyAppState extends State<MyApp> {
           }
           if (settings.name == "/medicationHistory") {
             return MaterialPageRoute(builder: (context) => const MedicationHistory());
+          }
+          if (settings.name == "/adviceScreen") {
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+                builder: (context) => AdviceScreen(
+                      isBmiNormal: args['isBmiNormal'],
+                      isBmiObese: args['isBmiObese'],
+                      isBmiUnderweight: args['isBmiUnderweight'],
+                      isNormalPhysicalActivity: args['isNormalPhysicalActivity'],
+                    ));
           }
           // final name = settings.arguments as String;
           // final carbs = settings.arguments as String;

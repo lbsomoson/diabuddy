@@ -28,7 +28,7 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
   }
 
   Future<void> _onUpdateRecord(UpdateRecord event, Emitter<RecordState> emit) async {
-    await recordRepository.updateRecord(event.record, event.recordId);
+    await recordRepository.updateRecord(event.record);
   }
 
   Future<void> _onDeleteRecord(DeleteRecord event, Emitter<RecordState> emit) async {

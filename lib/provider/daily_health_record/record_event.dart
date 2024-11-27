@@ -27,12 +27,11 @@ class AddRecord extends RecordEvent {
 
 class UpdateRecord extends RecordEvent {
   final DailyHealthRecord record;
-  final String recordId;
 
-  const UpdateRecord(this.record, this.recordId);
+  const UpdateRecord(this.record);
 
   @override
-  List<Object> get props => [record, recordId];
+  List<Object> get props => [record];
 }
 
 class DeleteRecord extends RecordEvent {

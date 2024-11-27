@@ -2,24 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DailyHealthRecord {
   final String? recordId;
-  final String? userId;
+  String? userId;
   DateTime date;
-  double healthyIndexScore;
-  int totalGlycemicIndex;
-  double totalCarbohydrates;
-  double totalCalories;
-  int dietDiversityScore;
-  int stepsCount;
+  double healthyEatingIndex;
+  double diversityScore;
+  double glycemicIndex;
+  double carbohydrates;
+  double energyKcal;
+  double stepsCount;
 
   DailyHealthRecord({
     this.recordId,
     this.userId,
     required this.date,
-    required this.healthyIndexScore,
-    required this.totalGlycemicIndex,
-    required this.totalCarbohydrates,
-    required this.totalCalories,
-    required this.dietDiversityScore,
+    required this.healthyEatingIndex,
+    required this.glycemicIndex,
+    required this.carbohydrates,
+    required this.energyKcal,
+    required this.diversityScore,
     required this.stepsCount,
   });
 
@@ -29,11 +29,11 @@ class DailyHealthRecord {
       recordId: id,
       userId: json['userId'],
       date: (json['date'] as Timestamp).toDate(),
-      healthyIndexScore: json['healthyIndexScore'],
-      totalGlycemicIndex: json['totalGlycemicIndex'],
-      totalCarbohydrates: json['totalCarbohydrates'],
-      totalCalories: json['totalCalories'],
-      dietDiversityScore: json['dietDiversityScore'],
+      healthyEatingIndex: json['healthyEatingIndex'],
+      glycemicIndex: json['glycemicIndex'],
+      carbohydrates: json['carbohydrates'],
+      energyKcal: json['energyKcal'],
+      diversityScore: json['diversityScore'],
       stepsCount: json['stepsCount'],
     );
   }
@@ -45,17 +45,17 @@ class DailyHealthRecord {
     }).toList();
   }
 
-  Map<String, dynamic> toJson(DailyHealthRecord medication) {
+  Map<String, dynamic> toJson(DailyHealthRecord dhr) {
     return {
-      'recordId': medication.recordId,
-      'userId': medication.userId,
-      'date': medication.date,
-      'healthyIndexScore': medication.healthyIndexScore,
-      'totalGlycemicIndex': medication.totalGlycemicIndex,
-      'totalCarbohydrates': medication.totalCarbohydrates,
-      'totalCalories': medication.totalCalories,
-      'dietDiversityScore': medication.dietDiversityScore,
-      'stepsCount': medication.stepsCount,
+      'recordId': dhr.recordId,
+      'userId': dhr.userId,
+      'date': dhr.date,
+      'healthyEatingIndex': dhr.healthyEatingIndex,
+      'glycemicIndex': dhr.glycemicIndex,
+      'carbohydrates': dhr.carbohydrates,
+      'energyKcal': dhr.energyKcal,
+      'diversityScore': dhr.diversityScore,
+      'stepsCount': dhr.stepsCount,
     };
   }
 

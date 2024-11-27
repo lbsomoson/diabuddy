@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:diabuddy/api/meal_api.dart';
+import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
 import 'package:diabuddy/screens/advice.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
@@ -25,8 +27,20 @@ class DashboardScreen extends StatefulWidget {
 enum AppState { DATA_NOT_FETCHED, FETCHING_DATA, DATA_READY, NO_DATA, AUTH_NOT_GRANTED }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  User? user;
   FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
+
+  DailyHealthRecord record = DailyHealthRecord(
+      recordId: "",
+      userId: "",
+      date: DateTime.now(),
+      healthyEatingIndex: 0.0,
+      glycemicIndex: 0.0,
+      carbohydrates: 0.0,
+      energyKcal: 0.0,
+      diversityScore: 0.0,
+      stepsCount: 0.0);
 
   @override
   void initState() {
@@ -34,6 +48,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // firestore.uploadJsonDataToFirestore();
     // await Permission.activityRecognition.request();
     // await Permission.location.request();
+    user = context.read<UserAuthProvider>().user;
+    record.userId = user!.uid;
+
+    if (user != null) {
+      context.read<RecordBloc>().add(LoadRecords(user!.uid));
+      context.read<RecordBloc>().add(AddRecord(record));
+    }
   }
 
   Future<void> loadDailySteps() async {
