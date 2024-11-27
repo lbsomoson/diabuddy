@@ -11,6 +11,7 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
 
   RecordBloc(this.recordRepository) : super(RecordLoading()) {
     on<LoadRecords>(_onLoadRecords);
+    on<LoadRecord>(_onLoadRecord);
     on<AddRecord>(_onAddRecord);
     on<UpdateRecord>(_onUpdateRecord);
     on<DeleteRecord>(_onDeleteRecord);
@@ -21,6 +22,19 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
     recordRepository.getRecords(event.userId).listen((records) {
       add(RecordsUpdated(records));
     });
+  }
+
+  Future<void> _onLoadRecord(LoadRecord event, Emitter<RecordState> emit) async {
+    try {
+      final record = await recordRepository.getRecordByDate(event.userId, event.date);
+      if (record != null) {
+        emit(SingleRecordLoaded(record));
+      } else {
+        emit(RecordNotFound());
+      }
+    } catch (e) {
+      emit(const RecordError("Failed to load record"));
+    }
   }
 
   Future<void> _onAddRecord(AddRecord event, Emitter<RecordState> emit) async {

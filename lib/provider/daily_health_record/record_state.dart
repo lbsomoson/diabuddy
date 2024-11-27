@@ -7,6 +7,8 @@ abstract class RecordState extends Equatable {
   List<Object> get props => [];
 }
 
+class RecordNotFound extends RecordState {}
+
 class RecordLoading extends RecordState {}
 
 class RecordLoaded extends RecordState {
@@ -16,6 +18,15 @@ class RecordLoaded extends RecordState {
 
   @override
   List<Object> get props => [records];
+}
+
+class SingleRecordLoaded extends RecordState {
+  final DailyHealthRecord record;
+
+  const SingleRecordLoaded(this.record);
+
+  @override
+  List<Object> get props => [record];
 }
 
 class RecordError extends RecordState {

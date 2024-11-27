@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DailyHealthRecord {
-  final String? recordId;
+  String? recordId;
   String? userId;
   DateTime date;
   double healthyEatingIndex;

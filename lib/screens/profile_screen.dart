@@ -105,8 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user == null) {
       // Show a loading indicator or a message if `user` is not available yet
       return Scaffold(
-        appBar: AppBar(title: Text("Profile")),
-        body: Center(child: CircularProgressIndicator()),
+        appBar: AppBar(title: const Text("Profile")),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 

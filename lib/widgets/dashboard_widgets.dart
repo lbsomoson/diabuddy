@@ -19,8 +19,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   final fairBackground = const Color.fromRGBO(249, 166, 32, 0.3);
   final badBackground = const Color.fromRGBO(249, 32, 32, 0.3);
 
-  // double? caloriesValue;
-
   @override
   Widget build(BuildContext context) {
     Color backgroundColor;
@@ -46,6 +44,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       // }
     } else if (widget.header == "Glycemic Index") {
       if (widget.value < 100) {
+        backgroundColor = fairBackground;
+        textColor = fairText;
+      } else if (widget.value == 100) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {
@@ -53,7 +54,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         textColor = badText;
       }
     } else if (widget.header == "Diet Diversity Score") {
-      if (widget.value > 5.0) {
+      if (widget.value <= 3) {
+        backgroundColor = fairBackground;
+        textColor = fairText;
+      } else if (widget.value > 4.0 && widget.value <= 5) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {

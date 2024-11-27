@@ -16,6 +16,16 @@ class LoadRecords extends RecordEvent {
   List<Object> get props => [userId];
 }
 
+class LoadRecord extends RecordEvent {
+  final String userId;
+  final DateTime date;
+
+  const LoadRecord(this.userId, this.date);
+
+  @override
+  List<Object> get props => [userId, date];
+}
+
 class AddRecord extends RecordEvent {
   final DailyHealthRecord record;
 
