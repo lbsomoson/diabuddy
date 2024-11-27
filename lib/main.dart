@@ -219,10 +219,8 @@ class _MyAppState extends State<MyApp> {
             final args = settings.arguments as Map<String, dynamic>;
             return MaterialPageRoute(
                 builder: (context) => AdviceScreen(
-                      isBmiNormal: args['isBmiNormal'],
-                      isBmiObese: args['isBmiObese'],
-                      isBmiUnderweight: args['isBmiUnderweight'],
-                      isNormalPhysicalActivity: args['isNormalPhysicalActivity'],
+                      bmi: args['bmi'],
+                      physicalActivity: args['physicalActivity'],
                     ));
           }
           // final name = settings.arguments as String;

@@ -4,40 +4,155 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class AdviceScreen extends StatefulWidget {
-  final bool? isBmiUnderweight, isBmiNormal, isBmiObese, isNormalPhysicalActivity;
-  const AdviceScreen(
-      {this.isBmiNormal, this.isBmiObese, this.isBmiUnderweight, this.isNormalPhysicalActivity, super.key});
+  final String bmi, physicalActivity;
+  const AdviceScreen({required this.bmi, required this.physicalActivity, super.key});
 
   @override
   State<AdviceScreen> createState() => _AdviceScreenState();
 }
 
 class _AdviceScreenState extends State<AdviceScreen> {
-  List<String> bmi_underweight = [];
+  List<String> bmi_underweight = [
+    '''Follow a healthy eating plan through the Pinggang Pinoy by:
+    - Emphasize vegetables, fruits, whole grains, and fat-free or low-fat dairy products, including lean meats, poultry, fish, beans, eggs, and nuts.
+    - Lessen saturated and trans fats, sodium, and added sugars.
+    Apply Portion Size.''',
+    'Gradually increase your weight by adding healthy calories of 300 to 600 per day.\n***Avoid empty calories such as sugar sweetened beverages, cakes, donuts, etc. as they may lead to excess fat.',
+    'Add extra ingredients to your meals for extra calories such as cheese, nuts, avocado, and dry or liquid milk.',
+    'Eat the right amount of protein to support your needs.',
+    'Healthy adult with minimal physical activity, 0.8 kilogram per body weight.',
+    'For those who regularly exercise and lift weights, aim for 1.2 - 1.7 g of protein per kilogram bodyweight to maximize muscle protein accretion.',
+    'Drink your beverages after meals as drinking during or before the meals may help you feel full easily.',
+    'Stay hydrated with 6 to 8 glasses of water and lessen sugar-sweetened beverages.',
+    'Write down what you eat using a Food Diary to help you identify which food must be consumed more or less.\nE.g. type of food consumed, quantity and meal time',
+    'Set specific goals to stay on track of your food and fitness regimen.\nI will improve my health by following the Pinggang Pinoy guidelines for every meal and exercising for 1 hour, 3 times per week, for the next 12 weeks. I will ensure I include a balanced portion of vegetables, protein, and grains in each meal according to the Pinggang Pinoy standards. I will track my food intake using a food diary app and my workouts using a fitness tracker to monitor my progress and make adjustments as needed.',
+    'Aim for at least 20 minutes of cardio exercise three times a week. In addition, incorporate strength or weight training twice a week to help build and maintain lean muscle mass, which supports healthy weight gain.',
+    'Move more and sit less throughout the day for optimal health. For every half hour, walk for 5 minutes.',
+    'Consult a registered nutritionist-dietitian.'
+  ];
   List<String> bmi_normal = [
-    "Follow a healthy eating plan through the Pinggang Pinoy by:\nEmphasize vegetables, fruits, whole grains, and fat-free or low-fat dairy products, including lean meats, poultry, fish, beans, eggs, and nuts. Lessen saturated and trans fats, sodium, and added sugars. Apply Portion Size",
-    "150 minutes of moderate to vigorous physical activity per week",
-    "Keep track of your meals by having a food diary.",
+    '''Follow a healthy eating plan through the Pinggang Pinoy by:
+    - Emphasize vegetables, fruits, whole grains, and fat-free or low-fat dairy products, including lean meats, poultry, fish, beans, eggs, and nuts. 
+    - Lessen saturated and trans fats, sodium, and added sugars. Apply Portion Size''',
+    'Balance the calories that you eat and calories that you burn from physical activity for weight maintenance.\n***Avoid empty calories such as sugar sweetened beverages, cakes, donuts, etc. as they may lead to excess fat.',
+    'Swap your usual food for healthier alternatives such as fresh fruits over biscuits with added sugar.',
+    'Eat the right amount of protein to support your needs.\nHealthy adult with minimal physical activity, 0.8 kilogram per body weight.\nFor those who regularly exercise and lift weights, aim for 1.2 - 1.7 g of protein per kilogram bodyweight to maximize muscle protein accretion.',
+    'Stay hydrated with 6 to 8 glasses of water and lessen sugar-sweetened beverages.',
+    'Write down what you eat using a Food Diary to help you identify which food must be consumed more or less.\nE.g. type of food consumed, quantity and meal time',
+    'Set specific goals to stay on track of your food and fitness regimen.\nI will improve my health by following the Pinggang Pinoy guidelines for every meal and exercising for 1 hour, 3 times per week, for the next 12 weeks. I will ensure I include a balanced portion of vegetables, protein, and grains in each meal according to the Pinggang Pinoy standards. I will track my food intake using a food diary app and my workouts using a fitness tracker to monitor my progress and make adjustments as needed.',
+    'Regularly exercise to maintain a healthy weight.\nAim at least 150 minutes to 300 minutes of moderate-intensity per week. Also, include muscle-strengthening activities 2 or more days a week for additional health benefits.',
+    'Move more and sit less throughout the day for optimal health. For every half hour, walk for 5 minutes.',
+    "Consult a registered nutritionist-dietitian",
+  ];
+  List<String> bmi_overweight = [
+    '''Follow a healthy eating plan through the Pinggang Pinoy by:
+    - Emphasize vegetables, fruits, whole grains, and fat-free or low-fat dairy products, including lean meats, poultry, fish, beans, eggs, and nuts. 
+    - Lessen saturated and trans fats, sodium, and added sugars. Apply Portion Size''',
+    'Gradually decrease your weight by decreasing your calories from 500 to 1000 calories per day.\n***Avoid empty calories such as sugar sweetened beverages, cakes, donuts, etc. as they may lead to excess fat.',
+    'Swap your usual food for healthier alternatives such as fresh fruits over biscuits with added sugar.',
+    'Eat the right amount of protein to support your needs.\nHealthy adult with minimal physical activity, 0.8 kilogram per body weight.\nFor those who regularly exercise and lift weights, aim for 1.2 - 1.7 g of protein per kilogram bodyweight to maximize muscle protein accretion.',
+    'Drink water before meals to lessen food intake.',
+    'Stay hydrated with 6 to 8 glasses of water and lessen sugar-sweetened beverages.',
+    'Write down what you eat using a Food Diary to help you identify which food must be consumed more or less.\nE.g. type of food consumed, quantity and meal time',
+    'Set specific goals to stay on track of your food and fitness regimen.\nI will improve my health by following the Pinggang Pinoy guidelines for every meal and exercising for 1 hour, 3 times per week, for the next 12 weeks. I will ensure I include a balanced portion of vegetables, protein, and grains in each meal according to the Pinggang Pinoy standards. I will track my food intake using a food diary app and my workouts using a fitness tracker to monitor my progress and make adjustments as needed.',
+    'Regularly exercise to maintain a healthy weight.\nAim at least 300 minutes of moderate-intensity or 150 minutes of vigorous activity per week. Also, include muscle-strengthening activities 2 or more days a week for additional health benefits.',
+    'Move more and sit less throughout the day for optimal health. For every half hour, walk for 5 minutes.',
     "Consult a registered nutritionist-dietitian",
   ];
   List<String> bmi_obese = [
-    "Follow a healthy eating plan through the Pinggang Pinoy by:\nEmphasize vegetables, fruits, whole grains, and fat-free or low-fat dairy products, including lean meats, poultry, fish, beans, eggs, and nuts. Lessen saturated and trans fats, sodium, and added sugars. Apply Portion Size",
-    "300 - 450 minutes of moderate to vigorous physical activity per week",
-    "Keep track of your meals by having a food diary.",
+    '''Follow a healthy eating plan through the Pinggang Pinoy by:
+    - Emphasize vegetables, fruits, whole grains, and fat-free or low-fat dairy products, including lean meats, poultry, fish, beans, eggs, and nuts. 
+    - Lessen saturated and trans fats, sodium, and added sugars. Apply Portion Size''',
+    'Gradually decrease your weight by decreasing your calories from 500 to 1000 calories per day.\n***Avoid empty calories such as sugar sweetened beverages, cakes, donuts, etc. as they may lead to excess fat.',
+    'Swap your usual food for healthier alternatives such as fresh fruits over biscuits with added sugar.',
+    'Eat the right amount of protein to support your needs.\nHealthy adult with minimal physical activity, 0.8 kilogram per body weight.\nFor those who regularly exercise and lift weights, aim for 1.2 - 1.7 g of protein per kilogram bodyweight to maximize muscle protein accretion.',
+    'Drink water before meals to lessen food intake.',
+    'Stay hydrated with 6 to 8 glasses of water and lessen sugar-sweetened beverages.',
+    'Write down what you eat using a Food Diary to help you identify which food must be consumed more or less.\nE.g. type of food consumed, quantity and meal time',
+    'Set specific goals to stay on track of your food and fitness regimen.\nI will improve my health by following the Pinggang Pinoy guidelines for every meal and exercising for 1 hour, 3 times per week, for the next 12 weeks. I will ensure I include a balanced portion of vegetables, protein, and grains in each meal according to the Pinggang Pinoy standards. I will track my food intake using a food diary app and my workouts using a fitness tracker to monitor my progress and make adjustments as needed.',
+    'Regularly exercise to maintain a healthy weight.\nAim at least 300 minutes of moderate-intensity or 150 minutes of vigorous activity per week. Also, include muscle-strengthening activities 2 or more days a week for additional health benefits.',
+    'Move more and sit less throughout the day for optimal health. For every half hour, walk for 5 minutes.',
     "Consult a registered nutritionist-dietitian",
   ];
-  List<String> physical_activity = [
-    "Aim for at least 300 - 450 minutes of moderate activity weekly.",
-    "Move 1-2 minutes every hour to reduce sedentary activity.	Move 1-2 minutes every hour to reduce sedentary activity.",
-    "Follow a varied physical routine for overall fitness health:\nCardiovascular Endurance: Cardio exercises such as walking, jogging, swimming, riding a bike, dancing, etc.\nMuscular Strength: Lifting weights, using resistance bands, climbing stairs, heavy gardening, etc. \nBone Strength: Weight-bearing exercise such as brisk walking, jogging, badminton, climbing stairs, etc.; Resistance training such as lifting weights and body exercises such as push ups or pull ups; and balance training.\nBalance: Weight shift, tai chi, etc.\nFlexibility: Stretching, yoga, pilates, etc.",
-    "Monitor your fitness journey by having a physical activity journal.",
-    "Consult a registered nutritionist-dietitian, physical therapist or doctor."
+  List<String> sedentary = [
+    'Small habits make a difference — the key is consistency. Begin with 10 to 15 minutes of exercise per day. Gradually increase your workout duration by five minutes every two to four weeks, or as you feel ready.',
+    'When parking your car, park farther from the entrance to intentionally walk extra steps. For commuters, get off the bus early and walk the rest of the way.',
+    'Move more and sit less by walking for 5 minutes every 30 minutes.',
+    'Stretch every day for flexibility and to prepare yourself for workouts in the future.',
+    'Invite family and friends to join you—working out together is more enjoyable and helps you stay consistent.\nDogs can also make great walking companions.',
+    'Instead of calling or emailing a colleague, walk to their workstation to communicate.',
+    'Always stand or walk around when you\'re on the phone.',
+    'Have a fitness tracker to keep you engaged on your fitness regimen. Log the date, type of activity and duration.',
+    'Instead of taking the elevator or escalator, use the stairs instead.',
+    'Do household chores such as vacuuming and mopping the floor, washing the car or light gardening.',
+    'Consult a registered nutritionist-dietitian, physical therapist or doctor.',
   ];
-  String normal_physical_activity =
-      "Physical Activity	Aim for at least 150 minutes of moderate activity weekly.	Aim for at least 300 - 450 minutes of moderate activity weekly.";
+  List<String> light = [
+    'Small habits make a difference — the key is consistency. Begin with 10 to 15 minutes of exercise per day. Gradually increase your workout duration by five minutes every two to four weeks, or as you feel ready.',
+    'When parking your car, park farther from the entrance to intentionally walk extra steps. For commuters, get off the bus early and walk the rest of the way.',
+    'Move more and sit less by walking for 5 minutes every 30 minutes.',
+    'Stretch every day for flexibility and to prepare yourself for workouts in the future.',
+    'Invite family and friends to join you—working out together is more enjoyable and helps you stay consistent.\nDogs can also make great walking companions.',
+    'Instead of calling or emailing a colleague, walk to their workstation to communicate.',
+    'Always stand or walk around when you\'re on the phone.',
+    'Have a fitness tracker to keep you engaged on your fitness regimen. Log the date, type of activity and duration.',
+    'Instead of taking the elevator or escalator, use the stairs instead.',
+    'Do household chores such as vacuuming and mopping the floor, washing the car or light gardening.',
+    'Consult a registered nutritionist-dietitian, physical therapist or doctor.',
+  ];
+  List<String> active = [
+    'Aim for 150 minutes of moderate-intensity exercise or 75 minutes of vigorous activity each week. Incorporate muscle-strengthening exercises, like weightlifting or resistance training, at least twice a week.',
+    '''Follow a varied physical routine for overall fitness health:
+    - Cardiovascular Endurance: Cardio exercises such as walking, jogging, swimming, riding a bike, dancing, etc.
+    - Muscular Strength: Lifting weights, using resistance bands, climbing stairs, heavy gardening, etc.
+    - Bone Strength: Weight-bearing exercise such as brisk walking, jogging, badminton, climbing stairs, etc.;
+      - Resistance training such as lifting weights and body exercises such as push ups or pull ups; and balance training.
+    - Balance: Weight shift, tai chi, etc.
+    - Flexibility: Stretching, yoga, pilates, etc.''',
+    'Brisk walking (at least 2.5 mph)\nWater Aerobics Dancing\nGardening\nDoubles Tennis\nBiking (under 10 mph)\nYoga\nWeight training\nHousework that involves intense scrubbing and cleaning',
+    'Move more and sit less by walking for 5 minutes every 30 minutes.',
+    'Invite family and friends to join you—working out together is more enjoyable and helps you stay consistent. Dogs can also make great walking companions.',
+    'Have a fitness tracker to keep you engaged on your fitness regimen. Log the date, type of activity and duration.',
+    'Consult a registered nutritionist-dietitian, physical therapist or doctor.',
+  ];
+  List<String> strenous = [
+    'Aim for 150 minutes of moderate-intensity exercise or 75 minutes of vigorous activity each week. Incorporate muscle-strengthening exercises, like weightlifting or resistance training, at least twice a week.',
+    '''Follow a varied physical routine for overall fitness health:
+    - Cardiovascular Endurance: Cardio exercises such as walking, jogging, swimming, riding a bike, dancing, etc.
+    - Muscular Strength: Lifting weights, using resistance bands, climbing stairs, heavy gardening, etc.
+    - Bone Strength: Weight-bearing exercise such as brisk walking, jogging, badminton, climbing stairs, etc.;
+      - Resistance training such as lifting weights and body exercises such as push ups or pull ups; and balance training.
+    - Balance: Weight shift, tai chi, etc.
+    - Flexibility: Stretching, yoga, pilates, etc.''',
+    'Hiking uphill or with a heavy backpack\nRunning\nSwimming laps\nVigorous aerobic dancing\nIntense yard work like digging or hoeing\nSingles tennis\nKarate, judo, tae kwon do, jujitsu\nCompetitive Basketball, Soccer or Football\nCycling at 10 mph or faster\nJumping rope',
+    'Move more and sit less by walking for 5 minutes every 30 minutes.',
+    'Invite family and friends to join you—working out together is more enjoyable and helps you stay consistent. Dogs can also make great walking companions.',
+    'Have a fitness tracker to keep you engaged on your fitness regimen. Log the date, type of activity and duration.',
+    'Consult a registered nutritionist-dietitian, physical therapist or doctor.',
+  ];
+  // List<String> physical_activity = [
+  //   "Aim for at least 300 - 450 minutes of moderate activity weekly.",
+  //   "Move 1-2 minutes every hour to reduce sedentary activity.	Move 1-2 minutes every hour to reduce sedentary activity.",
+  //   '''Follow a varied physical routine for overall fitness health:
+  //   - Cardiovascular Endurance: Cardio exercises such as walking, jogging, swimming, riding a bike, dancing, etc.
+  //   - Muscular Strength: Lifting weights, using resistance bands, climbing stairs, heavy gardening, etc.
+  //   - Bone Strength: Weight-bearing exercise such as brisk walking, jogging, badminton, climbing stairs, etc.;
+  //     - Resistance training such as lifting weights and body exercises such as push ups or pull ups; and balance training.
+  //   - Balance: Weight shift, tai chi, etc.
+  //   - Flexibility: Stretching, yoga, pilates, etc.''',
+  //   "Monitor your fitness journey by having a physical activity journal.",
+  //   "Consult a registered nutritionist-dietitian, physical therapist or doctor."
+  // ];
+  // String normal_physical_activity =
+  //     "Aim for at least 150 minutes of moderate activity weekly.	Aim for at least 300 - 450 minutes of moderate activity weekly.";
   List<String> dietary_assessment = [
-    "Follow the Pinggang Pinoy by:\nFilling half of your plate with fruits and vegetables, ⅔ for grains, bread, pasta, etc. and ⅓ for protein."
-        "\nMake healthier food choices when dining out by:\nWhole-grain options like whole wheat bread or brown rice\nMeals with fruits and vegetables\nLean proteins like grilled chicken or baked fish\nLessen the use of condiments 	Make healthier food choices when dining out by:\nWhole-grain options like whole wheat bread or brown rice\nMeals with fruits and vegetables\nLean proteins like grilled chicken or baked fish\nLessen the use of condiments \nCook at home to improve health as home-cooked meals typically include more fruits, vegetables, and fiber, while reducing your intake of salt and saturated fat.	Cook at home to improve health as home-cooked meals typically include more fruits, vegetables, and fiber, while reducing your intake of salt and saturated fat.",
+    "Follow the Pinggang Pinoy by:\nFilling half of your plate with fruits and vegetables, ⅔ for grains, bread, pasta, etc. and ⅓ for protein.",
+    '''Make healthier food choices when dining out by:
+    - Whole-grain options like whole wheat bread or brown rice
+    - Meals with fruits and vegetables
+    - Lean proteins like grilled chicken or baked fish
+    - Lessen the use of condiments
+    - Cook at home to improve health as home-cooked meals typically include more fruits, vegetables, and fiber, while reducing your intake of salt and saturated fat.''',
     "Pre-portion snacks to avoid overeating.",
     "Consult a registered nutritionist-dietitian",
   ];
@@ -89,20 +204,24 @@ class _AdviceScreenState extends State<AdviceScreen> {
   void initState() {
     super.initState();
 
-    if (widget.isBmiNormal!) {
+    if (widget.bmi == 'normal') {
       addUniqueAdvice(bmi_normal, "Body Mass Index");
-    } else if (widget.isBmiObese!) {
+    } else if (widget.bmi == 'obese') {
       addUniqueAdvice(bmi_obese, "Body Mass Index");
-    } else if (widget.isBmiUnderweight!) {
+    } else if (widget.bmi == 'underweight') {
       addUniqueAdvice(bmi_underweight, "Body Mass Index");
+    } else if (widget.bmi == 'overweight') {
+      addUniqueAdvice(bmi_overweight, "Body Mass Index");
     }
 
-    if (widget.isNormalPhysicalActivity!) {
-      if (!advices.any((item) => item['advice'] == normal_physical_activity)) {
-        advices.add({'category': "Physical Activity", 'advice': normal_physical_activity});
-      }
-    } else {
-      addUniqueAdvice(physical_activity, "Physical Activity");
+    if (widget.physicalActivity == "sedentary") {
+      addUniqueAdvice(sedentary, "Physical Activity");
+    } else if (widget.physicalActivity == "light") {
+      addUniqueAdvice(light, "Physical Activity");
+    } else if (widget.physicalActivity == "active") {
+      addUniqueAdvice(active, "Physical Activity");
+    } else if (widget.physicalActivity == "strenous") {
+      addUniqueAdvice(strenous, "Physical Activity");
     }
 
     addUniqueAdvice(dietary_assessment, "Dietary Assessment");

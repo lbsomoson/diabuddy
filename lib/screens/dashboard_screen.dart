@@ -142,7 +142,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         IconButton(
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return const AdviceScreen(isBmiNormal: true, isNormalPhysicalActivity: true);
+                                return const AdviceScreen(
+                                  bmi: 'overweight',
+                                  physicalActivity: 'light',
+                                );
                               }));
                             },
                             icon: Icon(
