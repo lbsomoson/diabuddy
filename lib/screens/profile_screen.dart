@@ -60,6 +60,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
 
+    double computeIdealBodyWeight() {
+      double idw = 0.0;
+      if (appuser?.height != null) {
+        print(appuser!.height!);
+        idw = ((appuser!.height! * 100) - 100) - (0.1 * ((appuser!.height! * 100) - 100));
+      }
+      return idw;
+    }
+
     double computeBmi() {
       double bmi = 0;
       if (appuser?.weight != null && appuser?.height != null) {
@@ -78,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } else if (bmi >= 25) {
         return "Obese";
       } else {
-        return "N/A"; // Handle invalid BMI cases
+        return "N/A";
       }
     }
 
@@ -168,6 +177,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         PersonalInformation(
                             title: "Weight", value: "${appuser?.weight?.toStringAsFixed(2) ?? "N/A"} kg", icon: null),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        PersonalInformation(
+                            title: "IBW", value: "${computeIdealBodyWeight().toStringAsFixed(2)} kg", icon: null),
                         const SizedBox(
                           height: 8,
                         ),
