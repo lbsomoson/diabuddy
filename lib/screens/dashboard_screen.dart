@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/models/daily_health_record_model.dart';
+import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
 import 'package:diabuddy/screens/advice.dart';
@@ -28,6 +29,7 @@ enum AppState { DATA_NOT_FETCHED, FETCHING_DATA, DATA_READY, NO_DATA, AUTH_NOT_G
 
 class _DashboardScreenState extends State<DashboardScreen> {
   User? user;
+  AppUser? appuser;
   FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
 
@@ -49,12 +51,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // await Permission.activityRecognition.request();
     // await Permission.location.request();
     user = context.read<UserAuthProvider>().user;
+
     record.userId = user!.uid;
 
     if (user != null) {
       context.read<RecordBloc>().add(AddRecord(record));
       context.read<RecordBloc>().add(LoadRecord(user!.uid, DateTime.now()));
+      context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    appuser ??= context.watch<UserAuthProvider>().userInfo;
   }
 
   Future<void> loadDailySteps() async {
@@ -101,6 +112,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //     setState(() => _state = AppState.DATA_NOT_FETCHED);
   //   }
   // }
+
+  int getCalorieRequirement() {
+    int calReq = 0;
+
+    if (appuser?.age != null && appuser?.gender != null) {
+      if (appuser!.gender! == "Male") {
+        /* CHILDREN */
+        if (appuser!.age! >= 1 && appuser!.age! <= 2) return calReq = 1000;
+        if (appuser!.age! >= 3 && appuser!.age! <= 5) return calReq = 1350;
+        if (appuser!.age! >= 6 && appuser!.age! <= 9) return calReq = 1600;
+        if (appuser!.age! >= 10 && appuser!.age! <= 12) return calReq = 2060;
+        if (appuser!.age! >= 13 && appuser!.age! <= 15) return calReq = 2700;
+        if (appuser!.age! >= 16 && appuser!.age! <= 18) return calReq = 3010;
+        /* ADULT */
+        if (appuser!.age! >= 19 && appuser!.age! <= 29) return calReq = 2530;
+        if (appuser!.age! >= 30 && appuser!.age! <= 49) return calReq = 2420;
+        if (appuser!.age! >= 50 && appuser!.age! <= 59) return calReq = 2420;
+        if (appuser!.age! >= 60 && appuser!.age! <= 69) return calReq = 2140;
+        if (appuser!.age! >= 70) return calReq = 1960;
+      } else if (appuser!.gender == "Female") {
+        /* CHILDREN */
+        if (appuser!.age! >= 1 && appuser!.age! <= 2) return calReq = 920;
+        if (appuser!.age! >= 3 && appuser!.age! <= 5) return calReq = 1260;
+        if (appuser!.age! >= 6 && appuser!.age! <= 9) return calReq = 1470;
+        if (appuser!.age! >= 10 && appuser!.age! <= 12) return calReq = 1980;
+        if (appuser!.age! >= 13 && appuser!.age! <= 15) return calReq = 2170;
+        if (appuser!.age! >= 16 && appuser!.age! <= 18) return calReq = 2280;
+        /* ADULT */
+        if (appuser!.age! >= 19 && appuser!.age! <= 29) return calReq = 1930;
+        if (appuser!.age! >= 30 && appuser!.age! <= 49) return calReq = 1870;
+        if (appuser!.age! >= 50 && appuser!.age! <= 59) return calReq = 1870;
+        if (appuser!.age! >= 60 && appuser!.age! <= 69) return calReq = 1610;
+        if (appuser!.age! >= 70) return calReq = 1540;
+      }
+    }
+
+    return calReq;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -228,7 +277,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         const SizedBox(height: 10),
         Text(
-          "2000 kCal",
+          "${getCalorieRequirement()} kCal",
           style: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.w900,
