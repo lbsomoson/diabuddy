@@ -11,10 +11,12 @@ class DashboardWidget extends StatefulWidget {
 }
 
 class _DashboardWidgetState extends State<DashboardWidget> {
+  final nullText = const Color.fromARGB(74, 32, 35, 34);
   final goodText = const Color.fromARGB(255, 19, 98, 93);
   final fairText = const Color.fromRGBO(249, 166, 32, 1);
   final badText = const Color.fromRGBO(249, 32, 32, 1);
 
+  final nullBackground = const Color.fromARGB(73, 189, 180, 181);
   final goodBackground = const Color.fromRGBO(100, 204, 197, 0.3);
   final fairBackground = const Color.fromRGBO(249, 166, 32, 0.3);
   final badBackground = const Color.fromRGBO(249, 32, 32, 0.3);
@@ -25,25 +27,21 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     Color textColor;
 
     if (widget.header == "Carbohydrates") {
-      if (widget.value >= 0.55 * widget.caloriesValue! && widget.value <= 0.7 * widget.caloriesValue!) {
+      if (widget.value == 0.0) {
+        backgroundColor = nullBackground;
+        textColor = nullText;
+      } else if (widget.value >= 0.55 * widget.caloriesValue! && widget.value <= 0.7 * widget.caloriesValue!) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {
         backgroundColor = badBackground;
         textColor = badText;
       }
-      // if (widget.value <= 225) {
-      //   backgroundColor = goodBackground;
-      //   textColor = goodText;
-      // } else if (widget.value <= 325 && widget.value > 225) {
-      //   backgroundColor = fairBackground;
-      //   textColor = fairText;
-      // } else {
-      //   backgroundColor = badBackground;
-      //   textColor = badText;
-      // }
     } else if (widget.header == "Glycemic Index") {
-      if (widget.value < 100) {
+      if (widget.value == 0.0) {
+        backgroundColor = nullBackground;
+        textColor = nullText;
+      } else if (widget.value < 100) {
         backgroundColor = fairBackground;
         textColor = fairText;
       } else if (widget.value == 100) {
@@ -54,7 +52,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         textColor = badText;
       }
     } else if (widget.header == "Diet Diversity Score") {
-      if (widget.value <= 3) {
+      if (widget.value == 0.0) {
+        backgroundColor = nullBackground;
+        textColor = nullText;
+      } else if (widget.value <= 3) {
         backgroundColor = fairBackground;
         textColor = fairText;
       } else if (widget.value > 4.0 && widget.value <= 5) {
@@ -65,19 +66,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         textColor = badText;
       }
     } else if (widget.header == "Calories") {
-      // if (user.age >= 16 && user.age <= 18) {
-      //   if (user.sex == "Male" &&
-      //       widget.value >= 2400 &&
-      //       widget.value <= 3200) {
-      //   } else if (user.sex =
-      //       "Female" && widget.value >= 1800 && widget.value <= 2400) {
-
-      //       }
-      // }
-      // setState(() {
-      //   caloriesValue = widget.value;
-      // });
-      if (widget.value >= 1200 && widget.value <= 1500) {
+      if (widget.value == 0.0) {
+        backgroundColor = nullBackground;
+        textColor = nullText;
+      } else if (widget.value >= 1200 && widget.value <= 1500) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {
@@ -87,15 +79,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     } else {
       backgroundColor = badBackground;
       textColor = badText;
-      // if (widget.value >= 7.5) {
-      //   backgroundColor = badBackground;
-      //   textColor = badText;
-      //   backgroundColor = goodBackground;
-      //   textColor = goodText;
-      // } else if (widget.value >= 5.0 && widget.value <= 7.4) {
-      //   backgroundColor = fairBackground;
-      //   textColor = fairText;
-      // } else {}
     }
 
     return Container(
@@ -103,10 +86,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: backgroundColor,
-        // border: Border.all(
-        //   width: 1.0,
-        //   color: backgroundColor,
-        // ),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(widget.header,
