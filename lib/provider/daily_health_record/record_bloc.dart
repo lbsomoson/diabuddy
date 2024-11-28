@@ -42,7 +42,13 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
   }
 
   Future<void> _onUpdateRecord(UpdateRecord event, Emitter<RecordState> emit) async {
-    await recordRepository.updateRecord(event.record);
+    // await recordRepository.updateRecord(event.record);
+    try {
+      await recordRepository.updateRecord(event.record);
+      emit(RecordUpdated(event.record));
+    } catch (e) {
+      emit(const RecordError("Failed to update record"));
+    }
   }
 
   Future<void> _onDeleteRecord(DeleteRecord event, Emitter<RecordState> emit) async {

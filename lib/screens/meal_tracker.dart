@@ -17,6 +17,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
   String? userId;
   List<MealIntake> mealsToday = [];
   double accDietDiversityScore = 0;
+  double accHealthyEatingIndex = 0;
   double accCalories = 0;
   double accCarbohydrates = 0;
 
@@ -84,6 +85,7 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                   }
 
                   for (var m in state.mealIntakes) {
+                    accHealthyEatingIndex = accHealthyEatingIndex + m.accMeals!.healtyEatingIndex!;
                     accDietDiversityScore = accDietDiversityScore + m.accMeals!.diversityScore!;
                     accCalories = accCalories + m.accMeals!.energyKcal!;
                     accCarbohydrates = accCarbohydrates + m.accMeals!.carbohydrate!;
@@ -95,12 +97,12 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Diet Diversity Score",
+                            "Healthy Eating Index",
                             style: TextStyle(color: fairText),
                           ),
                         ],
                       ),
-                      Text(accDietDiversityScore.toStringAsFixed(0), style: TextStyle(color: fairText, fontSize: 35)),
+                      Text(accHealthyEatingIndex.toStringAsFixed(0), style: TextStyle(color: fairText, fontSize: 35)),
                       Container(
                         padding: const EdgeInsets.all(15),
                         width: double.infinity,

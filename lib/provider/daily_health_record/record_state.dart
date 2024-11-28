@@ -20,6 +20,15 @@ class RecordLoaded extends RecordState {
   List<Object> get props => [records];
 }
 
+class RecordUpdated extends RecordState {
+  final DailyHealthRecord record;
+
+  const RecordUpdated(this.record);
+
+  @override
+  List<Object> get props => [record];
+}
+
 class SingleRecordLoaded extends RecordState {
   final DailyHealthRecord record;
 
