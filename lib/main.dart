@@ -51,8 +51,8 @@ void main() async {
   );
 
   // TODO: COMMENT/UNCOMMENT THIS BLOCK OF CODE
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  await flutterLocalNotificationsPlugin.cancelAll();
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  // await flutterLocalNotificationsPlugin.cancelAll();
 
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
@@ -223,19 +223,6 @@ class _MyAppState extends State<MyApp> {
                       physicalActivity: args['physicalActivity'],
                     ));
           }
-          // final name = settings.arguments as String;
-          // final carbs = settings.arguments as String;
-          // final cal = settings.arguments as String;
-          // final gi = settings.arguments as String;
-          // final date = settings.arguments as String;
-          // return MaterialPageRoute(
-          //     builder: (context) => MealDetailsScreen(
-          //           name: name,
-          //           carbs: carbs,
-          //           cal: cal,
-          //           gi: gi,
-          //           date: date,
-          //         ));
           return null;
         },
       ),

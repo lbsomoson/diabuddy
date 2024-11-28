@@ -9,7 +9,7 @@ class AppUser {
   String? activityLevel;
   double? height;
   double? weight;
-  int? dailyGlycemicIndex;
+  int? dailyCalorieIntake;
 
   AppUser({
     this.userId,
@@ -20,7 +20,7 @@ class AppUser {
     this.activityLevel,
     this.height,
     this.weight,
-    this.dailyGlycemicIndex,
+    this.dailyCalorieIntake,
   });
 
   // Factory constructor to instantiate object from json format
@@ -34,7 +34,7 @@ class AppUser {
       activityLevel: json['activityLevel'],
       height: json['height'],
       weight: json['weight'],
-      dailyGlycemicIndex: json['dailyGlycemicIndex'],
+      dailyCalorieIntake: json['dailyCalorieIntake'],
     );
   }
 
@@ -53,7 +53,7 @@ class AppUser {
       'activityLevel': appuser.activityLevel,
       'height': appuser.height,
       'weight': appuser.weight,
-      'dailyGlycemicIndex': appuser.dailyGlycemicIndex,
+      'dailyCalorieIntake': appuser.dailyCalorieIntake,
     };
   }
 }

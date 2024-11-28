@@ -17,8 +17,7 @@ class FirebaseAuthAPI {
 
   Future<bool> addUser(String id) async {
     // Check if the user exists in Firestore
-    final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-        await db.collection('users').doc(id).get();
+    final DocumentSnapshot<Map<String, dynamic>> userSnapshot = await db.collection('users').doc(id).get();
 
     if (!userSnapshot.exists) {
       // if the user doesn't exist, add the user to Firestore
@@ -49,12 +48,10 @@ class FirebaseAuthAPI {
   Future signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
     if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
@@ -64,8 +61,7 @@ class FirebaseAuthAPI {
       print(credential);
 
       try {
-        final UserCredential userCredential =
-            await auth.signInWithCredential(credential);
+        final UserCredential userCredential = await auth.signInWithCredential(credential);
         print(userCredential.user);
         return userCredential.user;
       } on FirebaseAuthException catch (e) {
@@ -87,8 +83,7 @@ class FirebaseAuthAPI {
 
   Future<void> onboarding(String id, AppUser appuser) async {
     // Check if the user exists in Firestore
-    final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-        await db.collection('users').doc(id).get();
+    final DocumentSnapshot<Map<String, dynamic>> userSnapshot = await db.collection('users').doc(id).get();
 
     if (userSnapshot.exists) {
       // if the user exist, add the user to Firestore
@@ -97,6 +92,7 @@ class FirebaseAuthAPI {
         'gender': appuser.gender,
         'weight': appuser.weight,
         'height': appuser.height,
+        'activityLevel': appuser.activityLevel,
       });
     }
   }

@@ -130,21 +130,6 @@ class _AdviceScreenState extends State<AdviceScreen> {
     'Have a fitness tracker to keep you engaged on your fitness regimen. Log the date, type of activity and duration.',
     'Consult a registered nutritionist-dietitian, physical therapist or doctor.',
   ];
-  // List<String> physical_activity = [
-  //   "Aim for at least 300 - 450 minutes of moderate activity weekly.",
-  //   "Move 1-2 minutes every hour to reduce sedentary activity.	Move 1-2 minutes every hour to reduce sedentary activity.",
-  //   '''Follow a varied physical routine for overall fitness health:
-  //   - Cardiovascular Endurance: Cardio exercises such as walking, jogging, swimming, riding a bike, dancing, etc.
-  //   - Muscular Strength: Lifting weights, using resistance bands, climbing stairs, heavy gardening, etc.
-  //   - Bone Strength: Weight-bearing exercise such as brisk walking, jogging, badminton, climbing stairs, etc.;
-  //     - Resistance training such as lifting weights and body exercises such as push ups or pull ups; and balance training.
-  //   - Balance: Weight shift, tai chi, etc.
-  //   - Flexibility: Stretching, yoga, pilates, etc.''',
-  //   "Monitor your fitness journey by having a physical activity journal.",
-  //   "Consult a registered nutritionist-dietitian, physical therapist or doctor."
-  // ];
-  // String normal_physical_activity =
-  //     "Aim for at least 150 minutes of moderate activity weekly.	Aim for at least 300 - 450 minutes of moderate activity weekly.";
   List<String> dietary_assessment = [
     "Follow the Pinggang Pinoy by:\nFilling half of your plate with fruits and vegetables, ⅔ for grains, bread, pasta, etc. and ⅓ for protein.",
     '''Make healthier food choices when dining out by:

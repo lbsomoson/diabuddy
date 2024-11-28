@@ -29,65 +29,15 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   User? user;
-
-  void _editPersonalInformation(context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 380),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Age",
-                      label: "Age",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Height",
-                      label: "Height",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      callback: () {},
-                      hintText: "Weight",
-                      label: "Weight",
-                      type: "String",
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ButtonWidget(
-                        style: 'filled',
-                        label: "Save",
-                        callback: () {
-                          Navigator.pop(context);
-                        })
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
+  AppUser? appuser;
 
   @override
-  void initState() {
-    super.initState();
-    user = context.read<UserAuthProvider>().user;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // use context.read here to initialize user and fetch data
+    user ??= context.read<UserAuthProvider>().user;
+    appuser ??= context.watch<UserAuthProvider>().userInfo;
 
     if (user != null) {
       context.read<MedicationBloc>().add(LoadMedications(user!.uid));
@@ -97,13 +47,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user = context.read<UserAuthProvider>().user;
-    AppUser? appuser = context.watch<UserAuthProvider>().userInfo;
-    // if (appuser == null && user != null) {
-    //   context.read<UserAuthProvider>().getUserInfo(user!.uid);
-    // }
     if (user == null) {
-      // Show a loading indicator or a message if `user` is not available yet
+      // show a loading indicator or a message if `user` is not available yet
       return Scaffold(
         appBar: AppBar(title: const Text("Profile")),
         body: const Center(child: CircularProgressIndicator()),
@@ -111,14 +56,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     if (appuser == null) {
-      // Fetch user info if `appuser` is not loaded yet
+      // fetch user info if `appuser` is not loaded yet
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
 
     double computeBmi() {
       double bmi = 0;
       if (appuser?.weight != null && appuser?.height != null) {
-        bmi = ((appuser?.weight)! / (appuser!.height! * appuser.height!));
+        bmi = ((appuser?.weight)! / (appuser!.height! * appuser!.height!));
       }
       return bmi;
     }
@@ -231,8 +176,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           value: "${computeBmi().toStringAsFixed(2)} kg/m\u00B2, ${classifyBmi(computeBmi())}",
                           icon: Icons.info_outline,
                         ),
-                        // PersonalInformation(
-                        //     title: "BMI", value: "${computeBmi().toStringAsFixed(2)} kg/m\u00B2", icon: null),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        PersonalInformation(
+                          title: "Activity",
+                          value: appuser?.activityLevel ?? "N/A",
+                          icon: Icons.info_outline,
+                        ),
                       ],
                     ),
                   ),
@@ -496,4 +447,58 @@ Widget _displayAppointments(BuildContext context, String id) {
       );
     }
   });
+}
+
+void _editPersonalInformation(context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          child: Container(
+            constraints: const BoxConstraints(maxHeight: 380),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFieldWidget(
+                    callback: () {},
+                    hintText: "Age",
+                    label: "Age",
+                    type: "String",
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextFieldWidget(
+                    callback: () {},
+                    hintText: "Height",
+                    label: "Height",
+                    type: "String",
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextFieldWidget(
+                    callback: () {},
+                    hintText: "Weight",
+                    label: "Weight",
+                    type: "String",
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ButtonWidget(
+                      style: 'filled',
+                      label: "Save",
+                      callback: () {
+                        Navigator.pop(context);
+                      })
+                ],
+              ),
+            ),
+          ),
+        );
+      });
 }

@@ -279,8 +279,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(child: DashboardWidget(header: "Calories", value: r.energyKcal)),
                         const SizedBox(width: 10),
                         Expanded(
-                            child:
-                                DashboardWidget(header: "Carbohydrates", value: r.carbohydrates, caloriesValue: 2000)),
+                            child: DashboardWidget(
+                                header: "Carbohydrates", value: r.carbohydrates, caloriesValue: r.energyKcal)),
                       ],
                     ),
                     SizedBox(height: sizedBoxHeight),

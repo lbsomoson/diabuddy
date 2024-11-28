@@ -2,8 +2,6 @@ import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
@@ -26,7 +24,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   double _height = 1.7;
 
   final int _nTotalCount = 110;
-  final int _nInitValue = 50;
+  final int _nInitValue = 30;
   int _nCurrentValue = 10;
 
   String? _selectedGender;
@@ -44,6 +42,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(
             height: 5,
           ),
+          const TextWidget(text: "This will help us determine your nutritional needs.", style: 'bodySmall'),
           SizedBox(
             width: 100,
             child: WheelSlider.number(
@@ -85,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(
             height: 5,
           ),
-          const TextWidget(text: "This will help us calculate your daily calorie intake.", style: 'bodySmall'),
+          const TextWidget(text: "This will help us determine your nutritional needs.", style: 'bodySmall'),
           const SizedBox(
             height: 35,
           ),
@@ -258,7 +257,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           PhysicalActivityContainer(
             level: "Sedentary",
             activityIcon: FontAwesomeIcons.chair,
-            description: 'Mostly resting with little or no activity. Less than 5,000 steps daily',
+            short: 'Less than 5,000 steps daily',
+            description: 'Mostly resting with little or no activity.',
             selectedLevel: _selectedLevel,
             onTap: () {
               setState(() {
@@ -269,8 +269,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           PhysicalActivityContainer(
             level: "Light",
             activityIcon: FontAwesomeIcons.personWalking,
+            short: 'About 5,000 to 7,499 steps daily',
             description:
-                'Occupations that require minimal movement, mostly sitting/desk work or standing for long hours and/or with occasional walking (professional, clerical, technical workers, administrative and managerial staff, driving light vehicles (cars, jeepney). Housewives with light housework (dishwashing, preparing food). About 5,000 to 7,499 steps daily',
+                'Occupations that require minimal movement, mostly sitting/desk work or standing for long hours and/or with occasional walking (professional, clerical, technical workers, administrative and managerial staff, driving light vehicles (cars, jeepney). Housewives with light housework (dishwashing, preparing food).',
             selectedLevel: _selectedLevel,
             onTap: () {
               setState(() {
@@ -281,8 +282,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           PhysicalActivityContainer(
             level: "Moderate",
             activityIcon: FontAwesomeIcons.personRunning,
+            short: 'About 7,500 to 9,999 steps daily',
             description:
-                'Occupations that require extended periods of walking, pushing or pulling or lifting or carrying heavy objects (cleaning/domestic services, waiting table, homebuilding task, farming, patient care). About 7,500 to 9,999 steps daily',
+                'Occupations that require extended periods of walking, pushing or pulling or lifting or carrying heavy objects (cleaning/domestic services, waiting table, homebuilding task, farming, patient care).',
             selectedLevel: _selectedLevel,
             onTap: () {
               setState(() {
@@ -293,8 +295,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           PhysicalActivityContainer(
             level: "Very Active or Vigorous",
             activityIcon: FontAwesomeIcons.personSkating,
+            short: 'More than 10,000 steps daily',
             description:
-                'Occupations that require extensive periods of running, rapid movement, pushing or pulling heavy objects or tasks frequently requiring strenuous effort and extensive total body movements (teaching a class or skill requiring active and strenuous participation, such as aerobics or physical education instructor; firefighting; masonry and heavy construction work; coal mining; manually shoveling, using heavy non-powered tools). More than 10,000 steps daily',
+                'Occupations that require extensive periods of running, rapid movement, pushing or pulling heavy objects or tasks frequently requiring strenuous effort and extensive total body movements (teaching a class or skill requiring active and strenuous participation, such as aerobics or physical education instructor; firefighting; masonry and heavy construction work; coal mining; manually shoveling, using heavy non-powered tools).',
             selectedLevel: _selectedLevel,
             onTap: () {
               setState(() {
@@ -350,6 +353,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 gender: _selectedGender,
                 weight: _weight,
                 height: _height,
+                activityLevel: _selectedLevel,
               );
               await context.read<UserAuthProvider>().onboarding(widget.id, appuser);
 
@@ -429,7 +433,7 @@ class GenderSelectionContainer extends StatelessWidget {
 class PhysicalActivityContainer extends StatelessWidget {
   final String level;
   final IconData activityIcon;
-  final String description;
+  final String description, short;
   final String? selectedLevel;
   final VoidCallback onTap;
 
@@ -437,6 +441,7 @@ class PhysicalActivityContainer extends StatelessWidget {
     Key? key,
     required this.level,
     required this.activityIcon,
+    required this.short,
     required this.description,
     required this.selectedLevel,
     required this.onTap,
@@ -467,23 +472,24 @@ class PhysicalActivityContainer extends StatelessWidget {
           splashColor: Theme.of(context).colorScheme.secondary,
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(15.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(
-                  activityIcon,
-                  color: isSelected ? Colors.white : unselectedColor,
-                  size: 100,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
                 Expanded(
+                  flex: 1,
                   child: Column(
                     children: [
+                      Icon(
+                        activityIcon,
+                        color: isSelected ? Colors.white : unselectedColor,
+                        size: level == 'Very Active or Vigorous' || level == 'Sedentary' ? 75 : 85,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text(level,
                             style: TextStyle(
                               fontSize: 18,
@@ -491,9 +497,28 @@ class PhysicalActivityContainer extends StatelessWidget {
                               color: isSelected ? Colors.white : unselectedColor,
                             )),
                       ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    children: [
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(short,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: isSelected ? Colors.white : unselectedColor,
+                              ))),
                       Text(description,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 15,
+                          textAlign: TextAlign.justify,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w100,
