@@ -3,7 +3,8 @@ import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class CircleProgressIndicator extends StatefulWidget {
   final String title;
-  const CircleProgressIndicator({required this.title, super.key});
+  final double value;
+  const CircleProgressIndicator({required this.title, required this.value, super.key});
 
   @override
   State<CircleProgressIndicator> createState() => _CircleProgressIndicatorState();
@@ -17,7 +18,7 @@ class _CircleProgressIndicatorState extends State<CircleProgressIndicator> {
   @override
   void initState() {
     super.initState();
-    valueNotifier = ValueNotifier(35);
+    valueNotifier = ValueNotifier(widget.value);
     keyForRepaint++;
   }
 
