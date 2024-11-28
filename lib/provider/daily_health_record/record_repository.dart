@@ -93,16 +93,15 @@ class RecordRepository {
   }
 
   Stream<List<DailyHealthRecord>> getRecords(String userId) {
-    return FirebaseFirestore.instance
-        .collection('records')
-        .where("userId", isEqualTo: userId)
-        .snapshots()
-        .map((snapshot) {
+    print("in get records");
+    final r =
+        FirebaseFirestore.instance.collection('records').where("userId", isEqualTo: userId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        // include the document ID when creating the DailyHealthRecord object
         return DailyHealthRecord.fromJson(doc.data(), doc.id);
       }).toList();
     });
+    // print(r);
+    return r;
   }
 
   // get one record

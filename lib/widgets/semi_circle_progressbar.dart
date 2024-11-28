@@ -43,10 +43,10 @@ class _CircleProgressIndicatorState extends State<CircleProgressIndicator> {
                     return Text(
                       '${value.toInt()}%',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 35,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orangeAccent.withOpacity(value * 0.01),
+                        color: Colors.orangeAccent,
                       ),
                     );
                   },

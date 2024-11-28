@@ -19,9 +19,19 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
   }
 
   Future<void> _onLoadRecords(LoadRecords event, Emitter<RecordState> emit) async {
-    recordRepository.getRecords(event.userId).listen((records) {
-      add(RecordsUpdated(records));
-    });
+    try {
+      await emit.forEach(
+        recordRepository.getRecords(event.userId),
+        onData: (List<DailyHealthRecord> records) {
+          return RecordLoaded(records);
+        },
+        onError: (error, stackTrace) {
+          return RecordError(error.toString());
+        },
+      );
+    } catch (error) {
+      emit(RecordError(error.toString()));
+    }
   }
 
   Future<void> _onLoadRecord(LoadRecord event, Emitter<RecordState> emit) async {
@@ -42,7 +52,6 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
   }
 
   Future<void> _onUpdateRecord(UpdateRecord event, Emitter<RecordState> emit) async {
-    // await recordRepository.updateRecord(event.record);
     try {
       await recordRepository.updateRecord(event.record);
       emit(RecordUpdated(event.record));
