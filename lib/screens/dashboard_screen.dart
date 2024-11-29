@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/user_model.dart';
@@ -12,10 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-// import 'package:health/health.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -24,12 +20,10 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-// ignore: constant_identifier_names
-enum AppState { DATA_NOT_FETCHED, FETCHING_DATA, DATA_READY, NO_DATA, AUTH_NOT_GRANTED }
-
 class _DashboardScreenState extends State<DashboardScreen> {
   User? user;
   AppUser? appuser;
+
   FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
 
@@ -48,8 +42,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     // firestore.uploadJsonDataToFirestore();
-    // await Permission.activityRecognition.request();
-    // await Permission.location.request();
     user = context.read<UserAuthProvider>().user;
 
     record.userId = user!.uid;
@@ -67,51 +59,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     appuser ??= context.watch<UserAuthProvider>().userInfo;
   }
-
-  Future<void> loadDailySteps() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      // _steps = prefs.getString('daily_steps') ?? '0';
-    });
-  }
-
-  Future<void> saveDailySteps() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setString('daily_steps', _steps);
-  }
-
-  // Fetch steps from the health plugin and show them in the app.
-  // Future<void> fetchStepData() async {
-  //   int? steps;
-
-  //   // get steps for today (i.e., since midnight)
-  //   final now = DateTime.now();
-  //   final midnight = DateTime(now.year, now.month, now.day);
-
-  //   bool stepsPermission = await Health().hasPermissions([HealthDataType.STEPS]) ?? false;
-  //   if (!stepsPermission) {
-  //     stepsPermission = await Health().requestAuthorization([HealthDataType.STEPS]);
-  //   }
-
-  //   if (stepsPermission) {
-  //     try {
-  //       steps = await Health().getTotalStepsInInterval(midnight, now,
-  //           includeManualEntry: !recordingMethodsToFilter.contains(RecordingMethod.manual));
-  //     } catch (error) {
-  //       debugPrint("Exception in getTotalStepsInInterval: $error");
-  //     }
-
-  //     debugPrint('Total number of steps: $steps');
-
-  //     setState(() {
-  //       _nofSteps = (steps == null) ? 0 : steps;
-  //       _state = (steps == null) ? AppState.NO_DATA : AppState.STEPS_READY;
-  //     });
-  //   } else {
-  //     debugPrint("Authorization not granted - error in authorization");
-  //     setState(() => _state = AppState.DATA_NOT_FETCHED);
-  //   }
-  // }
 
   double getCalorieIntakePercent(cal) {
     double percent = 0.0;
@@ -176,6 +123,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 } else if (state is SingleRecordLoaded) {
                   DailyHealthRecord record = state.record;
                   return buildDashboard(record, firstName);
+                } else if (state is RecordUpdated) {
+                  DailyHealthRecord updatedRecord = state.record;
+                  return buildDashboard(updatedRecord, firstName);
                 } else if (state is RecordNotFound) {
                   context.read<RecordBloc>().add(AddRecord(record));
                   return const Center(child: CircularProgressIndicator());
@@ -224,7 +174,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              r.energyKcal.toString(),
+              r.energyKcal.toStringAsFixed(2),
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w900,
@@ -254,72 +204,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
           decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
           child: CircleProgressIndicator(title: "Title", value: getCalorieIntakePercent(r.energyKcal)),
         ),
+        const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularStepProgressIndicator(
-                  totalSteps: 100,
-                  currentStep: 74,
-                  stepSize: 10,
-                  selectedColor: Theme.of(context).primaryColor,
-                  unselectedColor: Colors.grey[100],
-                  padding: 0,
-                  width: 80,
-                  height: 80,
-                  selectedStepSize: 5,
-                  unselectedStepSize: 5,
-                  roundedCap: (_, __) => true,
-                  child: const Icon(FontAwesomeIcons.shoePrints),
+                Icon(
+                  FontAwesomeIcons.shoePrints,
+                  color: Theme.of(context).primaryColor,
                 ),
-                // Text(_steps,
-                //     style: const TextStyle(
-                //       color: Color.fromARGB(255, 19, 98, 93),
-                //       fontSize: 22,
-                //     )),
+                const SizedBox(height: 10),
+                Text((r.energyKcal * 25).ceil().toString(),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 19, 98, 93),
+                      fontSize: 22,
+                    )),
                 const Text(
-                  "steps",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 15,
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularStepProgressIndicator(
-                  totalSteps: 100,
-                  currentStep: 74,
-                  stepSize: 10,
-                  selectedColor: Theme.of(context).primaryColor,
-                  unselectedColor: Colors.grey[100],
-                  padding: 0,
-                  width: 80,
-                  height: 80,
-                  selectedStepSize: 5,
-                  unselectedStepSize: 5,
-                  roundedCap: (_, __) => true,
-                  child: const Icon(
-                    FontAwesomeIcons.fire,
-                  ),
-                ),
-                // Text(
-                //   (int.parse(_steps) / 25).toString(),
-                //   style: const TextStyle(
-                //     color: Color.fromARGB(255, 19, 98, 93),
-                //     fontSize: 22,
-                //   ),
-                // ),
-                const Text(
-                  "kCal burned",
+                  "steps to burn kCal",
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontStyle: FontStyle.italic,
@@ -330,7 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 40),
         Row(
           children: [
             Expanded(child: DashboardWidget(header: "Glycemic Index", value: r.glycemicIndex)),

@@ -96,7 +96,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         ),
         Row(
           children: [
-            Text(widget.value.toString(), style: TextStyle(color: textColor, fontSize: 22)),
+            Text(widget.value.toStringAsFixed(2), style: TextStyle(color: textColor, fontSize: 22)),
             Text(
                 widget.header == "Calories"
                     ? " kCal"

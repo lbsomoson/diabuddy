@@ -19,6 +19,7 @@ dependencies:
   vertical_weight_slider: ^2.6.0
   wheel_slider: ^1.2.1
   simple_circular_progress_bar: ^1.0.2
+  step_progress_indicator: ^1.0.2
   fl_chart: ^0.67.0
   firebase_core: ^2.27.0
   cloud_firestore: ^4.15.8
@@ -43,11 +44,8 @@ dependencies:
   image: ^4.2.0
   uuid: ^4.4.2
   flutter_timezone: ^1.0.8
-  searchfield: ^1.1.7
   pytorch_lite: ^4.3.0
   flutter_tesseract_ocr: ^0.4.27
-  step_progress_indicator: ^1.0.2
-  # health: ^3.0.6
   # animated_segmented_tab_control: ^2.0.0
 
 flutter_launcher_icons:
