@@ -92,16 +92,48 @@ class RecordRepository {
     return firestore.collection('records').doc(recordId).delete();
   }
 
-  Stream<List<DailyHealthRecord>> getRecords(String userId) {
-    print("in get records");
-    final r =
-        FirebaseFirestore.instance.collection('records').where("userId", isEqualTo: userId).snapshots().map((snapshot) {
+  Stream<List<DailyHealthRecord>> getRecords(String userId, DateTime date) {
+    // final r =
+    //     FirebaseFirestore.instance.collection('records').where("userId", isEqualTo: userId).snapshots().map((snapshot) {
+    //   return snapshot.docs.map((doc) {
+    //     return DailyHealthRecord.fromJson(doc.data(), doc.id);
+    //   }).toList();
+    // });
+    // return r;
+    return FirebaseFirestore.instance
+        .collection('records')
+        .where("userId", isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
         return DailyHealthRecord.fromJson(doc.data(), doc.id);
       }).toList();
+    }).map((records) {
+      // return records.where((record) {
+      //   final recordDate = record.date; // Assuming `date` is a field in DailyHealthRecord
+      //   return recordDate.year == date.year && recordDate.month == date.month;
+      // }).toList();
+
+      // Filter records by the specified month and year
+      // final filteredRecords = records.where((record) {
+      //   final recordDate = record.date; // Assuming `date` is a field in DailyHealthRecord
+      //   return recordDate.year == date.year && recordDate.month == date.month;
+      // }).toList();
+
+      // // Sort the filtered records in descending order of date
+      // filteredRecords.sort((a, b) => b.date.compareTo(a.date));
+      // return filteredRecords;
+
+      // Filter records by the specified month and year
+      final filteredRecords = records.where((record) {
+        final recordDate = record.date; // Assuming `date` is a field in DailyHealthRecord
+        return recordDate.year == date.year && recordDate.month == date.month;
+      }).toList();
+
+      // Sort the filtered records in ascending order of date
+      filteredRecords.sort((a, b) => a.date.compareTo(b.date));
+      return filteredRecords;
     });
-    // print(r);
-    return r;
   }
 
   // get one record
@@ -119,7 +151,7 @@ class RecordRepository {
           .where("date", isLessThan: endOfDay)
           .get();
 
-      // Check if at least one document was returned
+      // check if at least one document was returned
       if (querySnapshot.docs.isNotEmpty) {
         // access the first document in the result and map it to a Record object
         DocumentSnapshot recordSnapshot = querySnapshot.docs.first;

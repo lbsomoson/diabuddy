@@ -55,7 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     record.userId = user!.uid;
 
     if (user != null) {
-      context.read<RecordBloc>().add(AddRecord(record));
+      // context.read<RecordBloc>().add(AddRecord(record));
       context.read<RecordBloc>().add(LoadRecord(user!.uid, DateTime.now()));
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
@@ -168,58 +168,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: BlocListener<RecordBloc, RecordState>(
-                listener: (context, state) {
-                  if (state is RecordUpdated) {
-                    if (state is! RecordLoading) {
-                      context.read<RecordBloc>().add(LoadRecord(user.uid, DateTime.now()));
-                    }
-                  }
-                },
-                child: BlocBuilder<RecordBloc, RecordState>(
-                  builder: (context, state) {
-                    if (state is RecordLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is SingleRecordLoaded) {
-                      DailyHealthRecord r = state.record;
-                      return buildDashboard(r, firstName);
-                    } else if (state is RecordNotFound) {
-                      context.read<RecordBloc>().add(AddRecord(record));
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      return const Center(
-                        child: Text("Something went wrong."),
-                      );
-                    }
-                  },
-                ),
-              )
-              // child: BlocListener<RecordBloc, RecordState>(
-              //   listener: (context, state) {
-              //     if (state is RecordUpdated) {
-              //       context.read<RecordBloc>().add(LoadRecord(user.uid, DateTime.now()));
-              //     }
-              //   },
-              //   child: BlocBuilder<RecordBloc, RecordState>(
-              //     builder: (context, state) {
-              //       if (state is RecordLoading) {
-              //         return const Center(child: CircularProgressIndicator());
-              //       } else if (state is SingleRecordLoaded) {
-              //         DailyHealthRecord r = state.record;
-              //         return buildDashboard(r, firstName);
-              //       } else if (state is RecordNotFound) {
-              //         context.read<RecordBloc>().add(AddRecord(record));
-              //         return const Center(child: CircularProgressIndicator());
-              //       } else {
-              //         return const Center(
-              //           child: Text("Something went wrong."),
-              //         );
-              //       }
-              //     },
-              //   ),
-              // ),
-              ),
+            padding: const EdgeInsets.all(20.0),
+            child: BlocBuilder<RecordBloc, RecordState>(
+              builder: (context, state) {
+                if (state is RecordLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is SingleRecordLoaded) {
+                  DailyHealthRecord record = state.record;
+                  return buildDashboard(record, firstName);
+                } else if (state is RecordNotFound) {
+                  context.read<RecordBloc>().add(AddRecord(record));
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is RecordError) {
+                  print("Record Error: ${state.message}");
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  print("++++ $state");
+                  return const Center(child: Text("Something went wrong."));
+                }
+              },
+            ),
+          ),
         ),
       ),
     );

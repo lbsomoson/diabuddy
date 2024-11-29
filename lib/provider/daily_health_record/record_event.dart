@@ -9,11 +9,12 @@ abstract class RecordEvent extends Equatable {
 
 class LoadRecords extends RecordEvent {
   final String userId;
+  final DateTime date;
 
-  const LoadRecords(this.userId);
+  const LoadRecords(this.userId, this.date);
 
   @override
-  List<Object> get props => [userId];
+  List<Object> get props => [userId, date];
 }
 
 class LoadRecord extends RecordEvent {
