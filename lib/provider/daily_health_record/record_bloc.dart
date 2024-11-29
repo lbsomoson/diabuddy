@@ -19,10 +19,30 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
   }
 
   Future<void> _onLoadRecords(LoadRecords event, Emitter<RecordState> emit) async {
-    recordRepository.getRecords(event.userId).listen((records) {
-      add(RecordsUpdated(records));
-    });
+    try {
+      await emit.forEach(
+        recordRepository.getRecords(event.userId, event.date),
+        onData: (List<DailyHealthRecord> records) {
+          print("_onLoadRecords $records");
+          return RecordLoaded(records);
+        },
+        onError: (error, stackTrace) {
+          return RecordError(error.toString());
+        },
+      );
+    } catch (error) {
+      emit(RecordError(error.toString()));
+    }
   }
+
+  // Future<void> _onLoadRecords(LoadRecords event, Emitter<RecordState> emit) async {
+  //   try {
+  //     final records = await recordRepository.getRecords(event.userId, event.date);
+  //     emit(RecordLoaded(records));
+  //   } catch (error) {
+  //     emit(RecordError(error.toString()));
+  //   }
+  // }
 
   Future<void> _onLoadRecord(LoadRecord event, Emitter<RecordState> emit) async {
     try {
@@ -38,11 +58,15 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
   }
 
   Future<void> _onAddRecord(AddRecord event, Emitter<RecordState> emit) async {
-    await recordRepository.addRecord(event.record);
+    try {
+      await recordRepository.addRecord(event.record);
+      emit(RecordUpdated(event.record));
+    } catch (e) {
+      emit(const RecordError("Failed to add record"));
+    }
   }
 
   Future<void> _onUpdateRecord(UpdateRecord event, Emitter<RecordState> emit) async {
-    // await recordRepository.updateRecord(event.record);
     try {
       await recordRepository.updateRecord(event.record);
       emit(RecordUpdated(event.record));

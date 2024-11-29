@@ -1,7 +1,11 @@
-import 'package:diabuddy/widgets/history_row.dart';
+import 'package:diabuddy/models/daily_health_record_model.dart';
+import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
 import 'package:diabuddy/widgets/text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -11,262 +15,174 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  User? user;
+
+  @override
+  void initState() {
+    super.initState();
+
+    user = context.read<UserAuthProvider>().user;
+    if (user != null) {
+      context.read<RecordBloc>().add(LoadRecords(user!.uid, DateTime.now()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: const TextWidget(text: "Statistics", style: 'bodyLarge')),
+      appBar: AppBar(title: const TextWidget(text: "Statistics", style: 'bodyLarge')),
       body: SafeArea(
           child: SingleChildScrollView(
-        child: Column(children: [
-          // health index score
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey[200]),
-            padding:
-                const EdgeInsets.only(top: 20, right: 25, bottom: 15, left: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const TextWidget(
-                    text: "Health Index Score", style: 'labelLarge'),
-                Divider(color: Colors.grey[400]),
-                const SizedBox(
-                  height: 10,
-                ),
-                AspectRatio(
-                  aspectRatio: 2.0,
-                  child: LineChart(
-                    LineChartData(
-                        borderData: FlBorderData(
-                            border: const Border(
-                                right: BorderSide.none,
-                                left: BorderSide.none,
-                                bottom: BorderSide.none,
-                                top: BorderSide.none)),
-                        // gridData: const FlGridData(show: false),
-                        titlesData: const FlTitlesData(
-                          rightTitles: AxisTitles(
-                              drawBelowEverything: false, axisNameSize: 10),
-                          topTitles: AxisTitles(
-                              drawBelowEverything: false, axisNameSize: 10),
-                        ),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: const [
-                              FlSpot(1, 2),
-                              FlSpot(2, 2),
-                              FlSpot(3, 10),
-                              FlSpot(4, 4),
-                              FlSpot(5, 20),
-                              FlSpot(6, 4),
-                              FlSpot(8, 15),
-                              FlSpot(9, 9),
-                              FlSpot(10, 1),
-                            ],
-                            barWidth: 4,
-                            isCurved: true,
-                            preventCurveOverShooting: true,
-                            belowBarData: BarAreaData(
-                                show: true,
-                                gradient: const LinearGradient(colors: [
-                                  Color.fromRGBO(36, 216, 204, 1),
-                                  Color.fromRGBO(13, 227, 98, 1),
-                                  Color.fromRGBO(235, 223, 53, 1),
-                                ])),
-                            aboveBarData: BarAreaData(
-                              show: true,
-                            ),
-                          ),
-                        ]),
+              child: BlocListener<RecordBloc, RecordState>(listener: (context, state) {
+        if (state is RecordUpdated) {
+          context.read<RecordBloc>().add(LoadRecords(user!.uid, DateTime.now()));
+        }
+      }, child: BlocBuilder<RecordBloc, RecordState>(
+        builder: (context, state) {
+          if (state is RecordLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is RecordLoaded) {
+            List<DailyHealthRecord> records = state.records;
+            if (records.isEmpty) return const Center(child: Text("No records found."));
+            return buildScreen(records);
+          } else if (state is RecordNotFound) {
+            return const Center(child: Text("No records available."));
+          } else if (state is RecordError) {
+            return Center(child: Text("Error: ${state.message}"));
+          } else {
+            print("====== $state");
+            return const Center(child: Text("Something went wrong."));
+          }
+        },
+      )))),
+    );
+  }
+
+  Widget buildChartContainer(
+    String title,
+    List<FlSpot> spots,
+    List<DateTime> xAxisDates,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey[200],
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextWidget(text: title, style: 'labelLarge'),
+          Divider(color: Colors.grey[400]),
+          const SizedBox(height: 10),
+          AspectRatio(
+            aspectRatio: 2.0,
+            child: LineChart(
+              LineChartData(
+                borderData: FlBorderData(
+                  border: const Border(
+                    right: BorderSide.none,
+                    left: BorderSide.none,
+                    bottom: BorderSide.none,
+                    top: BorderSide.none,
                   ),
                 ),
-              ],
-            ),
-          ),
-          // glycemic index
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey[200]),
-            padding:
-                const EdgeInsets.only(top: 20, right: 25, bottom: 15, left: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const TextWidget(text: "Glycemic Index", style: 'labelLarge'),
-                Divider(color: Colors.grey[400]),
-                const SizedBox(
-                  height: 10,
-                ),
-                AspectRatio(
-                  aspectRatio: 2.0,
-                  child: LineChart(
-                    LineChartData(
-                        borderData: FlBorderData(
-                            border: const Border(
-                                right: BorderSide.none,
-                                left: BorderSide.none,
-                                bottom: BorderSide.none,
-                                top: BorderSide.none)),
-                        // gridData: const FlGridData(show: false),
-                        titlesData: const FlTitlesData(
-                          rightTitles: AxisTitles(
-                              drawBelowEverything: false, axisNameSize: 10),
-                          topTitles: AxisTitles(
-                              drawBelowEverything: false, axisNameSize: 10),
-                        ),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: const [
-                              FlSpot(1, 17),
-                              FlSpot(2, 5),
-                              FlSpot(3, 11),
-                              FlSpot(4, 26),
-                              FlSpot(5, 21),
-                              FlSpot(6, 7),
-                              FlSpot(8, 1),
-                              FlSpot(9, 18),
-                              FlSpot(10, 29),
-                            ],
-                            barWidth: 4,
-                            isCurved: true,
-                            preventCurveOverShooting: true,
-                            belowBarData: BarAreaData(
-                                show: true,
-                                gradient: const LinearGradient(colors: [
-                                  Color.fromRGBO(36, 216, 204, 1),
-                                  Color.fromRGBO(13, 227, 98, 1),
-                                  Color.fromRGBO(235, 223, 53, 1),
-                                ])),
-                            aboveBarData: BarAreaData(
-                              show: true,
-                            ),
-                          ),
-                        ]),
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 1,
+                      getTitlesWidget: (value, meta) {
+                        // convert the timestamp back to a readable date for display
+                        DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                        return Text("${date.month}/${date.day}");
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          // diet diversity score
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey[200]),
-            padding:
-                const EdgeInsets.only(top: 20, right: 25, bottom: 15, left: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const TextWidget(text: "Glycemic Index", style: 'labelLarge'),
-                Divider(color: Colors.grey[400]),
-                const SizedBox(
-                  height: 10,
-                ),
-                AspectRatio(
-                  aspectRatio: 2.0,
-                  child: LineChart(
-                    LineChartData(
-                        borderData: FlBorderData(
-                            border: const Border(
-                                right: BorderSide.none,
-                                left: BorderSide.none,
-                                bottom: BorderSide.none,
-                                top: BorderSide.none)),
-                        // gridData: const FlGridData(show: false),
-                        titlesData: const FlTitlesData(
-                          rightTitles: AxisTitles(
-                              drawBelowEverything: false, axisNameSize: 10),
-                          topTitles: AxisTitles(
-                              drawBelowEverything: false, axisNameSize: 10),
-                        ),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: const [
-                              FlSpot(1, 17),
-                              FlSpot(2, 5),
-                              FlSpot(3, 11),
-                              FlSpot(4, 26),
-                              FlSpot(5, 21),
-                              FlSpot(6, 7),
-                              FlSpot(8, 1),
-                              FlSpot(9, 18),
-                              FlSpot(10, 29),
-                            ],
-                            barWidth: 4,
-                            isCurved: true,
-                            preventCurveOverShooting: true,
-                            belowBarData: BarAreaData(
-                                show: true,
-                                gradient: const LinearGradient(colors: [
-                                  Color.fromRGBO(36, 216, 204, 1),
-                                  Color.fromRGBO(13, 227, 98, 1),
-                                  Color.fromRGBO(235, 223, 53, 1),
-                                ])),
-                            aboveBarData: BarAreaData(
-                              show: true,
-                            ),
-                          ),
-                        ]),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 100,
+                      getTitlesWidget: (value, meta) {
+                        if (value % 100 == 0) {
+                          return Text(
+                            "${value.toInt()}",
+                            style: const TextStyle(fontSize: 12),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                   ),
+                  rightTitles: const AxisTitles(drawBelowEverything: false, axisNameSize: 10),
+                  topTitles: const AxisTitles(drawBelowEverything: false, axisNameSize: 10),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey[200]),
-            padding: const EdgeInsets.all(20),
-            child: Column(children: [
-              const Row(
-                children: [
-                  Expanded(
-                      flex: 2,
-                      child: TextWidget(text: "Date", style: "bodyMedium")),
-                  Expanded(child: TextWidget(text: "HIS", style: "titleSmall")),
-                  Expanded(child: TextWidget(text: "GI", style: "titleSmall")),
-                  Expanded(child: TextWidget(text: "DDI", style: "titleSmall")),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: spots,
+                    barWidth: 4,
+                    isCurved: true,
+                    preventCurveOverShooting: true,
+                    belowBarData: BarAreaData(
+                      show: true,
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color.fromRGBO(36, 216, 204, 1),
+                          Color.fromRGBO(13, 227, 98, 1),
+                          Color.fromRGBO(235, 223, 53, 1),
+                        ],
+                      ),
+                    ),
+                    aboveBarData: BarAreaData(show: true),
+                  ),
                 ],
               ),
-              const SizedBox(
-                height: 2.0,
-              ),
-              Divider(color: Colors.grey[400]),
-              const SizedBox(
-                height: 2.0,
-              ),
-              const HistoryRow(date: "Dec 22", his: 10.0, gi: 10.0, ddi: 10.0),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const HistoryRow(date: "Dec 21", his: 7.5, gi: 8.0, ddi: 9.0),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const HistoryRow(date: "Dec 20", his: 10.0, gi: 10.0, ddi: 10.0),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const HistoryRow(date: "Dec 19", his: 7.5, gi: 8.0, ddi: 9.0),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const HistoryRow(date: "Dec 18", his: 10.0, gi: 10.0, ddi: 10.0),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const HistoryRow(date: "Dec 17", his: 7.5, gi: 8.0, ddi: 9.0),
-            ]),
-          )
-        ]),
-      )),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildScreen(List<DailyHealthRecord> records) {
+    // group records by date
+    Map<String, List<DailyHealthRecord>> groupedRecords = {};
+    for (var record in records) {
+      String dateKey = record.date.toString().split(' ')[0]; // group by date (YYYY-MM-DD)
+      groupedRecords.putIfAbsent(dateKey, () => []).add(record);
+    }
+
+    // prepare chart data
+    List<FlSpot> calorieSpots = [];
+    List<FlSpot> glycemicIndexSpots = [];
+    List<FlSpot> diversityScoreSpots = [];
+    List<DateTime> xAxisDates = [];
+
+    for (var entry in groupedRecords.entries) {
+      String date = entry.key;
+      List<DailyHealthRecord> dailyRecords = entry.value;
+
+      // aggregate data
+      double totalCalories = dailyRecords.fold(0, (sum, record) => sum + record.energyKcal);
+
+      // convert the date to a timestamp for the x-axis
+      DateTime dateTime = DateTime.parse(date);
+      print(dateTime);
+      xAxisDates.add(dateTime);
+
+      // add a FlSpot using the date's timestamp as x
+      calorieSpots.add(FlSpot(dateTime.millisecondsSinceEpoch.toDouble(), totalCalories));
+    }
+
+    print(xAxisDates);
+
+    // build charts
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildChartContainer("Calories", calorieSpots, xAxisDates),
+      ],
     );
   }
 }

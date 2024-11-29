@@ -63,7 +63,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     double computeIdealBodyWeight() {
       double idw = 0.0;
       if (appuser?.height != null) {
-        print(appuser!.height!);
         idw = ((appuser!.height! * 100) - 100) - (0.1 * ((appuser!.height! * 100) - 100));
       }
       return idw;

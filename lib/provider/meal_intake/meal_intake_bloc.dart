@@ -38,8 +38,6 @@ class MealIntakeBloc extends Bloc<MealIntakeEvent, MealIntakeState> {
 
   Future<void> _onLoadMealIntakeByDate(LoadMealIntakeByDate event, Emitter<MealIntakeState> emit) async {
     try {
-      emit(MealIntakeLoading()); // Optional loading state
-
       await emit.forEach(
         mealIntakeRepository.getMealIntakesByDate(event.mealIntakeId, event.date),
         onData: (List<MealIntake> mealIntakes) {
@@ -53,12 +51,6 @@ class MealIntakeBloc extends Bloc<MealIntakeEvent, MealIntakeState> {
       emit(MealIntakeError(error.toString()));
     }
   }
-
-  // Future<void> _onLoadMealIntakeByDate(LoadMealIntakeByDate event, Emitter<MealIntakeState> emit) async {
-  //   mealIntakeRepository.getMealIntakesByDate(event.mealIntakeId, event.date).listen((mealIntakes) {
-  //     emit(MealIntakeByDateLoaded(mealIntakes));
-  //   });
-  // }
 
   Future<void> _onAddMealIntake(AddMealIntake event, Emitter<MealIntakeState> emit) async {
     await mealIntakeRepository.addMealIntake(event.mealIntake);
