@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  gtext: ^0.0.3
   flutter_local_notifications: ^17.1.2
   cupertino_icons: ^1.0.2
   persistent_bottom_nav_bar_v2: ^5.2.3

@@ -155,8 +155,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     // prepare chart data
     List<FlSpot> calorieSpots = [];
-    List<FlSpot> glycemicIndexSpots = [];
-    List<FlSpot> diversityScoreSpots = [];
+    // List<FlSpot> glycemicIndexSpots = [];
+    // List<FlSpot> diversityScoreSpots = [];
     List<DateTime> xAxisDates = [];
 
     for (var entry in groupedRecords.entries) {

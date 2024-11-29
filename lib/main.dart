@@ -40,7 +40,6 @@ import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter/material.dart';
-import 'package:gtext/gtext.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -56,8 +55,7 @@ void main() async {
 
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
-  GText.init(to: 'fi', enableCaching: false);
-  // Initialize time zones
+  // initialize time zones
   tz.initializeTimeZones();
 
   runApp(
