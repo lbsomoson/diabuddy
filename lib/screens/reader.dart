@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
@@ -25,6 +26,7 @@ class VerifySubmit extends StatefulWidget {
 class _VerifySubmitState extends State<VerifySubmit> {
   String? userId;
   LocalNotifications localNotifications = LocalNotifications();
+  DatabaseService db = DatabaseService();
 
   @override
   void initState() {
@@ -208,7 +210,15 @@ class _VerifySubmitState extends State<VerifySubmit> {
                 ButtonWidget(
                     callback: () async {
                       await Permission.storage.request();
-                      if (context.mounted) context.read<MedicationBloc>().add(AddMedication(widget.medicationIntake));
+                      // if (context.mounted) context.read<MedicationBloc>().add(AddMedication(widget.medicationIntake));
+
+                      // int id = await db.insertMedication(widget.medicationIntake);
+                      // print("created medication id: $id");
+
+                      var listMedications = await db.getMedications(userId!);
+                      for (var m in listMedications) {
+                        print(m);
+                      }
 
                       if (context.mounted) {
                         final snackBar = SnackBar(

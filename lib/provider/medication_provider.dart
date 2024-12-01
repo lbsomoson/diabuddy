@@ -1,40 +1,47 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:diabuddy/api/medication_api.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:flutter/material.dart';
+import 'package:diabuddy/models/medication_intake_model.dart';
 
 class MedicationProvider with ChangeNotifier {
-  FirebaseMedicationAPI firebaseService = FirebaseMedicationAPI();
+  final DatabaseService databaseService = DatabaseService();
 
-  late Stream<QuerySnapshot> _medicationsStream;
+  late List<MedicationIntake> medications;
+  late List<MedicationIntake> inactiveMedications;
 
-  Stream<QuerySnapshot> getMedications(String id) {
-    _medicationsStream = firebaseService.getMedications(id);
-    notifyListeners();
-    return _medicationsStream;
+  Future<List<MedicationIntake>> getMedications(String userId) async {
+    medications = await databaseService.getMedications(userId);
+    return medications;
   }
 
-  Future<Map<String, dynamic>> getMedication(String id) async {
-    Map<String, dynamic> medication = await firebaseService.getMedication(id);
-    notifyListeners();
-    return medication;
+  Future<List<MedicationIntake>> getInactiveMedications(String userId) async {
+    inactiveMedications = await databaseService.getInactiveMedications(userId);
+    return inactiveMedications;
   }
 
-  Future<String> addMedication(Map<String, dynamic> data) async {
-    String message = await firebaseService.addMedication(data);
-    notifyListeners();
-    return message;
+  Future<void> addMedication(MedicationIntake medication) async {
+    try {
+      await databaseService.insertMedication(medication);
+      notifyListeners(); // Notify UI that data has changed
+    } catch (e) {
+      print("Error adding medication: $e");
+    }
   }
 
-  Future<String> editMedication(
-      String id, Map<String, dynamic> updatedData) async {
-    String message = await firebaseService.editMedication(id, updatedData);
-    notifyListeners();
-    return message;
+  Future<void> updateMedication(MedicationIntake medication, String medicationId) async {
+    try {
+      await databaseService.updateMedication(medication, medicationId);
+      notifyListeners();
+    } catch (e) {
+      print("Error updating medication: $e");
+    }
   }
 
-  Future<String> deleteMedication(Map<String, dynamic> data) async {
-    String message = await firebaseService.deleteMedication(data);
-    notifyListeners();
-    return message;
+  Future<void> deleteMedication(String medicationId) async {
+    try {
+      await databaseService.deleteMedication(medicationId);
+      notifyListeners();
+    } catch (e) {
+      print("Error deleting medication: $e");
+    }
   }
 }

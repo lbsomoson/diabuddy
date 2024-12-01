@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class MedicationIntake {
   String? medicationId;
   String userId;
@@ -30,14 +32,13 @@ class MedicationIntake {
       dose: json['dose'],
       frequency: json['frequency'],
       verifiedBy: json['verifiedBy'],
-      isActive: json['isActive'],
+      isActive: json['isActive'] == 1 ? true : false,
       name: json['name'],
       time: List<String>.from(json['time']),
     );
   }
 
-  static List<MedicationIntake> fromJsonArray(
-      List<Map<String, dynamic>> jsonData) {
+  static List<MedicationIntake> fromJsonArray(List<Map<String, dynamic>> jsonData) {
     return jsonData.map<MedicationIntake>((data) {
       String id = data['medicationId'];
       return MedicationIntake.fromJson(data, id);
@@ -55,6 +56,19 @@ class MedicationIntake {
       'frequency': medicationIntake.frequency,
       'verifiedBy': medicationIntake.verifiedBy,
       'isActive': medicationIntake.isActive,
+    };
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'userId': userId,
+      'channelId': channelId,
+      'name': name,
+      'time': jsonEncode(time),
+      'dose': dose,
+      'frequency': frequency,
+      'verifiedBy': jsonEncode(verifiedBy),
+      'isActive': isActive == true ? 1 : 0,
     };
   }
 }

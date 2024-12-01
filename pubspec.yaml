@@ -45,6 +45,7 @@ dependencies:
   flutter_timezone: ^1.0.8
   pytorch_lite: ^4.3.0
   flutter_tesseract_ocr: ^0.4.27
+  sqflite: ^2.3.1
   # animated_segmented_tab_control: ^2.0.0
 
 flutter_launcher_icons:

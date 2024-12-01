@@ -3,11 +3,13 @@ import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
 import 'package:diabuddy/screens/add_appointment.dart';
 import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/edit_appointment.dart';
 import 'package:diabuddy/screens/edit_medication.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
@@ -30,13 +32,13 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   User? user;
   AppUser? appuser;
+  DatabaseService db = DatabaseService();
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
 
     // use context.read here to initialize user and fetch data
-    user ??= context.read<UserAuthProvider>().user;
     appuser ??= context.watch<UserAuthProvider>().userInfo;
 
     if (user != null) {
@@ -47,6 +49,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    user = context.read<UserAuthProvider>().user;
+    Future<List<MedicationIntake>> medications = context.watch<MedicationProvider>().getMedications(user!.uid);
+
     if (user == null) {
       // show a loading indicator or a message if `user` is not available yet
       return Scaffold(
@@ -250,7 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  _displayMedicines(context, user!.uid),
+                  _displayMedicines(context, user!.uid, medications),
                   const SizedBox(
                     height: 10,
                   ),
@@ -340,15 +345,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-Widget _displayMedicines(BuildContext context, String id) {
-  return BlocBuilder<MedicationBloc, MedicationState>(
-    builder: (context, state) {
-      if (state is MedicationLoading) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      } else if (state is MedicationLoaded) {
-        if (state.medications.isEmpty) {
+// Widget _displayMedicines(BuildContext context, String id) {
+//   return BlocBuilder<MedicationBloc, MedicationState>(
+//     builder: (context, state) {
+//       if (state is MedicationLoading) {
+//         return const Center(
+//           child: CircularProgressIndicator(),
+//         );
+//       } else if (state is MedicationLoaded) {
+//         if (state.medications.isEmpty) {
+//           return const Center(
+//             child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 crossAxisAlignment: CrossAxisAlignment.center,
+//                 children: [Center(child: Text2Widget(text: "No medicines yet", style: 'body2'))]),
+//           );
+//         }
+//         return ListView.builder(
+//           physics: const NeverScrollableScrollPhysics(),
+//           shrinkWrap: true,
+//           itemCount: state.medications.length,
+//           itemBuilder: (context, index) {
+//             MedicationIntake medication = state.medications[index];
+//             medication.medicationId = state.medications[index].medicationId;
+
+//             if (medication.isActive == true) {
+//               return CardWidget(
+//                 leading: FontAwesomeIcons.pills,
+//                 callback: () {
+//                   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//                     return EditMedicationScreen(med: medication);
+//                   }));
+//                 },
+//                 trailing: Icons.edit,
+//                 title: medication.name,
+//                 subtitle: medication.time.join(", "),
+//               );
+//             } else {
+//               return const SizedBox.shrink();
+//             }
+//           },
+//         );
+//       } else {
+//         return const Center(
+//           child: Text("Error encountered!"),
+//         );
+//       }
+//     },
+//   );
+// }
+
+Widget _displayMedicines(BuildContext context, String id, Future<List<MedicationIntake>> medications) {
+  return FutureBuilder(
+      future: medications,
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          return ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: snapshot.data.length,
+            itemBuilder: (context, index) {
+              MedicationIntake medication = snapshot.data[index] as MedicationIntake;
+
+              if (medication.isActive == true) {
+                return CardWidget(
+                  leading: FontAwesomeIcons.pills,
+                  callback: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return EditMedicationScreen(med: medication);
+                    }));
+                  },
+                  trailing: Icons.edit,
+                  title: medication.name,
+                  subtitle: medication.time.join(", "),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          );
+        } else {
           return const Center(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -356,38 +436,7 @@ Widget _displayMedicines(BuildContext context, String id) {
                 children: [Center(child: Text2Widget(text: "No medicines yet", style: 'body2'))]),
           );
         }
-        return ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: state.medications.length,
-          itemBuilder: (context, index) {
-            MedicationIntake medication = state.medications[index];
-            medication.medicationId = state.medications[index].medicationId;
-
-            if (medication.isActive == true) {
-              return CardWidget(
-                leading: FontAwesomeIcons.pills,
-                callback: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return EditMedicationScreen(med: medication);
-                  }));
-                },
-                trailing: Icons.edit,
-                title: medication.name,
-                subtitle: medication.time.join(", "),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          },
-        );
-      } else {
-        return const Center(
-          child: Text("Error encountered!"),
-        );
-      }
-    },
-  );
+      });
 }
 
 Widget _displayAppointments(BuildContext context, String id) {
