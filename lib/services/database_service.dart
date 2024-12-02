@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:diabuddy/models/appointment_model.dart';
+import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -342,5 +343,75 @@ class DatabaseService {
     await database.insert('metadata', {'key': 'dataLoaded', 'value': 'true'});
 
     print('Data from SQLITE loaded successfully.');
+  }
+
+  // A method that retrieves all the meals
+  Future<List<Meal>> getMeals() async {
+    final db = await initializeDB();
+
+    final List<Map<String, dynamic>> maps = await db.query('meals');
+
+    // Convert the List<Map<String, dynamic> into a List<Meal>.
+    return List.generate(maps.length, (i) {
+      List<double?>? sodium;
+      if (maps[i]['sodium'] is String) {
+        sodium = List<double?>.from(maps[i]['sodium']?.split(', ').map((e) => double.tryParse(e.trim())) ?? []);
+      } else if (maps[i]['sodium'] is List) {
+        sodium = (maps[i]['sodium'] as List<dynamic>?)
+            ?.map((e) => e != null ? double.tryParse(e.toString()) : null)
+            .toList();
+      }
+
+      return Meal(
+        mealId: maps[i]['mealId'].toString(),
+        mealName: maps[i]['mealName'] ?? maps[i]['Meal Name'],
+        foodCode: maps[i]['foodCode'] ?? maps[i]['Food Code'],
+        carbohydrate: maps[i]['carbohydrate']?.toDouble() ?? maps[i]['Carbohydrate']?.toDouble(),
+        totalDietaryFiber: maps[i]['totalDietaryFiber']?.toDouble() ?? maps[i]['Total Dietary Fiber']?.toDouble(),
+        totalSugar: maps[i]['totalSugar']?.toDouble() ?? maps[i]['Total Sugar']?.toDouble(),
+        protein: maps[i]['protein']?.toDouble() ?? maps[i]['Protein']?.toDouble(),
+        fat: maps[i]['fat']?.toDouble() ?? maps[i]['Fat']?.toDouble(),
+        energyKcal: maps[i]['energyKcal']?.toDouble() ?? maps[i]['Energy (Kcal)']?.toDouble(),
+        sodium: sodium,
+        cholesterol: maps[i]['cholesterol']?.toDouble() ?? maps[i]['Cholesterol']?.toDouble(),
+        calcium: maps[i]['calcium']?.toDouble() ?? maps[i]['Calcium']?.toDouble(),
+        phosphorus: maps[i]['phosphorus']?.toDouble() ?? maps[i]['Phosphorus']?.toDouble(),
+        iron: maps[i]['iron']?.toDouble() ?? maps[i]['Iron']?.toDouble(),
+        potassium: maps[i]['potassium']?.toDouble() ?? maps[i]['Potassium']?.toDouble(),
+        zinc: maps[i]['zinc']?.toDouble() ?? maps[i]['Zinc']?.toDouble(),
+        retinol: maps[i]['retinol']?.toDouble() ?? maps[i]['Retinol']?.toDouble(),
+        betaCarotene: maps[i]['betaCarotene']?.toDouble() ?? maps[i]['beta-carotene']?.toDouble(),
+        thiamin: maps[i]['thiamin']?.toDouble() ?? maps[i]['Thiamin']?.toDouble(),
+        riboflavin: maps[i]['riboflavin']?.toDouble() ?? maps[i]['Riboflavin']?.toDouble(),
+        niacin: maps[i]['niacin']?.toDouble() ?? maps[i]['Niacin']?.toDouble(),
+        vitaminC: maps[i]['vitaminC']?.toDouble() ?? maps[i]['Vitamin C']?.toDouble(),
+        glycemicIndex: maps[i]['glycemicIndex']?.toDouble() ?? maps[i]['Glycemic Index']?.toDouble(),
+        diversityScore: maps[i]['diversityScore']?.toDouble() ?? maps[i]['Diversity Score']?.toDouble(),
+        phytochemicalIndex: maps[i]['phytochemicalIndex']?.toDouble() ?? maps[i]['Phytochemical Index']?.toDouble(),
+        healtyEatingIndex: maps[i]['healtyEatingIndex']?.toDouble() ?? maps[i]['Healthy Eating Index']?.toDouble(),
+        heiClassification: maps[i]['heiClassification'] ?? maps[i]['HEI Classification'],
+      );
+    });
+  }
+
+  Future<Meal?> getMeal(String mealName) async {
+    final db = await initializeDB();
+
+    // Query the meals table where the mealName matches
+    List<Map<String, dynamic>> result = await db.query(
+      'meals',
+      where: 'mealName = ?',
+      whereArgs: [mealName],
+      limit: 1,
+    );
+
+    // If a result is found, return a Meal object
+    if (result.isNotEmpty) {
+      Map<String, dynamic> mealData = result.first;
+      return Meal.fromJson(mealData, mealData['mealId'].toString());
+    }
+
+    // Return null if no meal is found
+    return null;
   }
 }

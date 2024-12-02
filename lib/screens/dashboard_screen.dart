@@ -54,7 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
 
-    db.printTableContents('meals');
+    db.printTableContents('meal_intakes');
     db.printTableContents('appointments');
     db.printTableContents('metadata');
     db.printTableSchema('meals');
