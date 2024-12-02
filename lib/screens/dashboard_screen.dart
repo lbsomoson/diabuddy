@@ -43,6 +43,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     // firestore.uploadJsonDataToFirestore();
+    uploadData();
     user = context.read<UserAuthProvider>().user;
 
     record.userId = user!.uid;
@@ -53,9 +54,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
 
+    db.printTableContents('meals');
     db.printTableContents('appointments');
-    db.printTableContents('medications');
-    db.printTableSchema('appointments');
+    db.printTableContents('metadata');
+    db.printTableSchema('meals');
   }
 
   @override
@@ -63,6 +65,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.didChangeDependencies();
 
     appuser ??= context.watch<UserAuthProvider>().userInfo;
+  }
+
+  void uploadData() async {
+    db.uploadJsonDataToSQLite(await db.initializeDB());
   }
 
   double getCalorieIntakePercent(cal) {

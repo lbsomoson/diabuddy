@@ -4,6 +4,7 @@ import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class DatabaseService {
   Future<void> printTableContents(String tableName) async {
@@ -68,6 +69,43 @@ class DatabaseService {
             date INTEGER NOT NULL
           )
           ''');
+        await db.execute('''
+          CREATE TABLE metadata(
+            key TEXT PRIMARY KEY,
+            value TEXT
+          )
+          ''');
+        await db.execute('''
+          CREATE TABLE meals(
+          mealId INTEGER PRIMARY KEY AUTOINCREMENT,
+          mealName TEXT NOT NULL,
+          foodCode TEXT,
+          carbohydrate REAL,
+          totalDietaryFiber REAL,
+          totalSugar REAL,
+          protein REAL,
+          fat REAL,
+          energy REAL,
+          sodium REAL,
+          cholesterol REAL,
+          calcium REAL,
+          phosphorus REAL,
+          iron REAL,
+          potassium REAL,
+          zinc REAL,
+          retinol REAL,
+          betaCarotene REAL,
+          thiamin REAL,
+          riboflavin REAL,
+          niacin REAL,
+          vitaminC REAL,
+          glycemicIndex REAL,
+          diversityScore REAL,
+          phytochemicalIndex REAL,
+          heiClassification TEXT,
+          healthyEatingIndex REAL
+        );
+        ''');
       },
       version: 1,
     );
@@ -242,5 +280,67 @@ class DatabaseService {
       where: 'appointmentId = ?',
       whereArgs: [appointmentId],
     );
+  }
+
+  // ================================== MEALS CRUD OPERATIONS ==================================
+  Future<Map<String, dynamic>> loadJsonData() async {
+    String jsonString = await rootBundle.loadString('assets/cleaned_meal2.json');
+    print("jsonString::: $jsonString");
+    return jsonDecode(jsonString);
+  }
+
+  Future<void> uploadJsonDataToSQLite(Database database) async {
+    // Check if the data has already been loaded (can be done with a metadata table or flag)
+    var result = await database.rawQuery("SELECT 1 FROM sqlite_master WHERE name = 'metadata'");
+    print(result);
+    if (result.isNotEmpty) {
+      print('Data from SQLITE has already been loaded.');
+      return;
+    }
+
+    // Load JSON data
+    Map<String, dynamic> jsonData = await loadJsonData();
+    List<dynamic> meals = jsonData['meals'];
+
+    print("meals:::::::: $meals");
+
+    for (var meal in meals) {
+      await database.insert('meals', {
+        'mealName': meal['Meal Name'],
+        'foodCode': meal['Food Code'],
+        'carbohydrate': meal['Carbohydrate'],
+        'totalDietaryFiber': meal['Total Dietary Fiber'],
+        'totalSugar': meal['Total Sugar'],
+        'protein': meal['Protein'],
+        'fat': meal['Fat'],
+        'energy': meal['Energy (Kcal)'],
+        'sodium': meal['Sodium'].join(', '),
+        'cholesterol': meal['Cholesterol'],
+        'calcium': meal['Calcium'],
+        'phosphorus': meal['Phosphorus'],
+        'iron': meal['Iron'],
+        'potassium': meal['Potassium'],
+        'zinc': meal['Zinc'],
+        'retinol': meal['Retinol'],
+        'betaCarotene': meal['beta-carotene'],
+        'thiamin': meal['Thiamin'],
+        'riboflavin': meal['Riboflavin'],
+        'niacin': meal['Niacin'],
+        'vitaminC': meal['Vitamin C'],
+        'glycemicIndex': meal['Glycemic Index'],
+        'diversityScore': meal['Diversity Score'],
+        'phytochemicalIndex': meal['Phytochemical Index'],
+        'heiClassification': meal['HEI Classification'],
+        'healthyEatingIndex': meal['Healthy Eating Index'],
+      });
+    }
+
+    print("UPLOADED DATA IN MEALS TABLE");
+
+    // Mark as loaded (optional, via metadata table or flag)
+    await database.execute("CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT)");
+    await database.insert('metadata', {'key': 'dataLoaded', 'value': 'true'});
+
+    print('Data from SQLITE loaded successfully.');
   }
 }

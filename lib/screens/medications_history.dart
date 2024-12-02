@@ -17,7 +17,7 @@ class MedicationHistory extends StatefulWidget {
 
 Widget _displayMedicationHistory(BuildContext context, String id) {
   return FutureBuilder(
-      future: context.watch<MedicationProvider>().getMedications(id),
+      future: context.watch<MedicationProvider>().getInactiveMedications(id),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

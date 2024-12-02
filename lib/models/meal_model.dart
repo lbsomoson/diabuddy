@@ -128,4 +128,35 @@ class Meal {
       'heiClassification': heiClassification,
     };
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'mealName': mealName,
+      'foodCode': foodCode,
+      'carbohydrate': carbohydrate,
+      'totalDietaryFiber': totalDietaryFiber,
+      'totalSugar': totalSugar,
+      'protein': protein,
+      'fat': fat,
+      'energyKcal': energyKcal,
+      'sodium': sodium!.join(', '),
+      'cholesterol': cholesterol,
+      'calcium': calcium,
+      'phosphorus': phosphorus,
+      'iron': iron,
+      'potassium': potassium,
+      'zinc': zinc,
+      'retinol': retinol,
+      'betaCarotene': betaCarotene,
+      'thiamin': thiamin,
+      'riboflavin': riboflavin,
+      'niacin': niacin,
+      'vitaminC': vitaminC,
+      'glycemicIndex': glycemicIndex,
+      'diversityScore': diversityScore,
+      'phytochemicalIndex': phytochemicalIndex,
+      'healtyEatingIndex': healtyEatingIndex,
+      'heiClassification': heiClassification,
+    };
+  }
 }
