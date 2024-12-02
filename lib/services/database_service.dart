@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:diabuddy/models/appointment_model.dart';
+import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -43,6 +44,7 @@ class DatabaseService {
     // Open the database and store the reference.
     final database = openDatabase(
       join(await getDatabasesPath(), 'diabuddy_database.db'),
+      version: 1,
       onCreate: (db, version) async {
         await db.execute(
           '''
@@ -86,7 +88,7 @@ class DatabaseService {
           totalSugar REAL,
           protein REAL,
           fat REAL,
-          energy REAL,
+          energyKcal REAL,
           sodium REAL,
           cholesterol REAL,
           calcium REAL,
@@ -107,8 +109,19 @@ class DatabaseService {
           healthyEatingIndex REAL
         );
         ''');
+        await db.execute('''
+          CREATE TABLE meal_intakes(
+            mealIntakeId INTEGER PRIMARY KEY AUTOINCREMENT,
+            userId TEXT NOT NULL,
+            photoUrl TEXT NOT NULL,
+            proofPath TEXT NOT NULL,
+            timestamp INTEGER NOT NULL,
+            foodIds TEXT NOT NULL,
+            mealTime TEXT NOT NULL,
+            accMeals TEXT NOT NULL
+          )
+        ''');
       },
-      version: 1,
     );
 
     return database;
@@ -283,27 +296,23 @@ class DatabaseService {
     );
   }
 
-  // ================================== MEALS CRUD OPERATIONS ==================================
+  // ================================== MEAL CRUD OPERATIONS ==================================
   Future<Map<String, dynamic>> loadJsonData() async {
     String jsonString = await rootBundle.loadString('assets/cleaned_meal2.json');
-    print("jsonString::: $jsonString");
     return jsonDecode(jsonString);
   }
 
   Future<void> uploadJsonDataToSQLite(Database database) async {
     // Check if the data has already been loaded (can be done with a metadata table or flag)
     var result = await database.rawQuery("SELECT 1 FROM sqlite_master WHERE name = 'metadata'");
-    print(result);
-    if (result.isNotEmpty) {
-      print('Data from SQLITE has already been loaded.');
-      return;
-    }
 
     // Load JSON data
     Map<String, dynamic> jsonData = await loadJsonData();
     List<dynamic> meals = jsonData['meals'];
 
-    print("meals:::::::: $meals");
+    if (result.isNotEmpty) {
+      return; // TODO: UNCOMMENT/COMMENT THIS LINE TO INSERT DATA TO DATABASE
+    }
 
     for (var meal in meals) {
       await database.insert('meals', {
@@ -314,7 +323,7 @@ class DatabaseService {
         'totalSugar': meal['Total Sugar'],
         'protein': meal['Protein'],
         'fat': meal['Fat'],
-        'energy': meal['Energy (Kcal)'],
+        'energyKcal': meal['Energy (Kcal)'],
         'sodium': meal['Sodium'].join(', '),
         'cholesterol': meal['Cholesterol'],
         'calcium': meal['Calcium'],
@@ -335,8 +344,6 @@ class DatabaseService {
         'healthyEatingIndex': meal['Healthy Eating Index'],
       });
     }
-
-    print("UPLOADED DATA IN MEALS TABLE");
 
     // Mark as loaded (optional, via metadata table or flag)
     await database.execute("CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT)");
@@ -388,7 +395,7 @@ class DatabaseService {
         glycemicIndex: maps[i]['glycemicIndex']?.toDouble() ?? maps[i]['Glycemic Index']?.toDouble(),
         diversityScore: maps[i]['diversityScore']?.toDouble() ?? maps[i]['Diversity Score']?.toDouble(),
         phytochemicalIndex: maps[i]['phytochemicalIndex']?.toDouble() ?? maps[i]['Phytochemical Index']?.toDouble(),
-        healtyEatingIndex: maps[i]['healtyEatingIndex']?.toDouble() ?? maps[i]['Healthy Eating Index']?.toDouble(),
+        healthyEatingIndex: maps[i]['healthyEatingIndex']?.toDouble() ?? maps[i]['Healthy Eating Index']?.toDouble(),
         heiClassification: maps[i]['heiClassification'] ?? maps[i]['HEI Classification'],
       );
     });
@@ -413,5 +420,99 @@ class DatabaseService {
 
     // Return null if no meal is found
     return null;
+  }
+
+  // ================================== MEAL_INTAKES CRUD OPERATIONS ==================================
+
+  // define a function that inserts meal_intake into the database
+  Future<int> insertMealIntake(MealIntake mealIntake) async {
+    // get a reference to the database
+    final db = await initializeDB();
+
+    try {
+      return await db.insert(
+        'meal_intakes',
+        mealIntake.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      print('error in insert meal intake: $e');
+    }
+    return 0;
+  }
+
+  // A method that retrieves all the meal_intakes belonging to a userId
+  Future<List<MealIntake>> getMealIntakes(String userId) async {
+    final db = await initializeDB();
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'meal_intakes',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+
+    // Convert the List<Map<String, dynamic> into a List<MealIntake>.
+    return List.generate(maps.length, (i) {
+      return MealIntake(
+        mealIntakeId: maps[i]['mealIntakeId'].toString(),
+        userId: maps[i]['userId'],
+        foodIds: List<String>.from(jsonDecode(maps[i]['foodIds'])),
+        photoUrl: maps[i]['photoUrl'],
+        proofPath: maps[i]['proofPath'],
+        timestamp: DateTime.fromMillisecondsSinceEpoch(maps[i]['timestamp']),
+        mealTime: maps[i]['mealTime'],
+        accMeals: Meal.fromJson(maps[i]['accMeals'], maps[i]['mealIntakeId'].toString()),
+      );
+    });
+  }
+
+  Future<MealIntake?> getMealIntake(String mealIntakeId) async {
+    final db = await initializeDB();
+
+    // Query the meals table where the mealName matches
+    List<Map<String, dynamic>> result = await db.query(
+      'meal_intakes',
+      where: 'mealIntakeId = ?',
+      whereArgs: [mealIntakeId],
+      limit: 1,
+    );
+
+    // If a result is found, return a Meal object
+    if (result.isNotEmpty) {
+      Map<String, dynamic> mealIntake = result.first;
+      return MealIntake.fromMap(mealIntake);
+    }
+    return null;
+  }
+
+  Future<List<MealIntake>> getMealIntakesByDate(String userId, DateTime date) async {
+    final db = await initializeDB();
+
+    // Calculate the start and end of the specified date
+    final startOfDay = DateTime(date.year, date.month, date.day).millisecondsSinceEpoch;
+    final endOfDay = startOfDay + const Duration(days: 1).inMilliseconds;
+
+    // Execute the query
+    final List<Map<String, dynamic>> maps = await db.query(
+      'meal_intakes',
+      where: 'userId = ? AND timestamp >= ? AND timestamp < ?',
+      whereArgs: [userId, startOfDay, endOfDay],
+    );
+
+    // Convert the List<Map<String, dynamic> into a List<MealIntake>.
+    return List.generate(maps.length, (i) {
+      return MealIntake(
+        mealIntakeId: maps[i]['mealIntakeId'].toString(),
+        userId: maps[i]['userId'],
+        foodIds: maps[i]['foodIds'].split(', '),
+        photoUrl: maps[i]['photoUrl'],
+        proofPath: maps[i]['proofPath'],
+        timestamp: DateTime.fromMillisecondsSinceEpoch(maps[i]['timestamp']),
+        mealTime: maps[i]['mealTime'],
+        accMeals: maps[i]['accMeals'] != null
+            ? Meal.fromJson(jsonDecode(maps[i]['accMeals']), maps[i]['mealIntakeId'].toString())
+            : null,
+      );
+    });
   }
 }

@@ -2,7 +2,6 @@ import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/meal/meal_bloc.dart';
-import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/textfield.dart';
@@ -43,7 +42,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
         iron: 0.0,
         phosphorus: 0.0,
         protein: 0.0,
-        healtyEatingIndex: 0.0,
+        healthyEatingIndex: 0.0,
         niacin: 0.0,
         cholesterol: 0.0,
         phytochemicalIndex: 0.0,
@@ -156,7 +155,6 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                               allMeals = state.meals;
                               foundMeals = allMeals;
                             });
-                            print('+++++ lenght: ${allMeals.length}');
                           }
                           if (state is SingleMealLoaded) {
                             final meal = state.meal;
@@ -272,22 +270,10 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
                         style: 'filled',
                         label: "Submit",
                         callback: () {
-                          for (Meal m in meals) {
-                            print('${m.mealId}: ${m.mealName}');
-                          }
                           mealIntake.userId = userId!;
                           mealIntake.mealTime = getCurrentMealTime();
                           mealIntake.timestamp = DateTime.now();
                           computeTotal();
-                          // print(
-                          //     'mealIntake.mealIntakeId: ${mealIntake.mealIntakeId}');
-                          // print('mealIntake.foodIds: ${mealIntake.foodIds}');
-                          // print('mealIntake.photoUrl: ${mealIntake.photoUrl}');
-                          // print(
-                          //     'mealIntake.proofPath: ${mealIntake.proofPath}');
-                          // print('mealIntake.mealTime: ${mealIntake.mealTime}');
-                          // print('mealIntake.mealTime: ${mealIntake.timestamp}');
-                          context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
                           // TODO: DISPLAY MEAL DETAILS SCREEN
                           if (!context.mounted) return;
                           Navigator.pop(context);

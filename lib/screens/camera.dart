@@ -3,9 +3,7 @@ import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-// import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
-// import 'package:diabuddy/provider/meal/meal_bloc.dart';
-// import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
+import 'package:diabuddy/provider/meal_intake_provider.dart';
 import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/utils/classes.dart';
@@ -54,7 +52,7 @@ class _CameraScreenState extends State<CameraScreen> {
       iron: 0.0,
       phosphorus: 0.0,
       protein: 0.0,
-      healtyEatingIndex: 0.0,
+      healthyEatingIndex: 0.0,
       niacin: 0.0,
       cholesterol: 0.0,
       phytochemicalIndex: 0.0,
@@ -89,7 +87,7 @@ class _CameraScreenState extends State<CameraScreen> {
           iron: 0.0,
           phosphorus: 0.0,
           protein: 0.0,
-          healtyEatingIndex: 0.0,
+          healthyEatingIndex: 0.0,
           niacin: 0.0,
           cholesterol: 0.0,
           phytochemicalIndex: 0.0,
@@ -426,11 +424,8 @@ class _CameraScreenState extends State<CameraScreen> {
                                                   });
                                                 }
 
-                                                print(mealsDetected);
-
                                                 // Accumulate meal values
                                                 accMeal = accumulateMealValues(mealsDetected);
-                                                print(accMeal);
 
                                                 // Update meal intake
                                                 mealIntake
@@ -439,14 +434,12 @@ class _CameraScreenState extends State<CameraScreen> {
                                                   ..timestamp = _currentDate
                                                   ..accMeals = accMeal;
 
-                                                print(mealIntake);
-
                                                 // Create or update daily health record
                                                 DailyHealthRecord record = DailyHealthRecord(
                                                   recordId: "",
                                                   userId: userId,
                                                   date: mealIntake.timestamp!,
-                                                  healthyEatingIndex: accMeal.healtyEatingIndex!,
+                                                  healthyEatingIndex: accMeal.healthyEatingIndex!,
                                                   glycemicIndex: accMeal.glycemicIndex!,
                                                   carbohydrates: accMeal.carbohydrate!,
                                                   energyKcal: accMeal.energyKcal!,
@@ -454,7 +447,8 @@ class _CameraScreenState extends State<CameraScreen> {
                                                   stepsCount: 0.0,
                                                 );
 
-                                                // TODO: Save or process `mealIntake` and `record` as needed
+                                                // TODO: Save `record`
+                                                context.read<MealIntakeProvider>().addMealIntake(mealIntake);
 
                                                 // Navigate to the Meal Details screen
                                                 Navigator.push(
@@ -479,75 +473,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                           },
                                           label: "Submit",
                                           style: 'filled'),
-                                      // BlocListener<MealBloc, MealState>(
-                                      //     listener: (context, state) {
-                                      //       if (state is MealLoaded) {
-                                      //         // update the allMeals list when meals are loaded
-                                      //         setState(() {
-                                      //           allMeals = state.meals;
-                                      //         });
-                                      //         for (var f in foodList) {
-                                      //           classNames.forEach((k, v) {
-                                      //             if (f == k) {
-                                      //               var idx = allMeals.indexWhere((meal) => meal.mealName == v);
-                                      //               if (idx != -1) {
-                                      //                 // if it exists in the list of all meals, add
-                                      //                 mealsDetected.add(allMeals[idx]);
-                                      //                 mealIntake.foodIds.add(allMeals[idx].mealId!);
-                                      //               }
-                                      //             }
-                                      //           });
-                                      //         }
-                                      //         accMeal = accumulateMealValues(mealsDetected);
-                                      //         setState(() {});
-                                      //         // TODO: ADD PHOTO
-                                      //         mealIntake.userId = userId!;
-                                      //         mealIntake.mealTime = getCurrentMealTime();
-                                      //         mealIntake.timestamp = _currentDate;
-                                      //         mealIntake.accMeals = accMeal;
-                                      //         DailyHealthRecord record = DailyHealthRecord(
-                                      //             recordId: "",
-                                      //             userId: userId,
-                                      //             date: mealIntake.timestamp!,
-                                      //             healthyEatingIndex: accMeal.healtyEatingIndex!,
-                                      //             glycemicIndex: accMeal.glycemicIndex!,
-                                      //             carbohydrates: accMeal.carbohydrate!,
-                                      //             energyKcal: accMeal.energyKcal!,
-                                      //             diversityScore: accMeal.diversityScore!,
-                                      //             stepsCount: 0.0);
-
-                                      //         context.read<MealIntakeBloc>().add(AddMealIntake(mealIntake));
-                                      //         context.read<RecordBloc>().add(UpdateRecord(record));
-
-                                      //         // TODO: JUMP TO MEAL DETAILS SCREEN
-                                      //         Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      //           return MealDetailsScreen(mealIntake: mealIntake);
-                                      //         }));
-                                      //       } else if (state is MealNotFound) {
-                                      //         // show an error message if the medication was not found
-                                      //         final snackBar = SnackBar(
-                                      //           backgroundColor: Colors.red,
-                                      //           content: const Text('Meal not found!'),
-                                      //           action: SnackBarAction(
-                                      //             label: 'Close',
-                                      //             onPressed: () {},
-                                      //           ),
-                                      //         );
-                                      //         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                      //       } else if (state is MealError) {
-                                      //         // handle any errors here
-                                      //         final snackBar = SnackBar(
-                                      //           backgroundColor: Colors.red,
-                                      //           content: Text(state.message),
-                                      //           action: SnackBarAction(
-                                      //             label: 'Close',
-                                      //             onPressed: () {},
-                                      //           ),
-                                      //         );
-                                      //         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                      //       }
-                                      //     },
-                                      //     child: const SizedBox()),
                                     ],
                                   ),
                                 ]),

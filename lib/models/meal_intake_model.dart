@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diabuddy/models/meal_model.dart';
 
@@ -52,5 +54,31 @@ class MealIntake {
       'mealTime': mealIntake.mealTime,
       'accMeals': mealIntake.accMeals?.toJson(),
     };
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'mealIntakeId': mealIntakeId,
+      'userId': userId,
+      'foodIds': foodIds.join(', '),
+      'photoUrl': photoUrl,
+      'proofPath': proofPath,
+      'timestamp': timestamp!.millisecondsSinceEpoch,
+      'mealTime': mealTime,
+      'accMeals': accMeals != null ? jsonEncode(accMeals!.toMap()) : null,
+    };
+  }
+
+  factory MealIntake.fromMap(Map<String, dynamic> map) {
+    return MealIntake(
+      mealIntakeId: map['mealIntakeId'] as String?,
+      userId: map['userId'] as String,
+      foodIds: (map['foodIds'] as String).split(','),
+      photoUrl: map['photoUrl'] as String,
+      proofPath: map['proofPath'] as String,
+      timestamp: map['timestamp'] != null ? DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int) : null,
+      mealTime: map['mealTime'] as String,
+      accMeals: map['accMeals'] != null ? Meal.fromJson(map['accMeals'], map['accMeals']['mealId']) : null,
+    );
   }
 }

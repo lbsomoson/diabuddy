@@ -23,7 +23,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     user = context.read<UserAuthProvider>().user;
     if (user != null) {
-      context.read<RecordBloc>().add(LoadRecords(user!.uid, DateTime.now()));
+      // context.read<RecordBloc>().add(LoadRecords(user!.uid, DateTime.now()));
     }
   }
 

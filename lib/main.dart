@@ -10,6 +10,7 @@ import 'package:diabuddy/provider/meal/meal_bloc.dart';
 import 'package:diabuddy/provider/meal/meal_repository.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_bloc.dart';
 import 'package:diabuddy/provider/meal_intake/meal_intake_repository.dart';
+import 'package:diabuddy/provider/meal_intake_provider.dart';
 import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/provider/medications/medications_bloc.dart';
@@ -67,7 +68,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AppointmentProvider()),
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
         ChangeNotifierProvider(create: (context) => DailyHealthRecordProvider()),
-        ChangeNotifierProvider(create: (context) => MealProvider())
+        ChangeNotifierProvider(create: (context) => MealProvider()),
+        ChangeNotifierProvider(create: (context) => MealIntakeProvider())
       ],
       child: const MyApp(),
     ),
