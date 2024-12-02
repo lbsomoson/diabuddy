@@ -296,7 +296,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
 
                         widget.med.time = widget.med.time + stringList;
 
-                        // context.read<MedicationBloc>().add(UpdateMedication(widget.med, widget.med.medicationId!));
                         context.read<MedicationProvider>().updateMedication(widget.med, widget.med.medicationId!);
 
                         if (context.mounted) {
@@ -322,7 +321,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   style: 'outlined',
                   label: "Delete",
                   callback: () async {
-                    // context.read<MedicationBloc>().add(DeleteMedication(widget.med.medicationId!));
                     context.read<MedicationProvider>().deleteMedication(widget.med.medicationId!);
 
                     await localNotifications.cancelScheduledNotifications(

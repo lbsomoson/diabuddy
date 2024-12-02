@@ -429,7 +429,7 @@ Widget _displayAppointments(BuildContext context, String id, Future<List<Appoint
                   },
                   trailing: Icons.edit,
                   title: appointment.title,
-                  subtitle: dateFormatted(appointment.date!),
+                  subtitle: dateFormatted(appointment.date),
                 );
               });
         } else {

@@ -1,6 +1,5 @@
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
-import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
 import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -112,7 +111,6 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                     label: "Edit Appointment",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        // TODO: MOVE THIS TO /chooseReadOptionScreen
                         context
                             .read<AppointmentProvider>()
                             .updateAppointment(widget.appointment, widget.appointment.appointmentId!);
@@ -149,7 +147,6 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                   style: 'outlined',
                   label: "Delete",
                   callback: () async {
-                    // context.read<AppointmentBloc>().add(DeleteAppointment(widget.appointment.appointmentId!));
                     context.read<AppointmentProvider>().deleteAppointment(int.parse(widget.appointment.appointmentId!));
 
                     localNotifications.cancelScheduledNotificationsAppointments(
