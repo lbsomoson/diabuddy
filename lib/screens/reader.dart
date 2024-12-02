@@ -212,8 +212,8 @@ class _VerifySubmitState extends State<VerifySubmit> {
                       await Permission.storage.request();
                       // if (context.mounted) context.read<MedicationBloc>().add(AddMedication(widget.medicationIntake));
 
-                      // int id = await db.insertMedication(widget.medicationIntake);
-                      // print("created medication id: $id");
+                      int id = await db.insertMedication(widget.medicationIntake);
+                      print("created medication id: $id");
 
                       var listMedications = await db.getMedications(userId!);
                       for (var m in listMedications) {

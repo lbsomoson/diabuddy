@@ -1,20 +1,47 @@
 import 'dart:convert';
 
+import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseService {
+  Future<void> printTableContents(String tableName) async {
+    final db = await initializeDB();
+    // Query all rows from the table
+    List<Map<String, dynamic>> rows = await db.query(tableName);
+
+    // Print the results to the console
+    print('Contents of $tableName:');
+    for (var row in rows) {
+      print(row);
+    }
+  }
+
+  Future<void> printTableSchema(String tableName) async {
+    final db = await initializeDB();
+
+    // Query the sqlite_master table for the schema of the table
+    List<Map<String, dynamic>> result =
+        await db.rawQuery("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?", [tableName]);
+
+    // Check if the table exists and print its schema
+    if (result.isNotEmpty) {
+      String schema = result.first['sql'];
+      print('Schema of table $tableName:');
+      print(schema);
+    } else {
+      print('Table $tableName does not exist in the database.');
+    }
+  }
+
   Future<Database> initializeDB() async {
+    // deleteDatabase(join(await getDatabasesPath(), 'diabuddy_database.db'));
+
     // Open the database and store the reference.
     final database = openDatabase(
-      // Set the path to the database. Note: Using the `join` function from the
-      // `path` package is best practice to ensure the path is correctly
-      // constructed for each platform.
       join(await getDatabasesPath(), 'diabuddy_database.db'),
-      // When the database is first created, create a table to store tasks.
       onCreate: (db, version) async {
-        // Run the CREATE TABLE statement on the database.
         await db.execute(
           '''
           CREATE TABLE medications(
@@ -28,14 +55,27 @@ class DatabaseService {
             verifiedBy TEXT NOT NULL,
             isActive INTEGER NOT NULL
           )
-        ''',
+          ''',
         );
+        await db.execute('''
+          CREATE TABLE appointments(
+            appointmentId INTEGER PRIMARY KEY AUTOINCREMENT,
+            userId TEXT NOT NULL,
+            channelId INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            doctorName TEXT NOT NULL,
+            clinicName TEXT NOT NULL,
+            date INTEGER NOT NULL
+          )
+          ''');
       },
       version: 1,
     );
 
     return database;
   }
+
+  // ================================== MEDICATION_INTAKE CRUD OPERATIONS ==================================
 
   // define a function that inserts medication into the database
   Future<int> insertMedication(MedicationIntake medicationIntake) async {
@@ -105,7 +145,6 @@ class DatabaseService {
   Future<void> deleteMedication(String medicationId) async {
     final db = await initializeDB();
 
-    print("in soft delete medicaions");
     // update only the isActive field to false
     await db.update(
       'medications',
@@ -121,7 +160,6 @@ class DatabaseService {
 
       // Prepare the updated data for the medication
       Map<String, dynamic> updatedData = medication.toMap();
-      print(updatedData);
 
       // Update the medication record in the database
       await db.update(
@@ -135,5 +173,74 @@ class DatabaseService {
     } catch (e) {
       print("Error: $e");
     }
+  }
+
+  // ================================== APPOINTMENTS CRUD OPERATIONS ==================================
+
+  // define a function that inserts appointment into the database
+  Future<int> insertAppointment(Appointment appointment) async {
+    // get a reference to the database
+    final db = await initializeDB();
+
+    return await db.insert(
+      'appointments',
+      appointment.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // A method that retrieves all the appointments belonging to a userId
+  Future<List<Appointment>> getAppointments(String userId) async {
+    final db = await initializeDB();
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'appointments',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+
+    // Convert the List<Map<String, dynamic> into a List<MedicationIntake>.
+    return List.generate(maps.length, (i) {
+      return Appointment(
+          appointmentId: maps[i]['appointmentId'].toString(),
+          channelId: maps[i]['channelId'],
+          userId: maps[i]['userId'],
+          title: maps[i]['title'],
+          doctorName: maps[i]['doctorName'],
+          clinicName: maps[i]['clinicName'],
+          date: DateTime.fromMillisecondsSinceEpoch(maps[i]['date']));
+    });
+  }
+
+  Future<void> updateAppointment(Appointment appointment, String appointmentId) async {
+    try {
+      final db = await initializeDB();
+
+      // Prepare the updated data for the medication
+      Map<String, dynamic> updatedData = appointment.toMap();
+
+      // Update the medication record in the database
+      await db.update(
+        'appointments',
+        updatedData,
+        where: 'appointmentId = ?',
+        whereArgs: [appointmentId],
+      );
+
+      print("Appointment updated successfully");
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  // A method that deletes a receipt given an id.
+  Future<void> deleteAppointment(int appointmentId) async {
+    final db = await initializeDB();
+
+    await db.delete(
+      'appointments',
+      where: 'appointmentId = ?',
+      whereArgs: [appointmentId],
+    );
   }
 }

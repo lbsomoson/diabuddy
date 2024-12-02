@@ -1,40 +1,41 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:diabuddy/api/appointment_api.dart';
+import 'package:diabuddy/models/appointment_model.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentProvider with ChangeNotifier {
-  FirebaseAppointmentAPI firebaseService = FirebaseAppointmentAPI();
+  final DatabaseService databaseService = DatabaseService();
 
-  late Stream<QuerySnapshot> _appointmentsStream;
+  late List<Appointment> appointments;
 
-  Stream<QuerySnapshot> getAppointments(String id) {
-    _appointmentsStream = firebaseService.getAppointments(id);
-    notifyListeners();
-    return _appointmentsStream;
+  Future<List<Appointment>> getAppointments(String userId) async {
+    appointments = await databaseService.getAppointments(userId);
+    return appointments;
   }
 
-  Future<Map<String, dynamic>> getAppointment(String id) async {
-    Map<String, dynamic> appointment = await firebaseService.getAppointment(id);
-    notifyListeners();
-    return appointment;
+  Future<void> addAppointment(Appointment appointment) async {
+    try {
+      await databaseService.insertAppointment(appointment);
+      notifyListeners(); // Notify UI that data has changed
+    } catch (e) {
+      print("Error adding medication: $e");
+    }
   }
 
-  Future<String> addAppointment(Map<String, dynamic> data) async {
-    String message = await firebaseService.addAppointment(data);
-    notifyListeners();
-    return message;
+  Future<void> updateAppointment(Appointment appointment, String appointmentId) async {
+    try {
+      await databaseService.updateAppointment(appointment, appointmentId);
+      notifyListeners();
+    } catch (e) {
+      print("Error updating medication: $e");
+    }
   }
 
-  Future<String> editAppointment(
-      String id, Map<String, dynamic> updatedData) async {
-    String message = await firebaseService.editAppointment(id, updatedData);
-    notifyListeners();
-    return message;
-  }
-
-  Future<String> deleteAppointment(String id) async {
-    String message = await firebaseService.deleteAppointment(id);
-    notifyListeners();
-    return message;
+  Future<void> deleteAppointment(int appointmentId) async {
+    try {
+      await databaseService.deleteAppointment(appointmentId);
+      notifyListeners();
+    } catch (e) {
+      print("Error deleting medication: $e");
+    }
   }
 }

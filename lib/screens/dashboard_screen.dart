@@ -4,6 +4,7 @@ import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
 import 'package:diabuddy/screens/advice.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
@@ -22,6 +23,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   User? user;
   AppUser? appuser;
+  DatabaseService db = DatabaseService();
 
   FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
@@ -50,6 +52,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context.read<RecordBloc>().add(LoadRecord(user!.uid, DateTime.now()));
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
     }
+
+    db.printTableContents('appointments');
+    db.printTableContents('medications');
+    db.printTableSchema('appointments');
   }
 
   @override

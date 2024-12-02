@@ -1,5 +1,5 @@
 import 'package:diabuddy/models/appointment_model.dart';
-import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/datepicker.dart';
@@ -7,7 +7,7 @@ import 'package:diabuddy/utils/local_notifications.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class AddAppointmentScreen extends StatefulWidget {
@@ -24,6 +24,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   List<Map<String, dynamic>> textFields = [];
   LocalNotifications localNotifications = LocalNotifications();
   late int uniqueId;
+  DatabaseService db = DatabaseService();
 
   late Appointment appointment;
   TimeOfDay time = TimeOfDay.now();
@@ -55,9 +56,9 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
   void _mergeDateAndTime(TimeOfDay time) {
     setState(() {
       appointment.date = DateTime(
-        appointment.date!.year,
-        appointment.date!.month,
-        appointment.date!.day,
+        appointment.date.year,
+        appointment.date.month,
+        appointment.date.day,
         time.hour,
         time.minute,
       );
@@ -85,6 +86,16 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
     }
 
     return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  DateTime formatDateTime(DateTime dateTime) {
+    // Format the DateTime to the required string format
+    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+    String formattedString = formatter.format(dateTime);
+
+    // Convert it back to DateTime
+    DateTime formattedDate = DateTime.parse(formattedString);
+    return formattedDate;
   }
 
   @override
@@ -145,7 +156,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                             List<String> parts = val.split('/');
                             val = '${parts[2]}-${parts[0]}-${parts[1]}';
                           }
-                          appointment.date = DateTime.parse(val);
+                          appointment.date = formatDateTime(DateTime.parse(val));
                         } catch (e) {
                           print("Invalid date format");
                         }
@@ -165,20 +176,33 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                     label: "Time",
                   ),
                   Column(
-                    children: textFields
-                        .map((field) => field['widget'] as Widget)
-                        .toList(),
+                    children: textFields.map((field) => field['widget'] as Widget).toList(),
                   ),
                   const SizedBox(height: 20),
-                  BlocListener<AppointmentBloc, AppointmentState>(
-                    listener: (context, state) {
-                      if (state is AppointmentAdded) {
+                  ButtonWidget(
+                    style: 'filled',
+                    label: "Add Appointment",
+                    callback: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          appointment.userId = widget.id;
+                        });
+
+                        _mergeDateAndTime(time);
+
+                        print(appointment.date);
+
+                        // dispatch the event to add appointment
+                        // context.read<AppointmentBloc>().add(AddAppointment(appointment));
+                        int id = await db.insertAppointment(appointment);
+                        print("created appointment id: $id");
+
+                        if (!context.mounted) return;
+
                         // display the snack bar or trigger notifications
                         final snackBar = SnackBar(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          content:
-                              const Text('Added appointment successfully!'),
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          content: const Text('Added appointment successfully!'),
                           action: SnackBarAction(
                             label: 'Close',
                             onPressed: () {},
@@ -193,39 +217,68 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                           context,
                           id: widget.id,
                           appointmentId: appointment.channelId,
-                          date: appointment.date!,
+                          date: appointment.date,
                           title: appointment.title,
-                          body:
-                              "You have a medical appointment with ${appointment.doctorName}!",
+                          body: "You have a medical appointment with ${appointment.doctorName}!",
                           payload: "Appointment Reminder",
                         );
 
                         // pop the screen after processing the appointment
                         Navigator.pop(context);
-                      } else if (state is AppointmentError) {
-                        // handle errors if needed
-                        print("Error: ${state.message}");
                       }
                     },
-                    child: ButtonWidget(
-                      style: 'filled',
-                      label: "Add Appointment",
-                      callback: () {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            appointment.userId = widget.id;
-                          });
+                  ),
+                  // BlocListener<AppointmentBloc, AppointmentState>(
+                  //   listener: (context, state) {
+                  //     if (state is AppointmentAdded) {
+                  //       // display the snack bar or trigger notifications
+                  //       final snackBar = SnackBar(
+                  //         backgroundColor: Theme.of(context).colorScheme.primary,
+                  //         content: const Text('Added appointment successfully!'),
+                  //         action: SnackBarAction(
+                  //           label: 'Close',
+                  //           onPressed: () {},
+                  //         ),
+                  //       );
+                  //       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                          _mergeDateAndTime(time);
+                  //       _mergeDateAndTime(time);
 
-                          // dispatch the event to add appointment
-                          context
-                              .read<AppointmentBloc>()
-                              .add(AddAppointment(appointment));
-                        }
-                      },
-                    ),
-                  )
+                  //       // trigger local notifications using appointment ID
+                  //       localNotifications.showScheduledNotificationAppointment(
+                  //         context,
+                  //         id: widget.id,
+                  //         appointmentId: appointment.channelId,
+                  //         date: appointment.date!,
+                  //         title: appointment.title,
+                  //         body: "You have a medical appointment with ${appointment.doctorName}!",
+                  //         payload: "Appointment Reminder",
+                  //       );
+
+                  //       // pop the screen after processing the appointment
+                  //       Navigator.pop(context);
+                  //     } else if (state is AppointmentError) {
+                  //       // handle errors if needed
+                  //       print("Error: ${state.message}");
+                  //     }
+                  //   },
+                  //   child: ButtonWidget(
+                  //     style: 'filled',
+                  //     label: "Add Appointment",
+                  //     callback: () {
+                  //       if (_formKey.currentState!.validate()) {
+                  //         setState(() {
+                  //           appointment.userId = widget.id;
+                  //         });
+
+                  //         _mergeDateAndTime(time);
+
+                  //         // dispatch the event to add appointment
+                  //         // context.read<AppointmentBloc>().add(AddAppointment(appointment));
+                  //       }
+                  //     },
+                  //   ),
+                  // )
                 ],
               ),
             ),
