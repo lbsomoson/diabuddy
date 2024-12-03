@@ -5,6 +5,7 @@ import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
+import 'package:diabuddy/models/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -135,10 +136,90 @@ class DatabaseService {
             stepsCount REAL NOT NULL
           )
         ''');
+        await db.execute('''
+          CREATE TABLE app_users(
+            userId INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT,
+            age INTEGER,
+            gender TEXT,
+            activityLevel TEXT,
+            height REAL,
+            weight REAL,
+            dailyCalorieIntake INTEGER,
+          )
+        ''');
       },
     );
 
     return database;
+  }
+
+  // ================================== APPUSER CRUD OPERATIONS ==================================
+
+  // define a function that inserts medication into the database
+  Future<int> insertUser(AppUser appUser) async {
+    // get a reference to the database
+    final db = await initializeDB();
+
+    return await db.insert(
+      'app_users',
+      appUser.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<AppUser?> getUserInfo(String userId) async {
+    final db = await initializeDB();
+
+    // Query the meals table where the mealName matches
+    List<Map<String, dynamic>> result = await db.query(
+      'app_users',
+      where: 'userId = ?',
+      whereArgs: [userId],
+      limit: 1,
+    );
+
+    // If a result is found, return a Meal object
+    if (result.isNotEmpty) {
+      Map<String, dynamic> appUser = result.first;
+      return AppUser.fromJson(appUser);
+    }
+
+    // Return null if no meal is found
+    return null;
+  }
+
+  Future<void> updateUserDetails(String userId, AppUser appUser) async {
+    // get a reference to the database
+    final db = await initializeDB();
+
+    final List<Map<String, dynamic>> existingUsers =
+        await db.query('app_users', where: 'userId = ?', whereArgs: [userId], limit: 1);
+
+    if (existingUsers.isNotEmpty) {
+      // Extract the existing record data
+      final Map<String, dynamic> existingData = existingUsers.first;
+
+      // Merge the existing data with the new data
+      final Map<String, dynamic> updatedData = {
+        ...existingData,
+        ...appUser.toMap(),
+      };
+
+      // Update the record in the database
+      await db.update(
+        'app_users',
+        updatedData,
+        where: 'userId = ?',
+        whereArgs: [existingData['userId']],
+      );
+
+      print('Record updated successfully.');
+    } else {
+      // Handle the case where no matching record exists
+      print('No existing record found for the specified date and userId.');
+    }
   }
 
   // ================================== MEDICATION_INTAKE CRUD OPERATIONS ==================================
@@ -332,10 +413,6 @@ class DatabaseService {
     // Load JSON data
     Map<String, dynamic> jsonData = await loadJsonData();
     List<dynamic> meals = jsonData['meals'];
-
-    // if (result.isNotEmpty) {
-    //   return; // TODO: UNCOMMENT/COMMENT THIS LINE TO INSERT DATA TO DATABASE
-    // }
 
     for (var meal in meals) {
       await database.insert('meals', {

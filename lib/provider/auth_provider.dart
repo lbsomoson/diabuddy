@@ -1,10 +1,12 @@
 import 'package:diabuddy/api/auth_api.dart';
 import 'package:diabuddy/models/user_model.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class UserAuthProvider with ChangeNotifier {
   late FirebaseAuthAPI authService;
+  final DatabaseService database = DatabaseService();
 
   UserAuthProvider() {
     authService = FirebaseAuthAPI();

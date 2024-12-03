@@ -100,13 +100,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       showTitles: true,
                       interval: 100,
                       getTitlesWidget: (value, meta) {
-                        if (value % 100 == 0) {
-                          return Text(
-                            "${value.toInt()}",
-                            style: const TextStyle(fontSize: 12),
-                          );
-                        }
-                        return const SizedBox.shrink();
+                        // if (value % 100 == 0) {}
+                        return Text(
+                          "${value.toInt()}",
+                          style: const TextStyle(fontSize: 12),
+                        );
+                        // return const SizedBox.shrink();
                       },
                     ),
                   ),
@@ -210,8 +209,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     // Get the month as a string (1-based index, so subtract 1)
     String monthString = monthNames[month - 1];
-
-    // Return the result formatted as a string
     return monthString;
   }
 }
