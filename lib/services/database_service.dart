@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:diabuddy/models/appointment_model.dart';
+import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/models/medication_intake_model.dart';
@@ -119,6 +120,19 @@ class DatabaseService {
             foodIds TEXT NOT NULL,
             mealTime TEXT NOT NULL,
             accMeals TEXT NOT NULL
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE records(
+            recordId INTEGER PRIMARY KEY AUTOINCREMENT,
+            userId TEXT NOT NULL,
+            date INTEGER NOT NULL,
+            healthyEatingIndex REAL NOT NULL,
+            diversityScore REAL NOT NULL,
+            glycemicIndex REAL NOT NULL,
+            carbohydrates REAL NOT NULL,
+            energyKcal REAL NOT NULL,
+            stepsCount REAL NOT NULL
           )
         ''');
       },
@@ -303,16 +317,25 @@ class DatabaseService {
   }
 
   Future<void> uploadJsonDataToSQLite(Database database) async {
-    // Check if the data has already been loaded (can be done with a metadata table or flag)
-    var result = await database.rawQuery("SELECT 1 FROM sqlite_master WHERE name = 'metadata'");
+    // Check if data is already loaded
+    var result = await database.query(
+      'metadata',
+      where: 'key = ?',
+      whereArgs: ['dataLoaded'],
+    );
+
+    if (result.isNotEmpty && result.first['value'] == 'true') {
+      print('Meals data is already loaded. Skipping insertion.');
+      return;
+    }
 
     // Load JSON data
     Map<String, dynamic> jsonData = await loadJsonData();
     List<dynamic> meals = jsonData['meals'];
 
-    if (result.isNotEmpty) {
-      return; // TODO: UNCOMMENT/COMMENT THIS LINE TO INSERT DATA TO DATABASE
-    }
+    // if (result.isNotEmpty) {
+    //   return; // TODO: UNCOMMENT/COMMENT THIS LINE TO INSERT DATA TO DATABASE
+    // }
 
     for (var meal in meals) {
       await database.insert('meals', {
@@ -514,5 +537,160 @@ class DatabaseService {
             : null,
       );
     });
+  }
+
+  // ================================== DAILY HEALTH RECORD CRUD OPERATIONS ==================================
+
+  // define a function that inserts meal_intake into the database
+  Future<void> insertRecord(DailyHealthRecord record) async {
+    try {
+      // Get a reference to the database
+      final db = await initializeDB();
+
+      // Define the start and end of the day for the record's date
+      final int startOfDay = DateTime(record.date.year, record.date.month, record.date.day).millisecondsSinceEpoch;
+      final int endOfDay = startOfDay + const Duration(days: 1).inMilliseconds;
+
+      // Check if a record with the same `userId` and `date` already exists
+      final List<Map<String, dynamic>> existingRecords = await db.query(
+        'records',
+        where: 'userId = ? AND date >= ? AND date < ?',
+        whereArgs: [record.userId, startOfDay, endOfDay],
+        limit: 1,
+      );
+
+      if (existingRecords.isNotEmpty) {
+        print('Record already exists for this user on the specified date.');
+        return;
+      }
+
+      // Add the new record if no duplicate exists
+      await db.insert(
+        'records',
+        record.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      print('Record added successfully.');
+    } catch (e) {
+      print('Error adding record: $e');
+    }
+  }
+
+  Future<void> updateRecord(DailyHealthRecord record) async {
+    try {
+      // Get a reference to the database
+      final db = await initializeDB();
+
+      // Define the start and end of the day for the record's date
+      final int startOfDay = DateTime(record.date.year, record.date.month, record.date.day).millisecondsSinceEpoch;
+      final int endOfDay = startOfDay + const Duration(days: 1).inMilliseconds;
+
+      // Query for the existing record with the same `userId` and date range
+      final List<Map<String, dynamic>> existingRecords = await db.query(
+        'records', // Table name
+        where: 'userId = ? AND date >= ? AND date < ?',
+        whereArgs: [record.userId, startOfDay, endOfDay],
+        limit: 1,
+      );
+
+      if (existingRecords.isNotEmpty) {
+        // Extract the existing record data
+        final Map<String, dynamic> existingData = existingRecords.first;
+
+        // Merge the existing data with the new data
+        final Map<String, dynamic> updatedData = {
+          ...existingData,
+          ...record.toMap(),
+          'healthyEatingIndex': (existingData['healthyEatingIndex'] as num) + record.healthyEatingIndex,
+          'glycemicIndex': (existingData['glycemicIndex'] as num) + record.glycemicIndex,
+          'carbohydrates': (existingData['carbohydrates'] as num) + record.carbohydrates,
+          'energyKcal': (existingData['energyKcal'] as num) + record.energyKcal,
+          'diversityScore': (existingData['diversityScore'] as num) + record.diversityScore,
+        };
+
+        // Update the record in the database
+        await db.update(
+          'records',
+          updatedData,
+          where: 'recordId = ?',
+          whereArgs: [existingData['recordId']],
+        );
+
+        print('Record updated successfully.');
+      } else {
+        // Handle the case where no matching record exists
+        print('No existing record found for the specified date and userId.');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('An error occurred: $e');
+    }
+  }
+
+  Future<DailyHealthRecord?> getRecordByDate(String id, DateTime date) async {
+    try {
+      // Get a reference to the database
+      final db = await initializeDB();
+
+      // Calculate the start and end of the specified date
+      final int startOfDay = DateTime(date.year, date.month, date.day).millisecondsSinceEpoch;
+      final int endOfDay = startOfDay + const Duration(days: 1).inMilliseconds;
+
+      // Query the database for a record that matches the criteria
+      final List<Map<String, dynamic>> records = await db.query(
+        'records',
+        where: 'userId = ? AND date >= ? AND date < ?',
+        whereArgs: [id, startOfDay, endOfDay],
+        limit: 1,
+      );
+
+      // Check if a record was found
+      if (records.isNotEmpty) {
+        // Convert the record data into a `DailyHealthRecord` object
+        final recordData = records.first;
+        return DailyHealthRecord.fromMap(recordData);
+      } else {
+        // Return null if no record was found
+        return null;
+      }
+    } catch (e) {
+      // Handle any errors that occur during the query
+      print("Error fetching record: $e");
+      return null;
+    }
+  }
+
+  Future<List<DailyHealthRecord>> getRecordsPerMonth(String userId, DateTime date) async {
+    // Get a reference to the database
+    final db = await initializeDB();
+
+    try {
+      // Query the database for records that match the userId
+      final List<Map<String, dynamic>> records = await db.query(
+        'records',
+        where: 'userId = ?',
+        whereArgs: [userId],
+      );
+
+      // Map the query results to a list of DailyHealthRecord objects
+      final allRecords = records.map((record) {
+        return DailyHealthRecord.fromMap(record);
+      }).toList();
+
+      // Filter the records by the specified month and year
+      final filteredRecords = allRecords.where((record) {
+        final recordDate = record.date;
+        return recordDate.year == date.year && recordDate.month == date.month;
+      }).toList();
+
+      // Sort the filtered records in ascending order of date
+      filteredRecords.sort((a, b) => a.date.compareTo(b.date));
+
+      return filteredRecords;
+    } catch (e) {
+      print('Error fetching records: $e');
+      return [];
+    }
   }
 }

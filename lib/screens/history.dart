@@ -1,6 +1,7 @@
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
+import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,47 +16,44 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  User? user;
-
-  @override
-  void initState() {
-    super.initState();
-
-    user = context.read<UserAuthProvider>().user;
-    if (user != null) {
-      // context.read<RecordBloc>().add(LoadRecords(user!.uid, DateTime.now()));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    User? user = context.read<UserAuthProvider>().user;
+    Future<List<DailyHealthRecord>> recordThisMonth =
+        context.watch<DailyHealthRecordProvider>().getRecordsPerMonth(user!.uid, DateTime.now());
+
     return Scaffold(
-      appBar: AppBar(title: const TextWidget(text: "Statistics", style: 'bodyLarge')),
-      body: SafeArea(
-          child: SingleChildScrollView(
-              child: BlocListener<RecordBloc, RecordState>(listener: (context, state) {
-        if (state is RecordUpdated) {
-          context.read<RecordBloc>().add(LoadRecords(user!.uid, DateTime.now()));
-        }
-      }, child: BlocBuilder<RecordBloc, RecordState>(
-        builder: (context, state) {
-          if (state is RecordLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is RecordLoaded) {
-            List<DailyHealthRecord> records = state.records;
-            if (records.isEmpty) return const Center(child: Text("No records found."));
-            return buildScreen(records);
-          } else if (state is RecordNotFound) {
-            return const Center(child: Text("No records available."));
-          } else if (state is RecordError) {
-            return Center(child: Text("Error: ${state.message}"));
-          } else {
-            print("====== $state");
-            return const Center(child: Text("Something went wrong."));
-          }
-        },
-      )))),
-    );
+        appBar: AppBar(title: const TextWidget(text: "Statistics", style: 'bodyLarge')),
+        body: SafeArea(
+            child: SingleChildScrollView(
+                child: BlocListener<RecordBloc, RecordState>(
+          listener: (context, state) {
+            if (state is RecordUpdated) {
+              context.read<RecordBloc>().add(LoadRecords(user.uid, DateTime.now()));
+            }
+          },
+          child: FutureBuilder(
+              future: recordThisMonth,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text("No records found this month"),
+                    );
+                  }
+                  print("--------------------------");
+                  print(snapshot.data);
+                  print("--------------------------");
+                  return buildScreen(snapshot.data!);
+                } else {
+                  return Container();
+                }
+              }),
+        ))));
   }
 
   Widget buildChartContainer(
@@ -155,8 +153,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     // prepare chart data
     List<FlSpot> calorieSpots = [];
-    // List<FlSpot> glycemicIndexSpots = [];
-    // List<FlSpot> diversityScoreSpots = [];
+    List<FlSpot> glycemicIndexSpots = [];
+    List<FlSpot> diversityScoreSpots = [];
     List<DateTime> xAxisDates = [];
 
     for (var entry in groupedRecords.entries) {
@@ -165,23 +163,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       // aggregate data
       double totalCalories = dailyRecords.fold(0, (sum, record) => sum + record.energyKcal);
+      double totalGlycemicIndex = dailyRecords.fold(0, (sum, record) => sum + record.glycemicIndex);
+      double totalDiversityScore = dailyRecords.fold(0, (sum, record) => sum + record.diversityScore);
 
       // convert the date to a timestamp for the x-axis
       DateTime dateTime = DateTime.parse(date);
-      print(dateTime);
       xAxisDates.add(dateTime);
 
       // add a FlSpot using the date's timestamp as x
       calorieSpots.add(FlSpot(dateTime.millisecondsSinceEpoch.toDouble(), totalCalories));
+      glycemicIndexSpots.add(FlSpot(dateTime.millisecondsSinceEpoch.toDouble(), totalGlycemicIndex));
+      diversityScoreSpots.add(FlSpot(dateTime.millisecondsSinceEpoch.toDouble(), totalDiversityScore));
     }
-
-    print(xAxisDates);
 
     // build charts
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildChartContainer("Calories", calorieSpots, xAxisDates),
+        buildChartContainer("Glycemic Index", glycemicIndexSpots, xAxisDates),
+        buildChartContainer("Diversity Score", diversityScoreSpots, xAxisDates),
       ],
     );
   }

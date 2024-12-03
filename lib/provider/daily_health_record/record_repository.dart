@@ -88,18 +88,7 @@ class RecordRepository {
     }
   }
 
-  Future<void> deleteRecord(String recordId) {
-    return firestore.collection('records').doc(recordId).delete();
-  }
-
   Stream<List<DailyHealthRecord>> getRecords(String userId, DateTime date) {
-    // final r =
-    //     FirebaseFirestore.instance.collection('records').where("userId", isEqualTo: userId).snapshots().map((snapshot) {
-    //   return snapshot.docs.map((doc) {
-    //     return DailyHealthRecord.fromJson(doc.data(), doc.id);
-    //   }).toList();
-    // });
-    // return r;
     return FirebaseFirestore.instance
         .collection('records')
         .where("userId", isEqualTo: userId)
@@ -109,21 +98,6 @@ class RecordRepository {
         return DailyHealthRecord.fromJson(doc.data(), doc.id);
       }).toList();
     }).map((records) {
-      // return records.where((record) {
-      //   final recordDate = record.date; // Assuming `date` is a field in DailyHealthRecord
-      //   return recordDate.year == date.year && recordDate.month == date.month;
-      // }).toList();
-
-      // Filter records by the specified month and year
-      // final filteredRecords = records.where((record) {
-      //   final recordDate = record.date; // Assuming `date` is a field in DailyHealthRecord
-      //   return recordDate.year == date.year && recordDate.month == date.month;
-      // }).toList();
-
-      // // Sort the filtered records in descending order of date
-      // filteredRecords.sort((a, b) => b.date.compareTo(a.date));
-      // return filteredRecords;
-
       // Filter records by the specified month and year
       final filteredRecords = records.where((record) {
         final recordDate = record.date; // Assuming `date` is a field in DailyHealthRecord

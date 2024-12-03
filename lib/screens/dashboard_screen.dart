@@ -1,8 +1,8 @@
-import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
+import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/screens/advice.dart';
 import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
@@ -25,7 +25,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   AppUser? appuser;
   DatabaseService db = DatabaseService();
 
-  FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
 
   DailyHealthRecord record = DailyHealthRecord(
@@ -42,22 +41,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // firestore.uploadJsonDataToFirestore();
+    db.initializeDB();
     uploadData();
     user = context.read<UserAuthProvider>().user;
 
     record.userId = user!.uid;
 
     if (user != null) {
-      // context.read<RecordBloc>().add(AddRecord(record));
       context.read<RecordBloc>().add(LoadRecord(user!.uid, DateTime.now()));
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
+      context.read<DailyHealthRecordProvider>().addRecord(record);
     }
 
-    db.printTableSchema('meal_intakes');
-    db.printTableContents('meal_intakes');
-    // db.printTableContents('meals');
-    // db.printTableSchema('meals');
+    db.printTableSchema('records');
+    db.printTableContents('records');
   }
 
   @override
@@ -118,7 +115,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
-    List<String> nameParts = user!.displayName!.split(' ');
+    Future<DailyHealthRecord?> recordToday =
+        context.watch<DailyHealthRecordProvider>().getRecordByDate(user!.uid, DateTime.now());
+
+    List<String> nameParts = user.displayName!.split(' ');
     String firstName = nameParts.isNotEmpty ? nameParts.first : '';
 
     return Scaffold(
@@ -126,30 +126,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: BlocBuilder<RecordBloc, RecordState>(
-              builder: (context, state) {
-                if (state is RecordLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is SingleRecordLoaded) {
-                  DailyHealthRecord record = state.record;
-                  return buildDashboard(record, firstName);
-                } else if (state is RecordUpdated) {
-                  DailyHealthRecord updatedRecord = state.record;
-                  return buildDashboard(updatedRecord, firstName);
-                } else if (state is RecordNotFound) {
-                  context.read<RecordBloc>().add(AddRecord(record));
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is RecordError) {
-                  print("Record Error: ${state.message}");
-                  return const Center(child: CircularProgressIndicator());
-                } else {
-                  print("++++ $state");
-                  return const Center(child: Text("Something went wrong."));
-                }
-              },
-            ),
-          ),
+              padding: const EdgeInsets.all(20.0),
+              child: FutureBuilder(
+                  future: recordToday,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return buildDashboard(snapshot.data, firstName);
+                    } else {
+                      return Container();
+                    }
+                  })),
         ),
       ),
     );

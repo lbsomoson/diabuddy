@@ -3,6 +3,7 @@ import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/provider/meal_intake_provider.dart';
 import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/screens/meal_details.dart';
@@ -407,7 +408,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                       ButtonWidget(
                                           callback: () {
                                             if (_formKey.currentState!.validate()) {
-                                              // context.read<MealBloc>().add(const LoadMeals());
                                               try {
                                                 // Process the meals
                                                 mealsDetected.clear();
@@ -447,8 +447,8 @@ class _CameraScreenState extends State<CameraScreen> {
                                                   stepsCount: 0.0,
                                                 );
 
-                                                // TODO: Save `record`
                                                 context.read<MealIntakeProvider>().addMealIntake(mealIntake);
+                                                context.read<DailyHealthRecordProvider>().updateRecord(record);
 
                                                 // Navigate to the Meal Details screen
                                                 Navigator.push(
