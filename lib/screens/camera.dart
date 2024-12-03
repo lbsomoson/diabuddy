@@ -9,6 +9,7 @@ import 'package:diabuddy/provider/meal_provider.dart';
 import 'package:diabuddy/screens/meal_details.dart';
 import 'package:diabuddy/utils/classes.dart';
 import 'package:diabuddy/widgets/button.dart';
+import 'package:diabuddy/widgets/dropdown.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
@@ -209,21 +210,6 @@ class _CameraScreenState extends State<CameraScreen> {
       }
     }
 
-    for (var element in objDetect) {
-      print({
-        "score": element?.score,
-        "className": element?.className,
-        "rect": {
-          "left": element?.rect.left,
-          "top": element?.rect.top,
-          "width": element?.rect.width,
-          "height": element?.rect.height,
-          "right": element?.rect.right,
-          "bottom": element?.rect.bottom,
-        },
-      });
-    }
-
     isModelDoneAnalyzing = true;
 
     // trigger setState to update ui
@@ -297,6 +283,20 @@ class _CameraScreenState extends State<CameraScreen> {
         // remove the food item and its corresponding controller
         foodList.removeAt(index);
         controllers.removeAt(index);
+      });
+    }
+  }
+
+  void _addNewDropdown() {
+    setState(() {
+      foodList.add(''); // Default empty value
+    });
+  }
+
+  void _removeDropdown(int index) {
+    if (index < foodList.length) {
+      setState(() {
+        foodList.removeAt(index);
       });
     }
   }
@@ -426,30 +426,38 @@ class _CameraScreenState extends State<CameraScreen> {
                                                     ),
                                                     child: ListTile(
                                                       dense: true,
-                                                      title: TextField(
-                                                        controller: controllers[index],
-                                                        onChanged: (val) {
+                                                      // title: TextField(
+                                                      //   controller: controllers[index],
+                                                      //   onChanged: (val) {
+                                                      //     setState(() {
+                                                      //       foodList[index] = val;
+                                                      //     });
+                                                      //   },
+                                                      //   style: Theme.of(context).textTheme.labelSmall,
+                                                      //   decoration: InputDecoration(
+                                                      //     focusedBorder: OutlineInputBorder(
+                                                      //       borderSide: BorderSide(
+                                                      //           color: Theme.of(context).colorScheme.primary,
+                                                      //           width: 2.0),
+                                                      //       borderRadius: BorderRadius.circular(10.0),
+                                                      //     ),
+                                                      //     border: OutlineInputBorder(
+                                                      //       borderSide: BorderSide(color: Colors.grey[200]!),
+                                                      //       borderRadius: BorderRadius.circular(10.0),
+                                                      //     ),
+                                                      //     labelStyle: Theme.of(context).textTheme.bodyMedium,
+                                                      //     hintStyle: Theme.of(context).textTheme.labelMedium,
+                                                      //     contentPadding:
+                                                      //         const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                                      //   ),
+                                                      // ),
+                                                      title: FoodDropdown(
+                                                        value: foodList[index]!,
+                                                        onChanged: (newValue) {
                                                           setState(() {
-                                                            foodList[index] = val;
+                                                            foodList[index] = newValue ?? '';
                                                           });
                                                         },
-                                                        style: Theme.of(context).textTheme.labelSmall,
-                                                        decoration: InputDecoration(
-                                                          focusedBorder: OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                color: Theme.of(context).colorScheme.primary,
-                                                                width: 2.0),
-                                                            borderRadius: BorderRadius.circular(10.0),
-                                                          ),
-                                                          border: OutlineInputBorder(
-                                                            borderSide: BorderSide(color: Colors.grey[200]!),
-                                                            borderRadius: BorderRadius.circular(10.0),
-                                                          ),
-                                                          labelStyle: Theme.of(context).textTheme.bodyMedium,
-                                                          hintStyle: Theme.of(context).textTheme.labelMedium,
-                                                          contentPadding:
-                                                              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                                                        ),
                                                       ),
                                                       trailing: Row(
                                                         mainAxisSize: MainAxisSize.min,
@@ -457,7 +465,8 @@ class _CameraScreenState extends State<CameraScreen> {
                                                           IconButton(
                                                             icon: Icon(Icons.delete,
                                                                 color: Theme.of(context).primaryColor),
-                                                            onPressed: () => _removeTextField(index),
+                                                            // onPressed: () => _removeTextField(index),
+                                                            onPressed: () => _removeDropdown(index),
                                                           ),
                                                         ],
                                                       ),
@@ -470,7 +479,8 @@ class _CameraScreenState extends State<CameraScreen> {
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: InkWell(
-                                                onTap: () => _addNewTextField(),
+                                                // onTap: () => _addNewTextField(),
+                                                onTap: () => _addNewDropdown(),
                                                 child: Ink(
                                                   decoration: const BoxDecoration(
                                                     shape: BoxShape.circle,

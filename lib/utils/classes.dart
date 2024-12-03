@@ -144,10 +144,6 @@ Meal accumulateMealValues(List<Meal> meals) {
     }
   }
 
-  print(heiClassificationBufferList.length);
-  for (var c in heiClassificationBufferList) {
-    print(c);
-  }
   if (heiClassificationBufferList.length == 1) {
     heiClassificationBuffer = heiClassificationBufferList.join("");
   } else if (heiClassificationBufferList.length > 1) {
