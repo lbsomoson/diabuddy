@@ -45,9 +45,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       child: Text("No records found this month"),
                     );
                   }
-                  print("--------------------------");
-                  print(snapshot.data);
-                  print("--------------------------");
                   return buildScreen(snapshot.data!);
                 } else {
                   return Container();
@@ -94,7 +91,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       getTitlesWidget: (value, meta) {
                         // convert the timestamp back to a readable date for display
                         DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                        return Text("${date.month}/${date.day}");
+                        return Text('${date.day}'); // ${date.month}/
                       },
                     ),
                   ),
@@ -144,6 +141,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget buildScreen(List<DailyHealthRecord> records) {
+    DateTime date = DateTime.now();
+
     // group records by date
     Map<String, List<DailyHealthRecord>> groupedRecords = {};
     for (var record in records) {
@@ -180,10 +179,39 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Align(
+            alignment: Alignment.center,
+            child: Text(
+              getMonth(date.month),
+              style: const TextStyle(color: Color.fromRGBO(4, 54, 74, 1), fontSize: 20),
+            )),
         buildChartContainer("Calories", calorieSpots, xAxisDates),
         buildChartContainer("Glycemic Index", glycemicIndexSpots, xAxisDates),
         buildChartContainer("Diversity Score", diversityScoreSpots, xAxisDates),
       ],
     );
+  }
+
+  String getMonth(int month) {
+    List<String> monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+
+    // Get the month as a string (1-based index, so subtract 1)
+    String monthString = monthNames[month - 1];
+
+    // Return the result formatted as a string
+    return monthString;
   }
 }
