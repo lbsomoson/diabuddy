@@ -30,9 +30,9 @@ class _CameraScreenState extends State<CameraScreen> {
   String? userId;
   File? selectedImage;
   String? path;
-  bool imageSelected = false;
   ModelObjectDetection? _objectModel;
   List<ResultObjectDetection?> objDetect = [];
+  bool isModelDoneAnalyzing = false;
 
   List<String?> foodList = [];
   List<TextEditingController> controllers = [];
@@ -115,6 +115,15 @@ class _CameraScreenState extends State<CameraScreen> {
 
   final dinnerStart = const TimeOfDay(hour: 18, minute: 0); // 6:00 PM
   final dinnerEnd = const TimeOfDay(hour: 21, minute: 0); // 9:00 PM
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    for (var cont in controllers) {
+      cont.dispose();
+    }
+  }
 
   String getCurrentMealTime() {
     // get the current time of day
@@ -215,6 +224,8 @@ class _CameraScreenState extends State<CameraScreen> {
       });
     }
 
+    isModelDoneAnalyzing = true;
+
     // trigger setState to update ui
     setState(() {});
 
@@ -290,6 +301,85 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
+  void _submitButtonClicked() {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Process the meals
+        mealsDetected.clear();
+        for (var f in foodList) {
+          classNames.forEach((k, v) {
+            if (f == k) {
+              var idx = allMeals.indexWhere((meal) => meal.mealName == v);
+              if (idx != -1) {
+                // If it exists in the list of all meals, add
+                mealsDetected.add(allMeals[idx]);
+                mealIntake.foodIds.add(allMeals[idx].mealId!);
+              }
+            }
+          });
+        }
+
+        // Accumulate meal values
+        accMeal = accumulateMealValues(mealsDetected);
+
+        // Update meal intake
+        mealIntake
+          ..userId = userId!
+          ..mealTime = getCurrentMealTime()
+          ..timestamp = _currentDate
+          ..accMeals = accMeal;
+
+        // Create or update daily health record
+        DailyHealthRecord record = DailyHealthRecord(
+          recordId: "",
+          userId: userId,
+          date: mealIntake.timestamp!,
+          healthyEatingIndex: accMeal.healthyEatingIndex!,
+          glycemicIndex: accMeal.glycemicIndex!,
+          carbohydrates: accMeal.carbohydrate!,
+          energyKcal: accMeal.energyKcal!,
+          diversityScore: accMeal.diversityScore!,
+          stepsCount: 0.0,
+        );
+
+        context.read<MealIntakeProvider>().addMealIntake(mealIntake);
+        context.read<DailyHealthRecordProvider>().updateRecord(record);
+
+        // Navigate to the Meal Details screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MealDetailsScreen(mealIntake: mealIntake),
+          ),
+        );
+      } catch (e) {
+        // Handle errors
+        final snackBar = SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Error: ${e.toString()}'),
+          action: SnackBarAction(
+            label: 'Close',
+            onPressed: () {},
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+  }
+
+  void retakePhotoButtonClicked() {
+    setState(() {
+      mealsDetected.clear();
+      _objectModel = null;
+      objDetect = [];
+      selectedImage = null;
+      path = null;
+      foodList = [];
+    });
+    controllers.clear();
+    loadModel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -306,180 +396,133 @@ class _CameraScreenState extends State<CameraScreen> {
                           aspectRatio: 0.8,
                           child: _objectModel!.renderBoxesOnImage(selectedImage!, objDetect),
                         ),
-                        Form(
-                          key: _formKey,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
-                            child: Column(
-                              children: [
-                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Column(
+                        isModelDoneAnalyzing
+                            ? Form(
+                                key: _formKey,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(25, 20, 25, 80),
+                                  child: Column(
                                     children: [
-                                      const Align(
-                                          alignment: Alignment.topLeft,
-                                          child: TextWidget(text: "Food", style: 'bodyMedium')),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      ListView.builder(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: foodList.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                              ),
-                                              child: ListTile(
-                                                dense: true,
-                                                title: TextField(
-                                                  controller: controllers[index],
-                                                  onChanged: (val) {
-                                                    setState(() {
-                                                      foodList[index] = val;
-                                                    });
-                                                  },
-                                                  style: Theme.of(context).textTheme.labelSmall,
-                                                  decoration: InputDecoration(
-                                                    focusedBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Theme.of(context).colorScheme.primary, width: 2.0),
-                                                      borderRadius: BorderRadius.circular(10.0),
-                                                    ),
-                                                    border: OutlineInputBorder(
-                                                      borderSide: BorderSide(color: Colors.grey[200]!),
-                                                      borderRadius: BorderRadius.circular(10.0),
-                                                    ),
-                                                    labelStyle: Theme.of(context).textTheme.bodyMedium,
-                                                    hintStyle: Theme.of(context).textTheme.labelMedium,
-                                                    contentPadding:
-                                                        const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                                                  ),
-                                                ),
-                                                trailing: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    IconButton(
-                                                      icon: Icon(Icons.delete, color: Theme.of(context).primaryColor),
-                                                      onPressed: () => _removeTextField(index),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          }),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: InkWell(
-                                          onTap: () => _addNewTextField(),
-                                          child: Ink(
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.transparent,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.add_circle_outline,
-                                                  size: 22,
-                                                  color: Theme.of(context).colorScheme.primary,
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                const Text2Widget(text: "Add food", style: "body2"),
-                                              ],
-                                            ),
-                                          ),
+                                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                        const SizedBox(
+                                          height: 5,
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      ButtonWidget(
-                                          callback: () {
-                                            if (_formKey.currentState!.validate()) {
-                                              try {
-                                                // Process the meals
-                                                mealsDetected.clear();
-                                                for (var f in foodList) {
-                                                  classNames.forEach((k, v) {
-                                                    if (f == k) {
-                                                      var idx = allMeals.indexWhere((meal) => meal.mealName == v);
-                                                      if (idx != -1) {
-                                                        // If it exists in the list of all meals, add
-                                                        mealsDetected.add(allMeals[idx]);
-                                                        mealIntake.foodIds.add(allMeals[idx].mealId!);
-                                                      }
-                                                    }
-                                                  });
-                                                }
-
-                                                // Accumulate meal values
-                                                accMeal = accumulateMealValues(mealsDetected);
-
-                                                // Update meal intake
-                                                mealIntake
-                                                  ..userId = userId!
-                                                  ..mealTime = getCurrentMealTime()
-                                                  ..timestamp = _currentDate
-                                                  ..accMeals = accMeal;
-
-                                                // Create or update daily health record
-                                                DailyHealthRecord record = DailyHealthRecord(
-                                                  recordId: "",
-                                                  userId: userId,
-                                                  date: mealIntake.timestamp!,
-                                                  healthyEatingIndex: accMeal.healthyEatingIndex!,
-                                                  glycemicIndex: accMeal.glycemicIndex!,
-                                                  carbohydrates: accMeal.carbohydrate!,
-                                                  energyKcal: accMeal.energyKcal!,
-                                                  diversityScore: accMeal.diversityScore!,
-                                                  stepsCount: 0.0,
-                                                );
-
-                                                context.read<MealIntakeProvider>().addMealIntake(mealIntake);
-                                                context.read<DailyHealthRecordProvider>().updateRecord(record);
-
-                                                // Navigate to the Meal Details screen
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) => MealDetailsScreen(mealIntake: mealIntake),
+                                        Column(
+                                          children: [
+                                            const Align(
+                                                alignment: Alignment.topLeft,
+                                                child: TextWidget(text: "Food", style: 'bodyMedium')),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ListView.builder(
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: foodList.length,
+                                                itemBuilder: (BuildContext context, int index) {
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    child: ListTile(
+                                                      dense: true,
+                                                      title: TextField(
+                                                        controller: controllers[index],
+                                                        onChanged: (val) {
+                                                          setState(() {
+                                                            foodList[index] = val;
+                                                          });
+                                                        },
+                                                        style: Theme.of(context).textTheme.labelSmall,
+                                                        decoration: InputDecoration(
+                                                          focusedBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Theme.of(context).colorScheme.primary,
+                                                                width: 2.0),
+                                                            borderRadius: BorderRadius.circular(10.0),
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.grey[200]!),
+                                                            borderRadius: BorderRadius.circular(10.0),
+                                                          ),
+                                                          labelStyle: Theme.of(context).textTheme.bodyMedium,
+                                                          hintStyle: Theme.of(context).textTheme.labelMedium,
+                                                          contentPadding:
+                                                              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                                        ),
+                                                      ),
+                                                      trailing: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          IconButton(
+                                                            icon: Icon(Icons.delete,
+                                                                color: Theme.of(context).primaryColor),
+                                                            onPressed: () => _removeTextField(index),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: InkWell(
+                                                onTap: () => _addNewTextField(),
+                                                child: Ink(
+                                                  decoration: const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.transparent,
                                                   ),
-                                                );
-                                              } catch (e) {
-                                                // Handle errors
-                                                final snackBar = SnackBar(
-                                                  backgroundColor: Colors.red,
-                                                  content: Text('Error: ${e.toString()}'),
-                                                  action: SnackBarAction(
-                                                    label: 'Close',
-                                                    onPressed: () {},
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.add_circle_outline,
+                                                        size: 22,
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      const Text2Widget(text: "Add food", style: "body2"),
+                                                    ],
                                                   ),
-                                                );
-                                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                              }
-                                            }
-                                          },
-                                          label: "Submit",
-                                          style: 'filled'),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 30,
+                                            ),
+                                            ButtonWidget(
+                                                callback: () {
+                                                  _submitButtonClicked();
+                                                },
+                                                label: "Submit",
+                                                style: 'filled'),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        ButtonWidget(
+                                            callback: () {
+                                              retakePhotoButtonClicked();
+                                            },
+                                            label: "Retake Photo",
+                                            style: 'outlined'),
+                                      ]),
                                     ],
                                   ),
-                                ]),
-                              ],
-                            ),
-                          ),
-                        ),
+                                ),
+                              )
+                            : const Column(children: [
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                CircularProgressIndicator()
+                              ]),
                       ],
                     )
                   : ConstrainedBox(
