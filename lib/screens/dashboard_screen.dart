@@ -112,6 +112,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return calReq;
   }
 
+  double computeBmi() {
+    double bmi = 0;
+    if (appuser?.weight != null && appuser?.height != null) {
+      bmi = ((appuser?.weight)! / (appuser!.height! * appuser!.height!));
+    }
+    return bmi;
+  }
+
+  String classifyBmi(double bmi) {
+    if (bmi < 18.5) {
+      return "Underweight";
+    } else if (bmi >= 18.5 && bmi <= 22.9) {
+      return "Normal";
+    } else if (bmi >= 23 && bmi <= 24.9) {
+      return "Overweight";
+    } else if (bmi >= 25) {
+      return "Obese";
+    } else {
+      return "N/A";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
@@ -155,9 +177,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const AdviceScreen(
-                      bmi: 'overweight',
-                      physicalActivity: 'light',
+                    return AdviceScreen(
+                      bmi: classifyBmi(computeBmi()),
+                      physicalActivity: appuser!.activityLevel!,
                     );
                   }));
                 },
