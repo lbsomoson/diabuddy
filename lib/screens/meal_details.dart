@@ -54,9 +54,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: const Image(image: AssetImage('assets/images/meal.jpg'))),
+              ClipRRect(borderRadius: BorderRadius.circular(20), child: Image.memory(widget.mealIntake.imageBytes)),
               const SizedBox(
                 height: 10,
               ),

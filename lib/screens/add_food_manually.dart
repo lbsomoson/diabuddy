@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
@@ -25,8 +27,7 @@ class _AddFoodManuallyState extends State<AddFoodManually> {
   MealIntake mealIntake = MealIntake(
     userId: "",
     foodIds: [],
-    photoUrl: "",
-    proofPath: "",
+    imageBytes: Uint8List(0),
     timestamp: null,
     mealTime: "",
     accMeals: Meal(

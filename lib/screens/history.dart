@@ -16,12 +16,6 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   @override
-  void initState() {
-    super.initState();
-    print("Initializing statistics screen.");
-  }
-
-  @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
     Future<List<DailyHealthRecord>> recordThisMonth =
@@ -34,8 +28,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
           child: FutureBuilder(
               future: recordThisMonth,
               builder: (context, snapshot) {
-                print(snapshot.data);
-                print(context);
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {

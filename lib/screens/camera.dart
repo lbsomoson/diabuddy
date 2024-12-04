@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/meal_intake_model.dart';
 import 'package:diabuddy/models/meal_model.dart';
@@ -72,8 +73,7 @@ class _CameraScreenState extends State<CameraScreen> {
   MealIntake mealIntake = MealIntake(
       userId: '',
       foodIds: [],
-      photoUrl: "",
-      proofPath: "",
+      imageBytes: Uint8List(0),
       timestamp: null,
       mealTime: "",
       accMeals: Meal(
@@ -232,6 +232,10 @@ class _CameraScreenState extends State<CameraScreen> {
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (returnedImage == null) return;
+    // Convert image to bytes
+    final Uint8List bytes = await returnedImage.readAsBytes();
+    mealIntake.imageBytes = bytes;
+    print("IMAGE BYTES:::::: $bytes");
 
     setState(() {
       selectedImage = File(returnedImage.path);
@@ -251,7 +255,13 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future _pickImageFromCamera(String id) async {
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera);
+
     if (returnedImage == null) return;
+    // Convert image to bytes
+    final Uint8List bytes = await returnedImage.readAsBytes();
+    mealIntake.imageBytes = bytes;
+    print("IMAGE BYTES:::::: $bytes");
+
     setState(() {
       selectedImage = File(returnedImage.path);
     });

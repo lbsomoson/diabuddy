@@ -57,6 +57,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // db.printTableSchema('app_users');
     // db.printTableContents('app_users');
     db.printTableContents('records');
+    db.printTableContents('meal_intakes');
+    db.printTableContents('medications');
   }
 
   @override
