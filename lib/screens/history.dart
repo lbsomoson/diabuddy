@@ -1,12 +1,11 @@
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -17,6 +16,12 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   @override
+  void initState() {
+    super.initState();
+    print("Initializing statistics screen.");
+  }
+
+  @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
     Future<List<DailyHealthRecord>> recordThisMonth =
@@ -26,15 +31,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
         appBar: AppBar(title: const TextWidget(text: "Statistics", style: 'bodyLarge')),
         body: SafeArea(
             child: SingleChildScrollView(
-                child: BlocListener<RecordBloc, RecordState>(
-          listener: (context, state) {
-            if (state is RecordUpdated) {
-              context.read<RecordBloc>().add(LoadRecords(user.uid, DateTime.now()));
-            }
-          },
           child: FutureBuilder(
               future: recordThisMonth,
               builder: (context, snapshot) {
+                print(snapshot.data);
+                print(context);
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
@@ -50,7 +51,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   return Container();
                 }
               }),
-        ))));
+        )));
   }
 
   Widget buildChartContainer(

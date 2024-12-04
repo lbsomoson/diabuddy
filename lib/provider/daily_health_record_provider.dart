@@ -32,7 +32,12 @@ class DailyHealthRecordProvider with ChangeNotifier {
   }
 
   Future<List<DailyHealthRecord>> getRecordsPerMonth(String userId, DateTime date) async {
-    records = await databaseService.getRecordsPerMonth(userId, date);
-    return records;
+    try {
+      records = await databaseService.getRecordsPerMonth(userId, date);
+      return records;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 }

@@ -146,7 +146,7 @@ class DatabaseService {
             activityLevel TEXT,
             height REAL,
             weight REAL,
-            dailyCalorieIntake INTEGER,
+            dailyCalorieIntake INTEGER
           )
         ''');
       },

@@ -13,7 +13,7 @@ import 'package:diabuddy/widgets/dropdown.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pytorch_lite/pytorch_lite.dart';

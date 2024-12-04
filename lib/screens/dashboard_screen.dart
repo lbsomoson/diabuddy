@@ -10,7 +10,7 @@ import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -52,8 +52,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
       context.read<DailyHealthRecordProvider>().addRecord(record);
     }
+    Future.delayed(const Duration(seconds: 2));
 
-    db.printTableSchema('records');
+    // db.printTableSchema('app_users');
+    // db.printTableContents('app_users');
     db.printTableContents('records');
   }
 
@@ -71,6 +73,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   double getCalorieIntakePercent(cal) {
     double percent = 0.0;
     percent = cal / getCalorieRequirement() * 100;
+    print("calorie percent: $percent");
     return percent;
   }
 
@@ -225,7 +228,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Container(
           padding: const EdgeInsets.all(35),
           decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-          child: CircleProgressIndicator(title: "Title", value: getCalorieIntakePercent(r.energyKcal)),
+          child: CircleProgressIndicator(
+              title: "Title",
+              value: getCalorieIntakePercent(r.energyKcal).isNaN ? 0.0 : getCalorieIntakePercent(r.energyKcal)),
         ),
         const SizedBox(height: 20),
         Row(
@@ -259,18 +264,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 40),
         Row(
           children: [
-            Expanded(child: DashboardWidget(header: "Glycemic Index", value: r.glycemicIndex)),
+            Expanded(
+                child:
+                    DashboardWidget(header: "Glycemic Index", value: r.glycemicIndex, calReq: getCalorieRequirement())),
             SizedBox(width: sizedBoxHeight),
-            Expanded(child: DashboardWidget(header: "Diet Diversity Score", value: r.diversityScore)),
+            Expanded(
+                child: DashboardWidget(
+                    header: "Diet Diversity Score", value: r.diversityScore, calReq: getCalorieRequirement())),
           ],
         ),
         SizedBox(height: sizedBoxHeight),
         Row(
           children: [
-            Expanded(child: DashboardWidget(header: "Calories", value: r.energyKcal)),
+            Expanded(
+                child: DashboardWidget(
+              header: "Calories",
+              value: r.energyKcal,
+              calReq: getCalorieRequirement(),
+            )),
             const SizedBox(width: 10),
             Expanded(
-                child: DashboardWidget(header: "Carbohydrates", value: r.carbohydrates, caloriesValue: r.energyKcal)),
+                child: DashboardWidget(
+                    header: "Carbohydrates",
+                    value: r.carbohydrates,
+                    caloriesValue: r.energyKcal,
+                    calReq: getCalorieRequirement())),
           ],
         ),
         SizedBox(height: sizedBoxHeight),
