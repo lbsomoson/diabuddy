@@ -324,7 +324,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             finishButtonStyle: FinishButtonStyle(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
-            skipTextButton: const Text('Skip'),
             trailing: const Text('Done'),
             trailingFunction: () {
               Navigator.pop(context);

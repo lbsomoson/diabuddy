@@ -8,14 +8,13 @@ import 'package:diabuddy/screens/add_appointment.dart';
 import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/edit_appointment.dart';
 import 'package:diabuddy/screens/edit_medication.dart';
+import 'package:diabuddy/screens/edit_profile.dart';
 import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
-import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/personal_info.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/text2.dart';
-import 'package:diabuddy/widgets/textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,36 +28,17 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String? dropdownValue, age, height, weight;
   User? user;
   AppUser? appuser;
   DatabaseService db = DatabaseService();
 
   @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-
-    // use context.read here to initialize user and fetch data
-    appuser ??= context.watch<UserAuthProvider>().userInfo;
-  }
-
-  @override
   Widget build(BuildContext context) {
     user = context.read<UserAuthProvider>().user;
+    appuser ??= context.watch<UserAuthProvider>().userInfo;
     Future<List<MedicationIntake>> medications = context.watch<MedicationProvider>().getMedications(user!.uid);
     Future<List<Appointment>> appointments = context.watch<AppointmentProvider>().getAppointments(user!.uid);
-
-    if (user == null) {
-      // show a loading indicator or a message if `user` is not available yet
-      return Scaffold(
-        appBar: AppBar(title: const Text("Profile")),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (appuser == null) {
-      // fetch user info if `appuser` is not loaded yet
-      context.read<UserAuthProvider>().getUserInfo(user!.uid);
-    }
 
     double computeIdealBodyWeight() {
       double idw = 0.0;
@@ -138,7 +118,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       alignment: Alignment.centerLeft,
                       child: InkWell(
                         onTap: () {
-                          _editPersonalInformation(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return EditProfileScreen(appuser: appuser);
+                          }));
                         },
                         child: Ink(
                           decoration: const BoxDecoration(
@@ -338,18 +320,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ));
   }
-}
 
-Widget _displayMedicines(BuildContext context, String id, Future<List<MedicationIntake>> medications) {
-  return FutureBuilder(
-      future: medications,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
-          if (snapshot.data.isEmpty) {
+  Widget _displayMedicines(BuildContext context, String id, Future<List<MedicationIntake>> medications) {
+    return FutureBuilder(
+        future: medications,
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.hasData) {
+            if (snapshot.data.isEmpty) {
+              return const Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [Center(child: Text2Widget(text: "No medicines yet", style: 'body2'))]),
+              );
+            }
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                MedicationIntake medication = snapshot.data[index] as MedicationIntake;
+
+                if (medication.isActive == true) {
+                  return CardWidget(
+                    leading: FontAwesomeIcons.pills,
+                    callback: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return EditMedicationScreen(med: medication);
+                      }));
+                    },
+                    trailing: Icons.edit,
+                    title: medication.name,
+                    subtitle: medication.time.join(", "),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            );
+          } else {
             return const Center(
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -357,55 +370,50 @@ Widget _displayMedicines(BuildContext context, String id, Future<List<Medication
                   children: [Center(child: Text2Widget(text: "No medicines yet", style: 'body2'))]),
             );
           }
-          return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: snapshot.data.length,
-            itemBuilder: (context, index) {
-              MedicationIntake medication = snapshot.data[index] as MedicationIntake;
-
-              if (medication.isActive == true) {
-                return CardWidget(
-                  leading: FontAwesomeIcons.pills,
-                  callback: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return EditMedicationScreen(med: medication);
-                    }));
-                  },
-                  trailing: Icons.edit,
-                  title: medication.name,
-                  subtitle: medication.time.join(", "),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          );
-        } else {
-          return const Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [Center(child: Text2Widget(text: "No medicines yet", style: 'body2'))]),
-          );
-        }
-      });
-}
-
-Widget _displayAppointments(BuildContext context, String id, Future<List<Appointment>> appointments) {
-  String dateFormatted(DateTime date) {
-    return "${date.month}/${date.day}/${date.year}";
+        });
   }
 
-  return FutureBuilder(
-      future: appointments,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
-          if (snapshot.data.isEmpty) {
+  Widget _displayAppointments(BuildContext context, String id, Future<List<Appointment>> appointments) {
+    String dateFormatted(DateTime date) {
+      return "${date.month}/${date.day}/${date.year}";
+    }
+
+    return FutureBuilder(
+        future: appointments,
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.hasData) {
+            if (snapshot.data.isEmpty) {
+              return const Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [Center(child: Text2Widget(text: "No appointments yet", style: 'body2'))]),
+              );
+            }
+            return ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  Appointment appointment = snapshot.data[index] as Appointment;
+
+                  return CardWidget(
+                    leading: FontAwesomeIcons.pills,
+                    callback: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return EditAppointmentScreen(appointment: appointment);
+                      }));
+                    },
+                    trailing: Icons.edit,
+                    title: appointment.title,
+                    subtitle: dateFormatted(appointment.date),
+                  );
+                });
+          } else {
             return const Center(
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -413,86 +421,6 @@ Widget _displayAppointments(BuildContext context, String id, Future<List<Appoint
                   children: [Center(child: Text2Widget(text: "No appointments yet", style: 'body2'))]),
             );
           }
-          return ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                Appointment appointment = snapshot.data[index] as Appointment;
-
-                return CardWidget(
-                  leading: FontAwesomeIcons.pills,
-                  callback: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return EditAppointmentScreen(appointment: appointment);
-                    }));
-                  },
-                  trailing: Icons.edit,
-                  title: appointment.title,
-                  subtitle: dateFormatted(appointment.date),
-                );
-              });
-        } else {
-          return const Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [Center(child: Text2Widget(text: "No appointments yet", style: 'body2'))]),
-          );
-        }
-      });
-}
-
-void _editPersonalInformation(context) {
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 380),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFieldWidget(
-                    callback: () {},
-                    hintText: "Age",
-                    label: "Age",
-                    type: "String",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFieldWidget(
-                    callback: () {},
-                    hintText: "Height",
-                    label: "Height",
-                    type: "String",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFieldWidget(
-                    callback: () {},
-                    hintText: "Weight",
-                    label: "Weight",
-                    type: "String",
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ButtonWidget(
-                      style: 'filled',
-                      label: "Save",
-                      callback: () {
-                        Navigator.pop(context);
-                      })
-                ],
-              ),
-            ),
-          ),
-        );
-      });
+        });
+  }
 }

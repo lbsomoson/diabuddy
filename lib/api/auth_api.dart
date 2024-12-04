@@ -29,6 +29,23 @@ class FirebaseAuthAPI {
     return false;
   }
 
+  Future<bool> editUser(String id, int age, double height, double weight, String activityLevel) async {
+    // check if the user exists in Firestore
+    final DocumentSnapshot<Map<String, dynamic>> userSnapshot = await db.collection('users').doc(id).get();
+
+    if (userSnapshot.exists) {
+      await db.collection('users').doc(id).update({
+        'age': age,
+        'height': height,
+        'weight': weight,
+        'activityLevel': activityLevel,
+      });
+      return true;
+    }
+
+    return false; // user exists, so no action taken
+  }
+
   Future<AppUser?> getUserInfo(String id) async {
     try {
       DocumentSnapshot doc = await db.collection("users").doc(id).get();
@@ -58,23 +75,16 @@ class FirebaseAuthAPI {
         idToken: googleSignInAuthentication.idToken,
       );
 
-      print(credential);
-
       try {
         final UserCredential userCredential = await auth.signInWithCredential(credential);
-        print(userCredential.user);
         return userCredential.user;
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
-          print(e.message);
           return e.message;
         } else if (e.code == 'invalid-credential') {
-          print(e.message);
           return e.message;
         }
       } catch (e) {
-        print("=====================");
-        print(e.toString());
         // handle the error here
         return e.toString();
       }

@@ -235,7 +235,6 @@ class _CameraScreenState extends State<CameraScreen> {
     // Convert image to bytes
     final Uint8List bytes = await returnedImage.readAsBytes();
     mealIntake.imageBytes = bytes;
-    print("IMAGE BYTES:::::: $bytes");
 
     setState(() {
       selectedImage = File(returnedImage.path);
@@ -249,7 +248,6 @@ class _CameraScreenState extends State<CameraScreen> {
       path = '/$id/uploads/$fileName';
     });
 
-    print('selectedImage: $path');
     detectObjects();
   }
 
@@ -260,7 +258,6 @@ class _CameraScreenState extends State<CameraScreen> {
     // Convert image to bytes
     final Uint8List bytes = await returnedImage.readAsBytes();
     mealIntake.imageBytes = bytes;
-    print("IMAGE BYTES:::::: $bytes");
 
     setState(() {
       selectedImage = File(returnedImage.path);
@@ -276,25 +273,7 @@ class _CameraScreenState extends State<CameraScreen> {
     setState(() {
       path = '/$id/uploads/$fileName';
     });
-    print(path);
     detectObjects();
-  }
-
-  void _addNewTextField() {
-    setState(() {
-      foodList.add('');
-      controllers.add(TextEditingController(text: ''));
-    });
-  }
-
-  void _removeTextField(int index) {
-    if (index < foodList.length && index < controllers.length) {
-      setState(() {
-        // remove the food item and its corresponding controller
-        foodList.removeAt(index);
-        controllers.removeAt(index);
-      });
-    }
   }
 
   void _addNewDropdown() {
@@ -436,31 +415,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                                     ),
                                                     child: ListTile(
                                                       dense: true,
-                                                      // title: TextField(
-                                                      //   controller: controllers[index],
-                                                      //   onChanged: (val) {
-                                                      //     setState(() {
-                                                      //       foodList[index] = val;
-                                                      //     });
-                                                      //   },
-                                                      //   style: Theme.of(context).textTheme.labelSmall,
-                                                      //   decoration: InputDecoration(
-                                                      //     focusedBorder: OutlineInputBorder(
-                                                      //       borderSide: BorderSide(
-                                                      //           color: Theme.of(context).colorScheme.primary,
-                                                      //           width: 2.0),
-                                                      //       borderRadius: BorderRadius.circular(10.0),
-                                                      //     ),
-                                                      //     border: OutlineInputBorder(
-                                                      //       borderSide: BorderSide(color: Colors.grey[200]!),
-                                                      //       borderRadius: BorderRadius.circular(10.0),
-                                                      //     ),
-                                                      //     labelStyle: Theme.of(context).textTheme.bodyMedium,
-                                                      //     hintStyle: Theme.of(context).textTheme.labelMedium,
-                                                      //     contentPadding:
-                                                      //         const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                                                      //   ),
-                                                      // ),
                                                       title: FoodDropdown(
                                                         value: foodList[index]!,
                                                         onChanged: (newValue) {
@@ -475,7 +429,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                                           IconButton(
                                                             icon: Icon(Icons.delete,
                                                                 color: Theme.of(context).primaryColor),
-                                                            // onPressed: () => _removeTextField(index),
                                                             onPressed: () => _removeDropdown(index),
                                                           ),
                                                         ],
@@ -489,7 +442,6 @@ class _CameraScreenState extends State<CameraScreen> {
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: InkWell(
-                                                // onTap: () => _addNewTextField(),
                                                 onTap: () => _addNewDropdown(),
                                                 child: Ink(
                                                   decoration: const BoxDecoration(

@@ -1,4 +1,5 @@
 import 'package:diabuddy/models/meal_intake_model.dart';
+import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
@@ -9,6 +10,7 @@ import 'package:diabuddy/screens/add_medication.dart';
 import 'package:diabuddy/screens/advice.dart';
 import 'package:diabuddy/screens/camera.dart';
 import 'package:diabuddy/screens/dashboard_screen.dart';
+import 'package:diabuddy/screens/edit_profile.dart';
 import 'package:diabuddy/screens/history.dart';
 import 'package:diabuddy/screens/login_screen.dart';
 import 'package:diabuddy/screens/meal_details.dart';
@@ -188,6 +190,10 @@ class _MyAppState extends State<MyApp> {
         }
         if (settings.name == "/medicationHistory") {
           return MaterialPageRoute(builder: (context) => const MedicationHistory());
+        }
+        if (settings.name == "/editProfileScreen") {
+          final args = settings.arguments as AppUser;
+          return MaterialPageRoute(builder: (context) => EditProfileScreen(appuser: args));
         }
         if (settings.name == "/adviceScreen") {
           final args = settings.arguments as Map<String, dynamic>;
