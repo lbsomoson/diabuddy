@@ -1,7 +1,6 @@
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
 import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/screens/advice.dart';
 import 'package:diabuddy/services/database_service.dart';
@@ -48,17 +47,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     record.userId = user!.uid;
 
     if (user != null) {
-      context.read<RecordBloc>().add(LoadRecord(user!.uid, DateTime.now()));
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
       context.read<DailyHealthRecordProvider>().addRecord(record);
     }
     Future.delayed(const Duration(seconds: 2));
 
     // db.printTableSchema('app_users');
-    // db.printTableContents('app_users');
     db.printTableContents('records');
-    db.printTableContents('meal_intakes');
-    db.printTableContents('medications');
   }
 
   @override
@@ -75,7 +70,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   double getCalorieIntakePercent(cal) {
     double percent = 0.0;
     percent = cal / getCalorieRequirement() * 100;
-    print("calorie percent: $percent");
     return percent;
   }
 

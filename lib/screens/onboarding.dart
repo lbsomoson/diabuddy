@@ -18,7 +18,6 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  // weight
   late WeightSliderController _weightController, _heightController;
   double _weight = 50.0;
   double _height = 1.7;
