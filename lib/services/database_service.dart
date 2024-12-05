@@ -735,7 +735,7 @@ class DatabaseService {
     }
   }
 
-  Future<List<DailyHealthRecord>> getRecordsPerMonth(String userId, DateTime date) async {
+  Future<List<DailyHealthRecord>> getAllRecords(String userId) async {
     // Get a reference to the database
     final db = await initializeDB();
 
@@ -752,16 +752,10 @@ class DatabaseService {
         return DailyHealthRecord.fromMap(record);
       }).toList();
 
-      // Filter the records by the specified month and year
-      final filteredRecords = allRecords.where((record) {
-        final recordDate = record.date;
-        return recordDate.year == date.year && recordDate.month == date.month;
-      }).toList();
-
       // Sort the filtered records in ascending order of date
-      filteredRecords.sort((a, b) => a.date.compareTo(b.date));
+      allRecords.sort((a, b) => a.date.compareTo(b.date));
 
-      return filteredRecords;
+      return allRecords;
     } catch (e) {
       print('Error fetching records: $e');
       return [];
