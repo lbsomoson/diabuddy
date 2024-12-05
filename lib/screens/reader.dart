@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/services/database_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -209,8 +210,9 @@ class _VerifySubmitState extends State<VerifySubmit> {
                     callback: () async {
                       await Permission.storage.request();
 
-                      int id = await db.insertMedication(widget.medicationIntake);
-                      print("created medication id: $id");
+                      if (!context.mounted) return;
+
+                      context.read<MedicationProvider>().addMedication(widget.medicationIntake);
 
                       if (context.mounted) {
                         final snackBar = SnackBar(

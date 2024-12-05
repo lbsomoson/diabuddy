@@ -278,7 +278,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void _addNewDropdown() {
     setState(() {
-      foodList.add(''); // Default empty value
+      foodList.add('');
+      controllers.add(TextEditingController(text: ''));
     });
   }
 
@@ -286,6 +287,7 @@ class _CameraScreenState extends State<CameraScreen> {
     if (index < foodList.length) {
       setState(() {
         foodList.removeAt(index);
+        controllers.removeAt(index);
       });
     }
   }
@@ -419,7 +421,7 @@ class _CameraScreenState extends State<CameraScreen> {
                                                         value: foodList[index]!,
                                                         onChanged: (newValue) {
                                                           setState(() {
-                                                            foodList[index] = newValue ?? '';
+                                                            foodList[index] = newValue;
                                                           });
                                                         },
                                                       ),

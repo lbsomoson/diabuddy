@@ -10,8 +10,7 @@ class LocalNotifications {
   late Future<int> channelIdFuture;
   late int currentChannelId;
 
-  static final FlutterLocalNotificationsPlugin
-      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static final onClickNotification = BehaviorSubject<String>();
 
   static void onNotificationTap(NotificationResponse response) {
@@ -22,15 +21,11 @@ class LocalNotifications {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
-            onDidReceiveLocalNotification: ((id, title, body, payload) => {}));
+        DarwinInitializationSettings(onDidReceiveLocalNotification: ((id, title, body, payload) => {}));
     const LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open notification');
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsDarwin,
-            linux: initializationSettingsLinux);
+    final InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsDarwin, linux: initializationSettingsLinux);
     _flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: onNotificationTap,
         onDidReceiveBackgroundNotificationResponse: onNotificationTap);
@@ -42,8 +37,7 @@ class LocalNotifications {
 
   static tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
@@ -78,12 +72,8 @@ class LocalNotifications {
       // parse the time string (assuming format "hh:mm AM/PM")
       List<String> timeParts = timeString.split(':');
       int hour = int.parse(timeParts[0].trim());
-      int minute = int.parse(timeParts[1]
-          .substring(0, 2)
-          .trim()); // Get minute part (first two chars)
-      String amPm = timeString
-          .substring(timeString.length - 2)
-          .toUpperCase(); // Get AM/PM
+      int minute = int.parse(timeParts[1].substring(0, 2).trim()); // Get minute part (first two chars)
+      String amPm = timeString.substring(timeString.length - 2).toUpperCase(); // Get AM/PM
 
       // adjust hour based on AM/PM
       if (amPm == 'AM' && hour == 12) {
@@ -112,10 +102,8 @@ class LocalNotifications {
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents:
-            frequency == 'Everyday' ? DateTimeComponents.time : null,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: frequency == 'Everyday' ? DateTimeComponents.time : null,
         payload: payload,
       );
     }
@@ -142,11 +130,8 @@ class LocalNotifications {
       // parse the time string (assuming format "hh:mm AM/PM")
       List<String> timeParts = timeString.split(':');
       int hour = int.parse(timeParts[0].trim());
-      int minute =
-          int.parse(timeParts[1].substring(0, 2).trim()); // Get minute part
-      String amPm = timeString
-          .substring(timeString.length - 2)
-          .toUpperCase(); // Get AM/PM
+      int minute = int.parse(timeParts[1].substring(0, 2).trim()); // Get minute part
+      String amPm = timeString.substring(timeString.length - 2).toUpperCase(); // Get AM/PM
 
       // adjust hour based on AM/PM
       if (amPm == 'AM' && hour == 12) {
@@ -175,10 +160,8 @@ class LocalNotifications {
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents:
-            frequency == 'Everyday' ? DateTimeComponents.time : null,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: frequency == 'Everyday' ? DateTimeComponents.time : null,
         payload: payload,
       );
     }
@@ -218,18 +201,15 @@ class LocalNotifications {
         appointmentId,
         title,
         body,
-        tz.TZDateTime(
-            tz.local, date.year, date.month, date.day, date.hour, date.minute),
+        tz.TZDateTime(tz.local, date.year, date.month, date.day, date.hour, date.minute),
         const NotificationDetails(
-            android: AndroidNotificationDetails(
-                'channel 3', 'your channel name',
+            android: AndroidNotificationDetails('channel 3', 'your channel name',
                 channelDescription: 'your channel description',
                 importance: Importance.max,
                 priority: Priority.high,
                 ticker: 'ticker')),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload);
   }
 
@@ -259,18 +239,15 @@ class LocalNotifications {
         appointmentId,
         title,
         body,
-        tz.TZDateTime(
-            tz.local, date.year, date.month, date.day, date.hour, date.minute),
+        tz.TZDateTime(tz.local, date.year, date.month, date.day, date.hour, date.minute),
         const NotificationDetails(
-            android: AndroidNotificationDetails(
-                'channel 3', 'your channel name',
+            android: AndroidNotificationDetails('channel 3', 'your channel name',
                 channelDescription: 'your channel description',
                 importance: Importance.max,
                 priority: Priority.high,
                 ticker: 'ticker')),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload);
   }
 

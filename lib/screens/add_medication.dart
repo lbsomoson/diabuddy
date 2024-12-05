@@ -33,10 +33,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   String? path = '';
   String? _licenseNo;
   String? _ptrNo;
-  final ptrRegExp =
-      RegExp(r"(PTR\.? No\.?|PT|PTR[[:space:]].+|PTR)\s*[:.]?\s*(\d+)");
-  final licenseRegExp = RegExp(
-      r"(Lic\.? No\.?| Lic\. No|License No\.?|License No|LICENSE NO.?:?)\s*[:.]?\s*(\d+)");
+  final ptrRegExp = RegExp(r"(PTR\.? No\.?|PT|PTR[[:space:]].+|PTR)\s*[:.]?\s*(\d+)");
+  final licenseRegExp = RegExp(r"(Lic\.? No\.?| Lic\. No|License No\.?|License No|LICENSE NO.?:?)\s*[:.]?\s*(\d+)");
 
   @override
   void initState() {
@@ -89,8 +87,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   }
 
   Future _pickImageFromGallery(String id) async {
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (returnedImage == null) return;
 
@@ -115,8 +112,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   }
 
   void _ocr(image) async {
-    _ocrText =
-        await FlutterTesseractOcr.extractText(image, language: 'eng', args: {
+    _ocrText = await FlutterTesseractOcr.extractText(image, language: 'eng', args: {
       "preserve_interword_spaces": "1",
     });
     if (_ocrText != null) {
@@ -148,15 +144,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
 
     if (!mounted) return;
 
-    bool showWarningSnackBar = medicationIntake.verifiedBy!['ptrNo'] == null ||
-            medicationIntake.verifiedBy!['licenseNo'] == null
-        ? true
-        : false;
+    bool showWarningSnackBar =
+        medicationIntake.verifiedBy!['ptrNo'] == null || medicationIntake.verifiedBy!['licenseNo'] == null
+            ? true
+            : false;
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return VerifySubmit(
-          medicationIntake: medicationIntake,
-          showWarningSnackBar: showWarningSnackBar);
+      return VerifySubmit(medicationIntake: medicationIntake, showWarningSnackBar: showWarningSnackBar);
     }));
   }
 
@@ -226,34 +220,26 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                               itemCount: timeValues.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 6),
+                                  margin: const EdgeInsets.symmetric(vertical: 6),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0),
                                     color: Colors.grey[100],
                                   ),
                                   child: ListTile(
                                     title: Text(
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16),
-                                      timeValues[index]?.format(context) ??
-                                          TimeOfDay.now().format(context),
+                                      style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+                                      timeValues[index]?.format(context) ?? TimeOfDay.now().format(context),
                                     ),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          icon: Icon(Icons.delete,
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          onPressed: () =>
-                                              _removeTimePicker(index),
+                                          icon: Icon(Icons.delete, color: Theme.of(context).primaryColor),
+                                          onPressed: () => _removeTimePicker(index),
                                         ),
                                       ],
                                     ),
-                                    onTap: () =>
-                                        _updateTimeValue(context, index),
+                                    onTap: () => _updateTimeValue(context, index),
                                   ),
                                 );
                               })
@@ -303,8 +289,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                     value: medicationIntake.frequency,
                     isExpanded: true,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                       border: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.transparent),
                         borderRadius: BorderRadius.circular(10.0),
@@ -314,8 +299,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         borderSide: const BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.black)),
+                          borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.black)),
                     ),
                     style: const TextStyle(color: Colors.black, fontSize: 16),
                     icon: const Icon(Icons.keyboard_arrow_down),
@@ -344,12 +328,9 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           medicationIntake.userId = widget.id;
                         });
 
-                        List<String> stringList = timeValues
-                            .map<String>((time) => formatTimeOfDay(time!))
-                            .toList();
+                        List<String> stringList = timeValues.map<String>((time) => formatTimeOfDay(time!)).toList();
                         setState(() {
-                          medicationIntake.time =
-                              medicationIntake.time + stringList;
+                          medicationIntake.time = medicationIntake.time + stringList;
                         });
 
                         await _pickImageFromGallery(medicationIntake.userId);

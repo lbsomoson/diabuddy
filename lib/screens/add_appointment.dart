@@ -1,4 +1,5 @@
 import 'package:diabuddy/models/appointment_model.dart';
+import 'package:diabuddy/provider/appointment_provider.dart';
 import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
@@ -8,6 +9,7 @@ import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class AddAppointmentScreen extends StatefulWidget {
@@ -190,12 +192,9 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
 
                         _mergeDateAndTime(time);
 
-                        print(appointment.date);
-
                         // dispatch the event to add appointment
                         // context.read<AppointmentBloc>().add(AddAppointment(appointment));
-                        int id = await db.insertAppointment(appointment);
-                        print("created appointment id: $id");
+                        context.read<AppointmentProvider>().addAppointment(appointment);
 
                         if (!context.mounted) return;
 
