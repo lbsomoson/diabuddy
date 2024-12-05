@@ -274,7 +274,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             selectedLevel: _selectedLevel,
             onTap: () {
               setState(() {
-                _selectedLevel = "Sedentary";
+                _selectedLevel = "Light";
               });
             },
           ),
