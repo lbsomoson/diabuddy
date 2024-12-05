@@ -27,8 +27,6 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
   final fairText = const Color.fromRGBO(249, 166, 32, 1);
   final badText = const Color.fromRGBO(249, 32, 32, 1);
 
-  // TODO: FIX LAYOUT
-
   @override
   void initState() {
     super.initState();
@@ -100,12 +98,12 @@ class _MealTrackerScreenState extends State<MealTrackerScreen> {
                               children: [
                                 Text(
                                   "Healthy Eating Index",
-                                  style: TextStyle(color: fairText),
+                                  style: TextStyle(color: Theme.of(context).primaryColor),
                                 ),
                               ],
                             ),
                             Text(accHealthyEatingIndex.toStringAsFixed(0),
-                                style: TextStyle(color: fairText, fontSize: 35)),
+                                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 35)),
                             Container(
                               padding: const EdgeInsets.all(15),
                               width: double.infinity,
