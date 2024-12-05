@@ -12,6 +12,8 @@ class MealDetailsScreen extends StatefulWidget {
 }
 
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
+  final List<String> navigationHistory = [];
+
   String getMonthAndDay(DateTime dateTime) {
     List<String> monthNames = [
       "January",
@@ -38,13 +40,30 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return "$monthString $day";
   }
 
+  void navigateBackBasedOnHistory(BuildContext context, List<String> history) {
+    if (history.isNotEmpty && history.last == '/cameraScreen') {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/cameraScreen',
+        (route) => false,
+      );
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/mealTrackerScreen',
+        (route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(context, '/cameraScreen', (Route<dynamic> route) => false);
+              navigateBackBasedOnHistory(context, navigationHistory);
+              // Navigator.pushNamedAndRemoveUntil(context, '/cameraScreen', (Route<dynamic> route) => false);
             },
           ),
           title: TextWidget(text: widget.mealIntake.accMeals!.mealName, style: 'bodyLarge')),
