@@ -41,6 +41,7 @@ dependencies:
   pytorch_lite: ^4.3.0
   flutter_tesseract_ocr: ^0.4.27
   sqflite: ^2.3.1
+  custom_sliding_segmented_control: ^1.8.4
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -74,6 +75,7 @@ flutter:
     - assets/images/undraw_healthy_lifestyle.png
     - assets/images/undraw_ice_cream.png
     - assets/images/undraw_jogging.png
+    - assets/records.sql
 
   fonts:
     - family: Roboto

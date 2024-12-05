@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/daily_health_record_model.dart';
@@ -37,6 +38,336 @@ class DatabaseService {
       print(schema);
     } else {
       print('Table $tableName does not exist in the database.');
+    }
+  }
+
+  Future<void> seedUsersFromSQL() async {
+    // Start date
+    DateTime startDate = DateTime(2024, 11, 5, 0, 0, 0);
+
+    // Generate 30 DateTime objects
+    List<DateTime> dates = List.generate(
+      30,
+      (index) => startDate.add(Duration(days: index)),
+    );
+
+    final db = await initializeDB();
+    List<Map<String, dynamic>> rs = [
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[0].millisecondsSinceEpoch,
+        "healthyEatingIndex": 14.69,
+        "diversityScore": 14.57,
+        "glycemicIndex": 51.92,
+        "carbohydrates": 646.24,
+        "stepsCount": 1206.85,
+        "energyKcal": 973.63
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[1].millisecondsSinceEpoch,
+        "healthyEatingIndex": 3.48,
+        "diversityScore": 6.04,
+        "glycemicIndex": 261.09,
+        "carbohydrates": 374.16,
+        "stepsCount": 2268.56,
+        "energyKcal": 1582.82
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[2].millisecondsSinceEpoch,
+        "healthyEatingIndex": 7.56,
+        "diversityScore": 16.23,
+        "glycemicIndex": 97.53,
+        "carbohydrates": 636.76,
+        "stepsCount": 894.73,
+        "energyKcal": 2328.85
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[3].millisecondsSinceEpoch,
+        "healthyEatingIndex": 5.76,
+        "diversityScore": 3.05,
+        "glycemicIndex": 171.65,
+        "carbohydrates": 405.47,
+        "stepsCount": 452.68,
+        "energyKcal": 189.46
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[4].millisecondsSinceEpoch,
+        "healthyEatingIndex": 12.53,
+        "diversityScore": 1.08,
+        "glycemicIndex": 106.27,
+        "carbohydrates": 209.55,
+        "stepsCount": 6711.54,
+        "energyKcal": 1761.15
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[5].millisecondsSinceEpoch,
+        "healthyEatingIndex": 2.61,
+        "diversityScore": 6.69,
+        "glycemicIndex": 159.94,
+        "carbohydrates": 129.51,
+        "stepsCount": 4628.65,
+        "energyKcal": 2740.94
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[6].millisecondsSinceEpoch,
+        "healthyEatingIndex": 10.92,
+        "diversityScore": 4.15,
+        "glycemicIndex": 125.74,
+        "carbohydrates": 454.59,
+        "stepsCount": 3249.51,
+        "energyKcal": 2975.9
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[7].millisecondsSinceEpoch,
+        "healthyEatingIndex": 15.22,
+        "diversityScore": 10.92,
+        "glycemicIndex": 176.04,
+        "carbohydrates": 155.3,
+        "stepsCount": 5169.2,
+        "energyKcal": 1446.23
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[8].millisecondsSinceEpoch,
+        "healthyEatingIndex": 15.14,
+        "diversityScore": 2.24,
+        "glycemicIndex": 294.46,
+        "carbohydrates": 466.31,
+        "stepsCount": 5712.88,
+        "energyKcal": 658.5
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[9].millisecondsSinceEpoch,
+        "healthyEatingIndex": 14.84,
+        "diversityScore": 2.51,
+        "glycemicIndex": 191.48,
+        "carbohydrates": 365.94,
+        "stepsCount": 1469.65,
+        "energyKcal": 463.75
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[10].millisecondsSinceEpoch,
+        "healthyEatingIndex": 5.57,
+        "diversityScore": 4.85,
+        "glycemicIndex": 272.32,
+        "carbohydrates": 54.61,
+        "stepsCount": 4981.65,
+        "energyKcal": 284.99
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[11].millisecondsSinceEpoch,
+        "healthyEatingIndex": 16.93,
+        "diversityScore": 5.49,
+        "glycemicIndex": 117.13,
+        "carbohydrates": 396.41,
+        "stepsCount": 5684.04,
+        "energyKcal": 2214.42
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[12].millisecondsSinceEpoch,
+        "healthyEatingIndex": 12.35,
+        "diversityScore": 12.47,
+        "glycemicIndex": 137.09,
+        "carbohydrates": 234.26,
+        "stepsCount": 6734.56,
+        "energyKcal": 1913.36
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[13].millisecondsSinceEpoch,
+        "healthyEatingIndex": 16.22,
+        "diversityScore": 12.24,
+        "glycemicIndex": 90.75,
+        "carbohydrates": 367.05,
+        "stepsCount": 43.95,
+        "energyKcal": 1232.3
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[14].millisecondsSinceEpoch,
+        "healthyEatingIndex": 1.14,
+        "diversityScore": 13.91,
+        "glycemicIndex": 135.83,
+        "carbohydrates": 434.88,
+        "stepsCount": 376.57,
+        "energyKcal": 1836.52
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[15].millisecondsSinceEpoch,
+        "healthyEatingIndex": 11.69,
+        "diversityScore": 2.92,
+        "glycemicIndex": 198.37,
+        "carbohydrates": 222.81,
+        "stepsCount": 2273.28,
+        "energyKcal": 2331.76
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[16].millisecondsSinceEpoch,
+        "healthyEatingIndex": 1.86,
+        "diversityScore": 1.06,
+        "glycemicIndex": 162.1,
+        "carbohydrates": 11.76,
+        "stepsCount": 6499.56,
+        "energyKcal": 2485.56
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[17].millisecondsSinceEpoch,
+        "healthyEatingIndex": 3.12,
+        "diversityScore": 13.21,
+        "glycemicIndex": 33.75,
+        "carbohydrates": 299.15,
+        "stepsCount": 938.02,
+        "energyKcal": 1619.83
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[18].millisecondsSinceEpoch,
+        "healthyEatingIndex": 4.23,
+        "diversityScore": 13.16,
+        "glycemicIndex": 52.48,
+        "carbohydrates": 245.84,
+        "stepsCount": 966.72,
+        "energyKcal": 493.98
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[19].millisecondsSinceEpoch,
+        "healthyEatingIndex": 16.95,
+        "diversityScore": 3.64,
+        "glycemicIndex": 133.89,
+        "carbohydrates": 562.07,
+        "stepsCount": 3274.94,
+        "energyKcal": 2254.06
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[20].millisecondsSinceEpoch,
+        "healthyEatingIndex": 19.83,
+        "diversityScore": 16.4,
+        "glycemicIndex": 86.72,
+        "carbohydrates": 177.41,
+        "stepsCount": 176.36,
+        "energyKcal": 1596.54
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[21].millisecondsSinceEpoch,
+        "healthyEatingIndex": 9.16,
+        "diversityScore": 3.62,
+        "glycemicIndex": 272.12,
+        "carbohydrates": 156.3,
+        "stepsCount": 3860.22,
+        "energyKcal": 2484.33
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[22].millisecondsSinceEpoch,
+        "healthyEatingIndex": 15.47,
+        "diversityScore": 11.25,
+        "glycemicIndex": 204.38,
+        "carbohydrates": 22.05,
+        "stepsCount": 4857.88,
+        "energyKcal": 2013.98
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[23].millisecondsSinceEpoch,
+        "healthyEatingIndex": 8.74,
+        "diversityScore": 17.15,
+        "glycemicIndex": 46.6,
+        "carbohydrates": 646.72,
+        "stepsCount": 6083.37,
+        "energyKcal": 2736.12
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[24].millisecondsSinceEpoch,
+        "healthyEatingIndex": 12.66,
+        "diversityScore": 6.45,
+        "glycemicIndex": 146.45,
+        "carbohydrates": 500.38,
+        "stepsCount": 6931.77,
+        "energyKcal": 1487.42
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[25].millisecondsSinceEpoch,
+        "healthyEatingIndex": 5.15,
+        "diversityScore": 6.8,
+        "glycemicIndex": 270.8,
+        "carbohydrates": 612.49,
+        "stepsCount": 3365.13,
+        "energyKcal": 1399.59
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[26].millisecondsSinceEpoch,
+        "healthyEatingIndex": 5.46,
+        "diversityScore": 9.14,
+        "glycemicIndex": 65.5,
+        "carbohydrates": 518.08,
+        "stepsCount": 6590.05,
+        "energyKcal": 2428.26
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[27].millisecondsSinceEpoch,
+        "healthyEatingIndex": 9.15,
+        "diversityScore": 10.69,
+        "glycemicIndex": 231.76,
+        "carbohydrates": 327.56,
+        "stepsCount": 162.96,
+        "energyKcal": 2873.94
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[28].millisecondsSinceEpoch,
+        "healthyEatingIndex": 9.08,
+        "diversityScore": 13.11,
+        "glycemicIndex": 43.61,
+        "carbohydrates": 456.04,
+        "stepsCount": 5813.09,
+        "energyKcal": 275.12
+      },
+      {
+        "userId": "0rIfWK6bugRNYZMDViysBHQbDiw1",
+        "date": dates[29].millisecondsSinceEpoch,
+        "healthyEatingIndex": 6.31,
+        "diversityScore": 9.14,
+        "glycemicIndex": 257.94,
+        "carbohydrates": 512.01,
+        "stepsCount": 5552.91,
+        "energyKcal": 1208.42
+      }
+    ];
+
+    try {
+      // Insert each user into the app_users table
+      for (var r in rs) {
+        await db.insert(
+          'records',
+          r,
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+
+      print("Successfully seeded users from SQL file");
+    } catch (e) {
+      print("Error seeding users from SQL file: $e");
     }
   }
 

@@ -51,6 +51,7 @@ void main() async {
   // Initialize database
   DatabaseService databaseService = DatabaseService();
   await databaseService.initializeDB();
+  // await databaseService.seedUsersFromSQL();
 
   runApp(
     MultiProvider(
