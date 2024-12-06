@@ -1,9 +1,15 @@
+import 'package:diabuddy/api/auth_api.dart';
+import 'package:diabuddy/provider/auth_provider.dart';
+import 'package:diabuddy/screens/onboarding.dart';
+import 'package:diabuddy/widgets/bottomnavbar.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/iconbutton.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:diabuddy/widgets/textlink.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -36,6 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String email = '';
   String password = '';
   String confirmPassword = '';
+  String errorMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +58,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
       confirmPassword = value;
     }
 
-    void handleSignupButtonClicked() {}
+    Future<void> handleGoogleSignUp({required BuildContext context}) async {
+      try {
+        final user = await context.read<UserAuthProvider>().authService.signInWithGoogle();
+        if (context.mounted && user != null) {
+          User? signedInUser = context.read<UserAuthProvider>().user;
 
-    void handleGoogleSignUp() {
-      // Navigator.pushNamed(context, '/onboarding');
+          bool isNew = await context.read<UserAuthProvider>().addUser(signedInUser!.uid);
+          if (context.mounted && isNew == true) {
+            // navigate to onboarding page
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return OnboardingScreen(id: signedInUser.uid);
+            }));
+          } else if (context.mounted && isNew == false) {
+            // dispay error the account already exists
+            if (!context.mounted) return;
+            final snackBar = SnackBar(
+              backgroundColor: Colors.red,
+              content: const Text('Account already exists!'),
+              action: SnackBarAction(
+                label: 'Close',
+                onPressed: () {},
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        }
+      } on NoGoogleAccountChosenException {
+        return;
+      } on FirebaseException catch (e) {
+        if (!context.mounted) return;
+        errorMessage = e.message!;
+      }
     }
 
     return Scaffold(
@@ -71,8 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 100,
                       width: 100,
                       child: Center(
-                        child: Image.asset('./assets/images/logo-with-name.png',
-                            fit: BoxFit.cover),
+                        child: Image.asset('./assets/images/logo-with-name.png', fit: BoxFit.cover),
                       )),
                 ),
                 const TextWidget(text: "Sign Up", style: 'bodyLarge'),
@@ -80,8 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 15,
                 ),
                 const TextWidget(
-                    text:
-                        "Get started in a few clicks to create your account and explore all the features.",
+                    text: "Get started in a few clicks to create your account and explore all the features.",
                     style: 'bodySmall'),
                 const SizedBox(height: 20),
                 Column(
@@ -120,19 +153,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               const SizedBox(
                                 height: 15,
                               ),
-                              ButtonWidget(
-                                  style: 'filled',
-                                  label: "Sign Up",
-                                  callback: () {
-                                    handleSignupButtonClicked();
-                                  }),
+                              ButtonWidget(style: 'filled', label: "Sign Up", callback: () {}),
                               Divider(
                                 color: Colors.grey[400],
                                 height: 0.5,
                               ),
                               Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 20),
+                                  margin: const EdgeInsets.symmetric(vertical: 20),
                                   child: const TextWidget(
                                     text: 'Or continue with',
                                     style: 'bodySmall',
@@ -149,15 +176,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 child: IconButtonWidget(
                                     label: 'Google',
-                                    callback: handleGoogleSignUp,
+                                    callback: () => handleGoogleSignUp(context: context),
                                     icon: './assets/images/google logo.png'),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 20, horizontal: 0),
+                                      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
                                       child: const TextWidget(
                                         text: 'Already have an account?',
                                         style: 'bodySmall',
@@ -165,8 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   TextLink(
                                       label: "Sign In",
                                       callback: () {
-                                        Navigator.pushNamed(
-                                            context, '/loginScreen');
+                                        Navigator.pushNamed(context, '/loginScreen');
                                       })
                                 ],
                               ),
@@ -182,4 +207,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+}
+
+class NoGoogleAccountChosenException implements Exception {
+  const NoGoogleAccountChosenException();
 }

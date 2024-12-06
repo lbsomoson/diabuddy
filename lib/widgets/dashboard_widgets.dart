@@ -49,10 +49,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       if (widget.value == 0.0) {
         backgroundColor = nullBackground;
         textColor = nullText;
-      } else if (widget.value < 100) {
+      } else if (widget.value >= 56 && widget.value <= 69) {
         backgroundColor = fairBackground;
         textColor = fairText;
-      } else if (widget.value == 100) {
+      } else if (widget.value <= 55) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {

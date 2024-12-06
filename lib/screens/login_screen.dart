@@ -44,10 +44,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
           bool isNew = await context.read<UserAuthProvider>().addUser(signedInUser!.uid);
           if (context.mounted && isNew == true) {
-            // navigate to onboarding page
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return OnboardingScreen(id: signedInUser.uid);
-            }));
+            if (!context.mounted) return;
+            final snackBar = SnackBar(
+              backgroundColor: Colors.red,
+              content: const Text('User not registered!'),
+              action: SnackBarAction(
+                label: 'Close',
+                onPressed: () {},
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           } else if (context.mounted && isNew == false) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return const BottomNavBar();
