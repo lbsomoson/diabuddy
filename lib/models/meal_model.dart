@@ -8,6 +8,7 @@ class Meal {
   double? energyKcal;
   double? fat;
   double? glycemicIndex;
+  double? glycemicLoad;
   double? iron;
   double? phosphorus;
   double? protein;
@@ -51,6 +52,7 @@ class Meal {
     this.niacin,
     this.vitaminC,
     this.glycemicIndex,
+    this.glycemicLoad,
     this.diversityScore,
     this.phytochemicalIndex,
     this.healthyEatingIndex,
@@ -90,6 +92,7 @@ class Meal {
       niacin: json['niacin']?.toDouble() ?? json['Niacin']?.toDouble(),
       vitaminC: json['vitaminC']?.toDouble() ?? json['Vitamin C']?.toDouble(),
       glycemicIndex: json['glycemicIndex']?.toDouble() ?? json['Glycemic Index']?.toDouble(),
+      glycemicLoad: json['glycemicLoad']?.toDouble() ?? json['Glycemic Load']?.toDouble(),
       diversityScore: json['diversityScore']?.toDouble() ?? json['Diversity Score']?.toDouble(),
       phytochemicalIndex: json['phytochemicalIndex']?.toDouble() ?? json['Phytochemical Index']?.toDouble(),
       healthyEatingIndex: json['healthyEatingIndex']?.toDouble() ?? json['Healthy Eating Index']?.toDouble(),
@@ -130,6 +133,7 @@ class Meal {
       'niacin': niacin,
       'vitaminC': vitaminC,
       'glycemicIndex': glycemicIndex,
+      'glycemicLoad': glycemicLoad,
       'diversityScore': diversityScore,
       'phytochemicalIndex': phytochemicalIndex,
       'healthyEatingIndex': healthyEatingIndex,
@@ -161,6 +165,7 @@ class Meal {
       'niacin': niacin,
       'vitaminC': vitaminC,
       'glycemicIndex': glycemicIndex,
+      'glycemicLoad': glycemicLoad,
       'diversityScore': diversityScore,
       'phytochemicalIndex': phytochemicalIndex,
       'healthyEatingIndex': healthyEatingIndex,
