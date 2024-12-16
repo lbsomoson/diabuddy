@@ -505,6 +505,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       ),
                       child: Center(
                         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                          Text("AI Food Tracker"),
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15.0),

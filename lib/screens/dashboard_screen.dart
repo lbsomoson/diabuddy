@@ -214,7 +214,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         const Text(
-          "Daily Calorie Intake",
+          "Daily Caloric Intake",
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w900,
@@ -266,7 +266,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SizedBox(width: sizedBoxHeight),
             Expanded(
                 child: DashboardWidget(
-                    header: "Diet Diversity Score", value: r.diversityScore, calReq: getCalorieRequirement())),
+                    header: "Dietary Diversity Score", value: r.diversityScore, calReq: getCalorieRequirement())),
           ],
         ),
         SizedBox(height: sizedBoxHeight),

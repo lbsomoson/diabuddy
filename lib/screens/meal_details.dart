@@ -80,15 +80,16 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 7,
                     child: Text(
-                      widget.mealIntake.accMeals!.heiClassification == ''
-                          ? "Food Group"
-                          : widget.mealIntake.accMeals!.heiClassification!,
+                      "Nutritional Value",
+                      // widget.mealIntake.accMeals!.heiClassification == ''
+                      //     ? "Food Group"
+                      //     : widget.mealIntake.accMeals!.heiClassification!,
                       overflow: TextOverflow.fade,
                       maxLines: 3,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: Color.fromRGBO(4, 54, 74, 1),
