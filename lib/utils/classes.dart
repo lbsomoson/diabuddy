@@ -115,7 +115,7 @@ Meal accumulateMealValues(List<Meal> meals) {
       iron: 0.0,
       phosphorus: 0.0,
       protein: 0.0,
-      healtyEatingIndex: 0.0,
+      healthyEatingIndex: 0.0,
       niacin: 0.0,
       cholesterol: 0.0,
       phytochemicalIndex: 0.0,
@@ -144,10 +144,6 @@ Meal accumulateMealValues(List<Meal> meals) {
     }
   }
 
-  print(heiClassificationBufferList.length);
-  for (var c in heiClassificationBufferList) {
-    print(c);
-  }
   if (heiClassificationBufferList.length == 1) {
     heiClassificationBuffer = heiClassificationBufferList.join("");
   } else if (heiClassificationBufferList.length > 1) {
@@ -184,7 +180,7 @@ Meal accumulateMealValues(List<Meal> meals) {
     accMeal.glycemicIndex = ((accMeal.glycemicIndex ?? 0.0) + (m.glycemicIndex ?? 0.0)).toDouble();
     accMeal.iron = ((accMeal.iron ?? 0.0) + (m.iron ?? 0.0)).toDouble();
     accMeal.phosphorus = ((accMeal.phosphorus ?? 0.0) + (m.phosphorus ?? 0.0)).toDouble();
-    accMeal.healtyEatingIndex = ((accMeal.healtyEatingIndex ?? 0.0) + (m.healtyEatingIndex ?? 0.0)).toDouble();
+    accMeal.healthyEatingIndex = ((accMeal.healthyEatingIndex ?? 0.0) + (m.healthyEatingIndex ?? 0.0)).toDouble();
     accMeal.niacin = ((accMeal.niacin ?? 0.0) + (m.niacin ?? 0.0)).toDouble();
     accMeal.cholesterol = ((accMeal.cholesterol ?? 0.0) + (m.cholesterol ?? 0.0)).toDouble();
     accMeal.phytochemicalIndex = ((accMeal.phytochemicalIndex ?? 0.0) + (m.phytochemicalIndex ?? 0.0)).toDouble();

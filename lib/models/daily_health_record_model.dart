@@ -59,5 +59,30 @@ class DailyHealthRecord {
     };
   }
 
-  addDailyHealthRecord(Map<String, dynamic> json) {}
+  Map<String, dynamic> toMap() {
+    return {
+      'userId': userId,
+      'date': date.millisecondsSinceEpoch,
+      'healthyEatingIndex': healthyEatingIndex,
+      'glycemicIndex': glycemicIndex,
+      'carbohydrates': carbohydrates,
+      'energyKcal': energyKcal,
+      'diversityScore': diversityScore,
+      'stepsCount': stepsCount,
+    };
+  }
+
+  factory DailyHealthRecord.fromMap(Map<String, dynamic> map) {
+    return DailyHealthRecord(
+      recordId: map['recordId'].toString(),
+      userId: map['userId'],
+      date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
+      healthyEatingIndex: map['healthyEatingIndex'],
+      glycemicIndex: map['glycemicIndex'],
+      carbohydrates: map['carbohydrates'],
+      energyKcal: map['energyKcal'],
+      diversityScore: map['diversityScore'],
+      stepsCount: map['stepsCount'],
+    );
+  }
 }

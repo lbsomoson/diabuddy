@@ -56,4 +56,17 @@ class AppUser {
       'dailyCalorieIntake': appuser.dailyCalorieIntake,
     };
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'email': email,
+      'name': name,
+      'age': age,
+      'gender': gender,
+      'activityLevel': activityLevel,
+      'height': height,
+      'weight': weight,
+      'dailyCalorieIntake': dailyCalorieIntake,
+    };
+  }
 }

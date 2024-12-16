@@ -1,15 +1,15 @@
-import 'package:diabuddy/api/meal_api.dart';
 import 'package:diabuddy/models/daily_health_record_model.dart';
 import 'package:diabuddy/models/user_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/daily_health_record/record_bloc.dart';
+import 'package:diabuddy/provider/daily_health_record_provider.dart';
 import 'package:diabuddy/screens/advice.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/dashboard_widgets.dart';
 import 'package:diabuddy/widgets/semi_circle_progressbar.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -22,8 +22,8 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   User? user;
   AppUser? appuser;
+  DatabaseService db = DatabaseService();
 
-  FirebaseMealAPI firestore = FirebaseMealAPI();
   final double sizedBoxHeight = 15;
 
   DailyHealthRecord record = DailyHealthRecord(
@@ -40,16 +40,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // firestore.uploadJsonDataToFirestore();
+    db.initializeDB();
+    uploadData();
     user = context.read<UserAuthProvider>().user;
 
     record.userId = user!.uid;
 
     if (user != null) {
-      // context.read<RecordBloc>().add(AddRecord(record));
-      context.read<RecordBloc>().add(LoadRecord(user!.uid, DateTime.now()));
       context.read<UserAuthProvider>().getUserInfo(user!.uid);
+      context.read<DailyHealthRecordProvider>().addRecord(record);
     }
+    Future.delayed(const Duration(seconds: 2));
+
+    // db.printTableSchema('app_users');
+    db.printTableContents('records');
   }
 
   @override
@@ -57,6 +61,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.didChangeDependencies();
 
     appuser ??= context.watch<UserAuthProvider>().userInfo;
+  }
+
+  void uploadData() async {
+    db.uploadJsonDataToSQLite(await db.initializeDB());
   }
 
   double getCalorieIntakePercent(cal) {
@@ -103,10 +111,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return calReq;
   }
 
+  double computeBmi() {
+    double bmi = 0;
+    if (appuser?.weight != null && appuser?.height != null) {
+      bmi = ((appuser?.weight)! / (appuser!.height! * appuser!.height!));
+    }
+    return bmi;
+  }
+
+  String classifyBmi(double bmi) {
+    if (bmi < 18.5) {
+      return "Underweight";
+    } else if (bmi >= 18.5 && bmi <= 22.9) {
+      return "Normal";
+    } else if (bmi >= 23 && bmi <= 24.9) {
+      return "Overweight";
+    } else if (bmi >= 25) {
+      return "Obese";
+    } else {
+      return "N/A";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     User? user = context.read<UserAuthProvider>().user;
-    List<String> nameParts = user!.displayName!.split(' ');
+    Future<DailyHealthRecord?> recordToday =
+        context.watch<DailyHealthRecordProvider>().getRecordByDate(user!.uid, DateTime.now());
+
+    List<String> nameParts = user.displayName!.split(' ');
     String firstName = nameParts.isNotEmpty ? nameParts.first : '';
 
     return Scaffold(
@@ -114,30 +147,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: BlocBuilder<RecordBloc, RecordState>(
-              builder: (context, state) {
-                if (state is RecordLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is SingleRecordLoaded) {
-                  DailyHealthRecord record = state.record;
-                  return buildDashboard(record, firstName);
-                } else if (state is RecordUpdated) {
-                  DailyHealthRecord updatedRecord = state.record;
-                  return buildDashboard(updatedRecord, firstName);
-                } else if (state is RecordNotFound) {
-                  context.read<RecordBloc>().add(AddRecord(record));
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is RecordError) {
-                  print("Record Error: ${state.message}");
-                  return const Center(child: CircularProgressIndicator());
-                } else {
-                  print("++++ $state");
-                  return const Center(child: Text("Something went wrong."));
-                }
-              },
-            ),
-          ),
+              padding: const EdgeInsets.all(20.0),
+              child: FutureBuilder(
+                  future: recordToday,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return buildDashboard(snapshot.data, firstName);
+                    } else {
+                      return Container();
+                    }
+                  })),
         ),
       ),
     );
@@ -153,9 +176,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const AdviceScreen(
-                      bmi: 'overweight',
-                      physicalActivity: 'light',
+                    return AdviceScreen(
+                      bmi: classifyBmi(computeBmi()),
+                      physicalActivity: appuser!.activityLevel!,
                     );
                   }));
                 },
@@ -201,7 +224,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Container(
           padding: const EdgeInsets.all(35),
           decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-          child: CircleProgressIndicator(title: "Title", value: getCalorieIntakePercent(r.energyKcal)),
+          child: CircleProgressIndicator(
+              title: "Title",
+              value: getCalorieIntakePercent(r.energyKcal).isNaN ? 0.0 : getCalorieIntakePercent(r.energyKcal)),
         ),
         const SizedBox(height: 20),
         Row(
@@ -235,18 +260,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 40),
         Row(
           children: [
-            Expanded(child: DashboardWidget(header: "Glycemic Index", value: r.glycemicIndex)),
+            Expanded(
+                child:
+                    DashboardWidget(header: "Glycemic Index", value: r.glycemicIndex, calReq: getCalorieRequirement())),
             SizedBox(width: sizedBoxHeight),
-            Expanded(child: DashboardWidget(header: "Diet Diversity Score", value: r.diversityScore)),
+            Expanded(
+                child: DashboardWidget(
+                    header: "Diet Diversity Score", value: r.diversityScore, calReq: getCalorieRequirement())),
           ],
         ),
         SizedBox(height: sizedBoxHeight),
         Row(
           children: [
-            Expanded(child: DashboardWidget(header: "Calories", value: r.energyKcal)),
+            Expanded(
+                child: DashboardWidget(
+              header: "Calories",
+              value: r.energyKcal,
+              calReq: getCalorieRequirement(),
+            )),
             const SizedBox(width: 10),
             Expanded(
-                child: DashboardWidget(header: "Carbohydrates", value: r.carbohydrates, caloriesValue: r.energyKcal)),
+                child: DashboardWidget(
+                    header: "Carbohydrates",
+                    value: r.carbohydrates,
+                    caloriesValue: r.energyKcal,
+                    calReq: getCalorieRequirement())),
           ],
         ),
         SizedBox(height: sizedBoxHeight),

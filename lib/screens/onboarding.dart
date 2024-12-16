@@ -18,7 +18,6 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  // weight
   late WeightSliderController _weightController, _heightController;
   double _weight = 50.0;
   double _height = 1.7;
@@ -275,7 +274,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             selectedLevel: _selectedLevel,
             onTap: () {
               setState(() {
-                _selectedLevel = "Sedentary";
+                _selectedLevel = "Light";
               });
             },
           ),
@@ -325,7 +324,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             finishButtonStyle: FinishButtonStyle(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
-            skipTextButton: const Text('Skip'),
             trailing: const Text('Done'),
             trailingFunction: () {
               Navigator.pop(context);

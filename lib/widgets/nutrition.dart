@@ -63,7 +63,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: meal.diversityScore!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.diversityScore!.toStringAsFixed(0), style: "bodySmall")
                 ],
               ),
               Row(
@@ -76,7 +76,7 @@ class NutritionWidget extends StatelessWidget {
                         color: Color.fromRGBO(4, 54, 74, 1),
                         fontFamily: 'Roboto',
                       )),
-                  TextWidget(text: meal.healtyEatingIndex!.toStringAsFixed(2), style: "bodySmall")
+                  TextWidget(text: meal.healthyEatingIndex!.toStringAsFixed(0), style: "bodySmall")
                 ],
               ),
               Row(
@@ -220,6 +220,19 @@ class NutritionWidget extends StatelessWidget {
                         fontFamily: 'Roboto',
                       )),
                   TextWidget(text: meal.riboflavin!.toStringAsFixed(2), style: "bodySmall")
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Sodium",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color.fromRGBO(4, 54, 74, 1),
+                        fontFamily: 'Roboto',
+                      )),
+                  TextWidget(text: meal.sodium!.join(', '), style: "bodySmall")
                 ],
               ),
               Row(

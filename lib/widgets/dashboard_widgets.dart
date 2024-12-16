@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 class DashboardWidget extends StatefulWidget {
   final String header;
+  final int calReq;
   final double value;
   final double? caloriesValue;
-  const DashboardWidget({required this.header, required this.value, this.caloriesValue, super.key});
+  const DashboardWidget(
+      {required this.header, required this.calReq, required this.value, this.caloriesValue, super.key});
 
   @override
   State<DashboardWidget> createState() => _DashboardWidgetState();
@@ -33,6 +35,12 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       } else if (widget.value >= 0.55 * widget.caloriesValue! && widget.value <= 0.7 * widget.caloriesValue!) {
         backgroundColor = goodBackground;
         textColor = goodText;
+      } else if (widget.value <= 0.55 * widget.caloriesValue!) {
+        backgroundColor = fairBackground;
+        textColor = fairText;
+      } else if (widget.value >= 0.7 * widget.caloriesValue!) {
+        backgroundColor = badBackground;
+        textColor = badText;
       } else {
         backgroundColor = badBackground;
         textColor = badText;
@@ -41,10 +49,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       if (widget.value == 0.0) {
         backgroundColor = nullBackground;
         textColor = nullText;
-      } else if (widget.value < 100) {
+      } else if (widget.value >= 56 && widget.value <= 69) {
         backgroundColor = fairBackground;
         textColor = fairText;
-      } else if (widget.value == 100) {
+      } else if (widget.value <= 55) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {
@@ -69,7 +77,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       if (widget.value == 0.0) {
         backgroundColor = nullBackground;
         textColor = nullText;
-      } else if (widget.value >= 1200 && widget.value <= 1500) {
+      } else if (widget.value >= (widget.calReq * 0.8) && widget.value < widget.calReq) {
+        backgroundColor = fairBackground;
+        textColor = fairText;
+      } else if (widget.value <= widget.calReq) {
         backgroundColor = goodBackground;
         textColor = goodText;
       } else {

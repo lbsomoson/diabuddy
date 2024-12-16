@@ -32,8 +32,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     // Defer setting _controller.text until after initState completes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.text = _formatDate(_selectedDate);
-      widget.callback(_controller
-          .text); // Ensure the callback is called with the initial value
+      widget.callback(_controller.text); // Ensure the callback is called with the initial value
     });
   }
 
@@ -46,7 +45,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime.now().add(const Duration(days: 1)),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -113,8 +112,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
               },
               decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 2.0),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 border: OutlineInputBorder(
@@ -124,8 +122,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
                 hintText: widget.hintText,
                 hintStyle: Theme.of(context).textTheme.labelMedium,
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               ),
             ),
           ),

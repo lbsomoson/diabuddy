@@ -2,13 +2,13 @@ import 'dart:core';
 
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/medications/medications_bloc.dart';
+import 'package:diabuddy/provider/medication_provider.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/text.dart';
 import 'package:diabuddy/widgets/textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:diabuddy/widgets/timepicker.dart';
 import 'package:diabuddy/utils/local_notifications.dart';
@@ -25,6 +25,7 @@ class VerifySubmit extends StatefulWidget {
 class _VerifySubmitState extends State<VerifySubmit> {
   String? userId;
   LocalNotifications localNotifications = LocalNotifications();
+  DatabaseService db = DatabaseService();
 
   @override
   void initState() {
@@ -208,7 +209,10 @@ class _VerifySubmitState extends State<VerifySubmit> {
                 ButtonWidget(
                     callback: () async {
                       await Permission.storage.request();
-                      if (context.mounted) context.read<MedicationBloc>().add(AddMedication(widget.medicationIntake));
+
+                      if (!context.mounted) return;
+
+                      context.read<MedicationProvider>().addMedication(widget.medicationIntake);
 
                       if (context.mounted) {
                         final snackBar = SnackBar(

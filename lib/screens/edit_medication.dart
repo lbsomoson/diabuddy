@@ -1,5 +1,5 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
-import 'package:diabuddy/provider/medications/medications_bloc.dart';
+import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/utils/local_notifications.dart';
@@ -31,14 +31,12 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
 
   // to listen to any notification clicked or not
   listenToNotification() {
-    LocalNotifications.onClickNotification.stream.listen((event) {
-      print("Notification popped up");
-    });
+    LocalNotifications.onClickNotification.stream.listen((event) {});
   }
 
   void _addNewTextField() {
     setState(() {
-      timeValues.add(null);
+      timeValues.add(TimeOfDay.now());
     });
   }
 
@@ -154,8 +152,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                             height: 5,
                           ),
                           ListView.separated(
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
+                              separatorBuilder: (BuildContext context, int index) {
                                 return const SizedBox(height: 5.0);
                               },
                               physics: const NeverScrollableScrollPhysics(),
@@ -190,34 +187,26 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                               itemCount: timeValues.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 6),
+                                  margin: const EdgeInsets.symmetric(vertical: 6),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0),
                                     color: Colors.grey[100],
                                   ),
                                   child: ListTile(
                                     title: Text(
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16),
-                                      timeValues[index]?.format(context) ??
-                                          TimeOfDay.now().format(context),
+                                      style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+                                      timeValues[index]?.format(context) ?? TimeOfDay.now().format(context),
                                     ),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          icon: Icon(Icons.delete,
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          onPressed: () =>
-                                              _removeTimePicker(index),
+                                          icon: Icon(Icons.delete, color: Theme.of(context).primaryColor),
+                                          onPressed: () => _removeTimePicker(index),
                                         ),
                                       ],
                                     ),
-                                    onTap: () =>
-                                        _updateTimeValue(context, index),
+                                    onTap: () => _updateTimeValue(context, index),
                                   ),
                                 );
                               })
@@ -268,8 +257,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                     value: widget.med.frequency,
                     isExpanded: true,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                       border: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.transparent),
                         borderRadius: BorderRadius.circular(10.0),
@@ -279,8 +267,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                         borderSide: const BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.black)),
+                          borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.black)),
                     ),
                     style: const TextStyle(color: Colors.black, fontSize: 16),
                     icon: const Icon(Icons.keyboard_arrow_down),
@@ -305,30 +292,21 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                     label: "Edit",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        List<String> stringList = timeValues
-                            .map<String>((time) => formatTimeOfDay(time!))
-                            .toList();
+                        List<String> stringList = timeValues.map<String>((time) => formatTimeOfDay(time!)).toList();
 
                         widget.med.time = widget.med.time + stringList;
 
-                        context.read<MedicationBloc>().add(UpdateMedication(
-                            widget.med, widget.med.medicationId!));
-
-                        // TODO: MOVE THIS TO /chooseReadOptionScreen
+                        context.read<MedicationProvider>().updateMedication(widget.med, widget.med.medicationId!);
 
                         if (context.mounted) {
                           final snackBar = SnackBar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            content:
-                                const Text('Medication edited successfully!'),
-                            action: SnackBarAction(
-                                label: 'Close', onPressed: () {}),
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            content: const Text('Medication edited successfully!'),
+                            action: SnackBarAction(label: 'Close', onPressed: () {}),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          await localNotifications.updateScheduledNotification(
-                              context,
+                          await localNotifications.updateScheduledNotification(context,
                               medicationId: widget.med.channelId,
                               time: widget.med.time,
                               frequency: widget.med.frequency,
@@ -343,20 +321,16 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   style: 'outlined',
                   label: "Delete",
                   callback: () async {
-                    context
-                        .read<MedicationBloc>()
-                        .add(DeleteMedication(widget.med.medicationId!));
+                    context.read<MedicationProvider>().deleteMedication(widget.med.medicationId!);
 
                     await localNotifications.cancelScheduledNotifications(
-                        medicationId: widget.med.channelId,
-                        time: widget.med.time);
+                        medicationId: widget.med.channelId, time: widget.med.time);
 
                     if (context.mounted) {
                       final snackBar = SnackBar(
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         content: const Text('Medication deleted successfully!'),
-                        action:
-                            SnackBarAction(label: 'Close', onPressed: () {}),
+                        action: SnackBarAction(label: 'Close', onPressed: () {}),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       Navigator.pop(context);

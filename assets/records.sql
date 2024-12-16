@@ -1,0 +1,10 @@
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '11/25/2024', 16, 20, 119, 523, 2418, 0.04);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '11/26/2024', 13, 16, 124, 187, 58, 0.16);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '11/27/2024', 2, 7, 90, 173, 2311, 0.11);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '11/28/2024', 1, 8, 192, 141, 1455, 0.34);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '11/29/2024', 9, 11, 95, 312, 741, 0.72);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '11/30/2024', 20, 1, 37, 453, 1028, 0.33);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '12/1/2024', 5, 18, 99, 485, 1407, 0.83);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '12/2/2024', 20, 9, 8, 345, 327, 0.65);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '12/3/2024', 1, 13, 47, 501, 744, 0.69);
+insert into records (userId, date, healthyEatingIndex, diversityScore, glycemicIndex, carbohydrates, energyKcal, stepsCount) values ('0rIfWK6bugRNYZMDViysBHQbDiw1', '12/4/2023', 16, 17, 197, 485, 265, 0.69);

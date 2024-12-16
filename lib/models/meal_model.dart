@@ -11,7 +11,7 @@ class Meal {
   double? iron;
   double? phosphorus;
   double? protein;
-  double? healtyEatingIndex;
+  double? healthyEatingIndex;
   double? niacin;
   double? cholesterol;
   double? phytochemicalIndex;
@@ -53,11 +53,19 @@ class Meal {
     this.glycemicIndex,
     this.diversityScore,
     this.phytochemicalIndex,
-    this.healtyEatingIndex,
+    this.healthyEatingIndex,
     this.heiClassification,
   });
 
   factory Meal.fromJson(Map<String, dynamic> json, String id) {
+    List<double?>? sodium;
+    if (json['sodium'] is String) {
+      sodium = List<double?>.from(json['sodium']?.split(', ').map((e) => double.tryParse(e.trim())) ?? []);
+    } else if (json['sodium'] is List) {
+      sodium =
+          (json['sodium'] as List<dynamic>?)?.map((e) => e != null ? double.tryParse(e.toString()) : null).toList();
+    }
+
     Meal m = Meal(
       mealId: id,
       mealName: json['mealName'] ?? json['Meal Name'],
@@ -68,7 +76,7 @@ class Meal {
       protein: json['protein']?.toDouble() ?? json['Protein']?.toDouble(),
       fat: json['fat']?.toDouble() ?? json['Fat']?.toDouble(),
       energyKcal: json['energyKcal']?.toDouble() ?? json['Energy (Kcal)']?.toDouble(),
-      sodium: json['sodium'] != null ? List<double?>.from(json['sodium']) : null,
+      sodium: sodium,
       cholesterol: json['cholesterol']?.toDouble() ?? json['Cholesterol']?.toDouble(),
       calcium: json['calcium']?.toDouble() ?? json['Calcium']?.toDouble(),
       phosphorus: json['phosphorus']?.toDouble() ?? json['Phosphorus']?.toDouble(),
@@ -84,7 +92,7 @@ class Meal {
       glycemicIndex: json['glycemicIndex']?.toDouble() ?? json['Glycemic Index']?.toDouble(),
       diversityScore: json['diversityScore']?.toDouble() ?? json['Diversity Score']?.toDouble(),
       phytochemicalIndex: json['phytochemicalIndex']?.toDouble() ?? json['Phytochemical Index']?.toDouble(),
-      healtyEatingIndex: json['healtyEatingIndex']?.toDouble() ?? json['Healthy Eating Index']?.toDouble(),
+      healthyEatingIndex: json['healthyEatingIndex']?.toDouble() ?? json['Healthy Eating Index']?.toDouble(),
       heiClassification: json['heiClassification'] ?? json['HEI Classification'],
     );
     return m;
@@ -124,7 +132,38 @@ class Meal {
       'glycemicIndex': glycemicIndex,
       'diversityScore': diversityScore,
       'phytochemicalIndex': phytochemicalIndex,
-      'healtyEatingIndex': healtyEatingIndex,
+      'healthyEatingIndex': healthyEatingIndex,
+      'heiClassification': heiClassification,
+    };
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'mealName': mealName,
+      'foodCode': foodCode,
+      'carbohydrate': carbohydrate,
+      'totalDietaryFiber': totalDietaryFiber,
+      'totalSugar': totalSugar,
+      'protein': protein,
+      'fat': fat,
+      'energyKcal': energyKcal,
+      'sodium': sodium!.join(', '),
+      'cholesterol': cholesterol,
+      'calcium': calcium,
+      'phosphorus': phosphorus,
+      'iron': iron,
+      'potassium': potassium,
+      'zinc': zinc,
+      'retinol': retinol,
+      'betaCarotene': betaCarotene,
+      'thiamin': thiamin,
+      'riboflavin': riboflavin,
+      'niacin': niacin,
+      'vitaminC': vitaminC,
+      'glycemicIndex': glycemicIndex,
+      'diversityScore': diversityScore,
+      'phytochemicalIndex': phytochemicalIndex,
+      'healthyEatingIndex': healthyEatingIndex,
       'heiClassification': heiClassification,
     };
   }

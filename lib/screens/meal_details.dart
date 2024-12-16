@@ -12,6 +12,8 @@ class MealDetailsScreen extends StatefulWidget {
 }
 
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
+  // final List<String> navigationHistory = [];
+
   String getMonthAndDay(DateTime dateTime) {
     List<String> monthNames = [
       "January",
@@ -38,12 +40,29 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return "$monthString $day";
   }
 
+  // void navigateBackBasedOnHistory(BuildContext context, List<String> history) {
+  //   if (history.isNotEmpty && history.last == '/cameraScreen') {
+  //     Navigator.pushNamedAndRemoveUntil(
+  //       context,
+  //       '/cameraScreen',
+  //       (route) => false,
+  //     );
+  //   } else {
+  //     Navigator.pushNamedAndRemoveUntil(
+  //       context,
+  //       '/mealTrackerScreen',
+  //       (route) => false,
+  //     );
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           leading: BackButton(
             onPressed: () {
+              // navigateBackBasedOnHistory(context, navigationHistory);
               Navigator.pushNamedAndRemoveUntil(context, '/cameraScreen', (Route<dynamic> route) => false);
             },
           ),
@@ -54,9 +73,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: const Image(image: AssetImage('assets/images/meal.jpg'))),
+              ClipRRect(borderRadius: BorderRadius.circular(20), child: Image.memory(widget.mealIntake.imageBytes)),
               const SizedBox(
                 height: 10,
               ),

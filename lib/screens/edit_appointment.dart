@@ -1,5 +1,6 @@
 import 'package:diabuddy/models/appointment_model.dart';
-import 'package:diabuddy/provider/appointments/appointments_bloc.dart';
+import 'package:diabuddy/provider/appointment_provider.dart';
+import 'package:diabuddy/services/database_service.dart';
 import 'package:diabuddy/widgets/appbar_title.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/datepicker.dart';
@@ -20,6 +21,7 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> textFields = [];
   LocalNotifications localNotifications = LocalNotifications();
+  DatabaseService db = DatabaseService();
 
   @override
   void initState() {
@@ -93,15 +95,13 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                     initialValue: widget.appointment.date,
                     callback: (String val) {
                       setState(() {
-                        widget.appointment.date = DateTime.tryParse(val);
+                        widget.appointment.date = DateTime.tryParse(val)!;
                       });
                     },
                     hintText: "Date",
                     label: "Date"),
                 Column(
-                  children: textFields
-                      .map((field) => field['widget'] as Widget)
-                      .toList(),
+                  children: textFields.map((field) => field['widget'] as Widget).toList(),
                 ),
                 const SizedBox(
                   height: 20,
@@ -111,42 +111,34 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                     label: "Edit Appointment",
                     callback: () async {
                       if (_formKey.currentState!.validate()) {
-                        // TODO: MOVE THIS TO /chooseReadOptionScreen
+                        context
+                            .read<AppointmentProvider>()
+                            .updateAppointment(widget.appointment, widget.appointment.appointmentId!);
 
-                        context.read<AppointmentBloc>().add(UpdateAppointment(
-                            widget.appointment,
-                            widget.appointment.appointmentId!));
-
-                        localNotifications.updateScheduledNotificationAppointment(
-                            context,
+                        localNotifications.updateScheduledNotificationAppointment(context,
                             id: widget.appointment.userId,
                             appointmentId: widget.appointment.channelId,
                             title: widget.appointment.title,
-                            date: widget.appointment.date!,
+                            date: widget.appointment.date,
                             body:
                                 "You have an appointment with ${widget.appointment.doctorName} today at ${widget.appointment.clinicName}!",
                             payload: "Appointment Reminder");
 
                         if (context.mounted) {
                           final snackBar = SnackBar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            content:
-                                const Text('Appointment edited successfully!'),
-                            action: SnackBarAction(
-                                label: 'Close', onPressed: () {}),
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            content: const Text('Appointment edited successfully!'),
+                            action: SnackBarAction(label: 'Close', onPressed: () {}),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                          await localNotifications
-                              .showScheduledNotificationAppointment(context,
-                                  id: widget.appointment.userId,
-                                  appointmentId: widget.appointment.channelId,
-                                  title: "Appointment Reminder",
-                                  date: widget.appointment.date!,
-                                  body:
-                                      "You have an appointment with ${widget.appointment.doctorName}!",
-                                  payload: "Appointment Reminder");
+                          await localNotifications.showScheduledNotificationAppointment(context,
+                              id: widget.appointment.userId,
+                              appointmentId: widget.appointment.channelId,
+                              title: "Appointment Reminder",
+                              date: widget.appointment.date,
+                              body: "You have an appointment with ${widget.appointment.doctorName}!",
+                              payload: "Appointment Reminder");
                         }
                       }
                     }),
@@ -155,8 +147,7 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                   style: 'outlined',
                   label: "Delete",
                   callback: () async {
-                    context.read<AppointmentBloc>().add(
-                        DeleteAppointment(widget.appointment.appointmentId!));
+                    context.read<AppointmentProvider>().deleteAppointment(int.parse(widget.appointment.appointmentId!));
 
                     localNotifications.cancelScheduledNotificationsAppointments(
                         appointmentId: widget.appointment.channelId);
@@ -164,10 +155,8 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
                     if (context.mounted) {
                       final snackBar = SnackBar(
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        content:
-                            const Text('Apppointment deleted successfully!'),
-                        action:
-                            SnackBarAction(label: 'Close', onPressed: () {}),
+                        content: const Text('Apppointment deleted successfully!'),
+                        action: SnackBarAction(label: 'Close', onPressed: () {}),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       Navigator.pop(context);

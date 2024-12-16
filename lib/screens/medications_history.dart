@@ -1,11 +1,11 @@
 import 'package:diabuddy/models/medication_intake_model.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/provider/medications/medications_bloc.dart';
+import 'package:diabuddy/provider/medication_provider.dart';
 import 'package:diabuddy/widgets/card.dart';
 import 'package:diabuddy/widgets/text2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MedicationHistory extends StatefulWidget {
@@ -16,46 +16,37 @@ class MedicationHistory extends StatefulWidget {
 }
 
 Widget _displayMedicationHistory(BuildContext context, String id) {
-  return BlocBuilder<MedicationBloc, MedicationState>(
-    builder: (context, state) {
-      if (state is MedicationLoading) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      } else if (state is MedicationLoaded) {
-        if (state.medications.isEmpty) {
-          return const Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [Center(child: Text2Widget(text: "No previous medicine yet", style: 'body2'))]),
-          );
-        }
-        return ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: state.medications.length,
-          itemBuilder: (context, index) {
-            MedicationIntake medication = state.medications[index];
-            medication.medicationId = state.medications[index].medicationId;
-            if (medication.isActive == false) {
+  return FutureBuilder(
+      future: context.watch<MedicationProvider>().getInactiveMedications(id),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          return ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: snapshot.data.length,
+            itemBuilder: (context, index) {
+              MedicationIntake medication = snapshot.data[index] as MedicationIntake;
               return CardWidget(
                 leading: FontAwesomeIcons.pills,
                 callback: () {},
                 title: medication.name,
                 subtitle: medication.time.join(", "),
               );
-            }
-            return const SizedBox.shrink();
-          },
-        );
-      } else {
-        return const Center(
-          child: Text("Error encountered!"),
-        );
-      }
-    },
-  );
+            },
+          );
+        } else {
+          return const Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [Center(child: Text2Widget(text: "No medicines yet", style: 'body2'))]),
+          );
+        }
+      });
 }
 
 class _MedicationHistoryState extends State<MedicationHistory> {

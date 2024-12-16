@@ -5,8 +5,8 @@ class Appointment {
   int channelId;
   String title;
   String doctorName;
-  String? clinicName;
-  DateTime? date;
+  String clinicName;
+  DateTime date;
   String userId;
 
   Appointment({
@@ -14,7 +14,7 @@ class Appointment {
     required this.channelId,
     required this.title,
     required this.doctorName,
-    this.clinicName,
+    required this.clinicName,
     required this.date,
     required this.userId,
   });
@@ -27,7 +27,7 @@ class Appointment {
         title: json['title'],
         doctorName: json['doctorName'],
         clinicName: json['clinicName'],
-        date: (json['date'] as Timestamp).toDate(),
+        date: DateTime.fromMillisecondsSinceEpoch(json['date']),
         userId: json['userId']);
   }
 
@@ -45,8 +45,19 @@ class Appointment {
       'title': appointment.title,
       'doctorName': appointment.doctorName,
       'clinicName': appointment.clinicName,
-      'date': appointment.date,
+      'date': Timestamp.fromDate(appointment.date),
       'userId': appointment.userId,
+    };
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'userId': userId,
+      'channelId': channelId,
+      'title': title,
+      'doctorName': doctorName,
+      'clinicName': clinicName,
+      'date': date.millisecondsSinceEpoch,
     };
   }
 }

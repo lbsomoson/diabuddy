@@ -32,6 +32,12 @@ class UserAuthProvider with ChangeNotifier {
     return await authService.addUser(id);
   }
 
+  Future<bool> editUser(String id, int age, double height, double weight, String activityLevel) async {
+    var edit = await authService.editUser(id, age, height, weight, activityLevel);
+    notifyListeners();
+    return edit;
+  }
+
   Future<void> onboarding(String id, AppUser appuser) async {
     return await authService.onboarding(id, appuser);
   }
