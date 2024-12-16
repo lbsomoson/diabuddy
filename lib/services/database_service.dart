@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:diabuddy/models/appointment_model.dart';
 import 'package:diabuddy/models/daily_health_record_model.dart';

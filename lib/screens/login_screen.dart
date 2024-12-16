@@ -1,6 +1,5 @@
 import 'package:diabuddy/api/auth_api.dart';
 import 'package:diabuddy/provider/auth_provider.dart';
-import 'package:diabuddy/screens/onboarding.dart';
 import 'package:diabuddy/widgets/bottomnavbar.dart';
 import 'package:diabuddy/widgets/button.dart';
 import 'package:diabuddy/widgets/iconbutton.dart';
