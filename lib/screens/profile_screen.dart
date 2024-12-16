@@ -246,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       const Align(
                         alignment: Alignment.centerLeft,
-                        child: TextWidget(text: "Medical Appointments", style: 'labelMedium'),
+                        child: TextWidget(text: "Nutrition Consultations", style: 'labelMedium'),
                       ),
                       const SizedBox(
                         width: 8,
@@ -391,7 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [Center(child: Text2Widget(text: "No appointments yet", style: 'body2'))]),
+                    children: [Center(child: Text2Widget(text: "No consultations yet", style: 'body2'))]),
               );
             }
             return ListView.builder(
@@ -418,7 +418,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [Center(child: Text2Widget(text: "No appointments yet", style: 'body2'))]),
+                  children: [Center(child: Text2Widget(text: "No consultations yet", style: 'body2'))]),
             );
           }
         });
