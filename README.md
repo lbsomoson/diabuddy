@@ -17,8 +17,8 @@ After downloading, follow these steps:
 1. **Clone the Repository**<br>
 Clone the project repository using Git and navigate inside the directory of the project:
 ```
-git clone https://github.com/ics-uplb/ay2024-2025-1st-sem-cmsc190-sp2-lbsomoson.git
-cd ay2024-2025-1st-sem-cmsc190-sp2-lbsomoson
+git clone https://github.com/lbsomoson/diabuddy.git
+cd diabuddy
 ```
 2. **Install Flutter Dependencies**<br>
 Run the following command to install dependencies listed in `pubspec.yaml`
