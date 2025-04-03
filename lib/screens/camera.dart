@@ -380,12 +380,13 @@ class _CameraScreenState extends State<CameraScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // if the model was successfully loaded and classified, display the image with bounding box
               _objectModel != null
                   ? Column(
                       children: [
                         AspectRatio(
                           aspectRatio: 0.8,
-                          child: _objectModel!.renderBoxesOnImage(selectedImage!, objDetect),
+                          child: _objectModel!.renderBoxesOnImage(selectedImage!, objDetect), // image with bounding box see https://pub.dev/packages/pytorch_lite#get-render-boxes-with-image
                         ),
                         isModelDoneAnalyzing
                             ? Form(
