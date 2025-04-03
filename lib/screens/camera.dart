@@ -166,6 +166,7 @@ class _CameraScreenState extends State<CameraScreen> {
     checkAndRequestPermissions();
   }
 
+  // checks if permission is allowed by users
   Future<void> checkAndRequestPermissions() async {
     if (await Permission.camera.request().isGranted) {
     } else {
@@ -181,6 +182,9 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
+  // load the object detection model with parameters:
+  // path to model, number of classes, resized dimensions of image before detection, path of labels/classes and the type of model
+  // see https://pub.dev/packages/pytorch_lite#load-model
   Future loadModel() async {
     try {
       print("Attempting to load model...");
@@ -197,6 +201,9 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
+  // using the path of the selected image from gallery or camera, apply readAsBytes(), 
+  // then adjust the minimum score and iOUThreshold depending on the results of the model 
+  // see https://pub.dev/packages/pytorch_lite#get-object-detection-prediction-for-an-image
   detectObjects() async {
     objDetect = await _objectModel!
         .getImagePrediction(await File(selectedImage!.path).readAsBytes(), minimumScore: 0.5, iOUThreshold: 0.3);
@@ -228,6 +235,7 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
+  // see the documentations for image_picker in pub.dev
   Future _pickImageFromGallery(String id) async {
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
@@ -251,6 +259,7 @@ class _CameraScreenState extends State<CameraScreen> {
     detectObjects();
   }
 
+  // see the documentations for image_picker in pub.dev
   Future _pickImageFromCamera(String id) async {
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera);
 
